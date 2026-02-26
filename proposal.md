@@ -104,12 +104,17 @@ OpenCV (optional video processing)
 - - Alerts notifications
 - - Live video feed
 
-- The Catopia system consists of two computing units: a Raspberry Pi Pico as an embedded controller and a Raspberry Pi 5 as a backend server. The Pico, primarily programmed using Micro Python, is responsible for sensor data acquisition and actuator control. Sensor readings are serialized in JSON format and transmitted to the Raspberry Pi 5 via USB serial communication.  
-
+The Catopia system consists of two computing units: a Raspberry Pi Pico as an embedded controller and a Raspberry Pi 5 as a backend server. The Pico, primarily programmed using Micro Python, is responsible for sensor data acquisition and actuator control. Sensor readings are serialized in JSON format and transmitted to the Raspberry Pi 5 via USB serial communication.  
 
 Multiple communication protocols are employed to separate functions across system components. USB Serial is used for reliable data transmission between the Raspberry Pi 5 and Pico. HTTP enables retrieval of the historical data and control commands across the server and mobile application. WebSocket is able to support real-time sensor updates and alert notifications.
 HLS (HTTP Live Streaming) is used for video delivery and HLS is easier to implement through IOS system.
-JSON is used as the standardized data exchange format across all software layers.
+JSON is used as the standardized data exchange format across all software layers.  
+
+The designed interface for user is through mobile app under IOS system environment. Users can view real-time environmental and  daily intake data, historical trend visualizations, and system healthy alerts. Also, the interactive controls allow remote activation of actuators such as the laser point. A media view enables live video streaming through HLS playback using AVPlayer.
+
+Frst of all, Pico will collect data from each sensors and serialized into JSON data object. After that, the data is transmitted through USB serial to the Raspberry Pi 5. Then it will be stored in the SQLite database, and processed for analysis.
+When the mobile application requests historical data, it retrieves data through RESTful API endpoints. For real-time monitoring, the backend pushes live updates to the client via WebSocket connections. Simultaneously, the Raspberry Pi Camera captures video, which is served through HLS streaming to the mobile app. This structured data flow ensures clear separation between acquisition, processing, storage, and presentation layers.
+
 
 
 
@@ -121,10 +126,12 @@ JSON is used as the standardized data exchange format across all software layers
 ## 5. Methodology
 Explain how the project will be developed:
 1. Requirement analysis
+
       
 2. Hardware setup
-    
+Hardware module will be individually validated before integration. Load cells will be tested using known reference weights. Environmental sensors will be verified through standard thermometers and hygrometers. The actuator will undergo functional and durability testing to ensure its reliability.
 3. Software development
+
 
     
 4. Integration and testing
