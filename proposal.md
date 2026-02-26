@@ -93,7 +93,16 @@ OpenCV (optional video processing)
 - - JSON (data format)
 - Software structure
 - Data flow
+- - Sensors
+    -> Pico(MicroPython)
+    -> Pi 5 (Backend)
+    -> Data Base
+    - > API
 - User interface
+- - Real-time sensor dashboard
+- - Daily health reports
+- - Alerts notifications
+- - Live video feed
 
 
 
