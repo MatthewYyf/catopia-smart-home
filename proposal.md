@@ -14,23 +14,13 @@
 ## 2. Abstract
 Provide a concise summary (150–250 words) describing:
 - The problem you are addressing:
--   We want to help treat and care for your cat more consistently.
--   The problem we have found is that most cats are not cared for enough
--   as owners are either under the misconception that cats are low maintenance or are away for long periods of time.
--   Cats, therefore, become depressed and it's difficult for owners to see changes in their cats health, especially if the changes are small and
--   would only be noticed if they were around their cat more often.
+We want to help treat and care for your cat more consistently. The problem we have found is that most cats are not cared for enough as owners are either under the misconception that cats are low maintenance or are away for long periods of time. Cats, therefore, become depressed and it's difficult for owners to see changes in their cats health, especially if the changes are small and would only be noticed if they were around their cat more often.
 - Brief description about your proposed project:
--   We are here to make an all-intelligent home for the owners to get for their cats and themselves.
--   The cat home, Catopia, will allow the owner to monitor and care for their cat.
--   Catopia will track and store data each day from each of the many sensors, like water intake, food intake, temperature and humidity tracker,
--   camera's, and mic.
--   
+We are here to make an all-intelligent home for the owners to get for their cats and themselves. The cat home, Catopia, will allow the owner to monitor and care for their cat. Catopia will track and store data each day from each of the many sensors, like water intake, food intake, temperature and humidity tracker, camera's, and mic.
 - Key technologies involved:
--   We will have a lot of sensors to track your cats health and use data that data to display on the app.
--   The cat house will have motors, bluetooth, and audio/visual modules to interact with your cat through the app as well. 
+We will have a lot of sensors to track your cats health and use data that data to display on the app. The cat house will have motors, bluetooth, and audio/visual modules to interact with your cat through the app as well. 
 - Expected outcomes or impact:
--   We think the impact of this project will help lead to more awareness for cat health and making sure they are being properly cared for.
--   A great outcome that we see when you can monitor and play with your cat more is that the cat will be and stay healthy. 
+We think the impact of this project will help lead to more awareness for cat health and making sure they are being properly cared for. A great outcome that we see when you can monitor and play with your cat more is that the cat will be and stay healthy. 
 
 
 ## 3. Objectives
@@ -62,6 +52,15 @@ Describe the details about your project
 ### 4.1 Project Description
 High-level description of the system.
 As detailed as possible.
+Catopia is a smart cat home system that integrates automated care, health monitoring, and emotional analysis into one connected platform. The system uses two computing units: a Raspberry Pi Pico W for sensor data collection and actuator control, and a Raspberry Pi 5 for data processing, storage, and backend services.
+
+The Pico collects data from sensors measuring food intake (load cells), water level, temperature, humidity, motion, and audio. It also controls actuators such as the water pump and a servo-powered laser toy. Sensor data is serialized in JSON and sent via USB serial to the Raspberry Pi 5.
+
+The Raspberry Pi 5 stores data in an SQLite database and performs higher-level analysis. For emotional detection, the system uses DeepCat for video-based body language analysis and JL-TFMSFNet for audio-based vocal analysis. These outputs are combined to estimate the cat’s emotional state.
+
+A mobile iOS app connects to the backend through REST APIs and WebSockets, allowing users to monitor real-time data, view historical trends, watch live video via HLS, receive alerts, and remotely control interactive features.
+
+Overall, Catopia separates sensing, processing, and user interaction into clear layers, creating a modular and scalable smart pet care system.
 
 ### 4.2 Hardware Components
 | Component | Description | Quantity |
@@ -78,7 +77,7 @@ As detailed as possible.
 | Housing Enclosure | Main structure everything surrounds or mounted on | 1 |
 | Food-safe containers | For food and water storage | 2 |
 | Tubes | For water system | 2 |
-| Mounting brackets + wiring | For all cat equipment | ? |
+| Mounting brackets + wiring | For all cat equipment | 4 |
 | Audio Sensor | To listen to cat | 1 |
 | Screen | To relay cat's emotional state | 1 |
 
@@ -128,50 +127,41 @@ Frst of all, Pico will collect data from each sensors and serialized into JSON d
 When the mobile application requests historical data, it retrieves data through RESTful API endpoints. For real-time monitoring, the backend pushes live updates to the client via WebSocket connections. Simultaneously, the Raspberry Pi Camera captures video, which is served through HLS streaming to the mobile app. This structured data flow ensures clear separation between acquisition, processing, storage, and presentation layers.
 
 
-
-
-
-
-
-
-
-
 ## 5. Methodology
 Explain how the project will be developed:
-1. Requirement analysis
-
+  1. Requirement analysis
 Functional requirements include automatic food and water replenishment, automatic litter box cleaning, and stable data and video transmission to the mobile client. The client also needs to support data analysis, remote actuator control, and real-time video calls. Non-functional requirements include a load cell for accurate weight detection with an error range of ±10g, and an air quality sensor. The camera must provide stable video input.
 
-      
-2. Hardware setup
-
+  2. Hardware setup
 Hardware module will be individually validated before integration. Load cells will be tested using known reference weights. Environmental sensors will be verified through standard thermometers and hygrometers. The actuator will undergo functional and durability testing to ensure its reliability.
 
-3. Software development
+  3. Software development
 
 
-    
-4. Integration and testing
+  4. Integration and testing
 
        
-5. Deployment
-    
+  5. Deployment
 
 
 ## 6. Timeline
 As detail as possible.
+7 weeks left to make this project
 | Phase | Activities | Duration |
 |------|------------|----------|
-| Phase 1 | Research & Planning | X weeks |
-| Phase 2 | Development | X weeks |
-| Phase 3 | Testing | X weeks |
-| Phase 4 | Final Deployment | X weeks |
+| Phase 1 | Research & Planning | 1 weeks |
+| Phase 2 | Development | 3 weeks |
+| Phase 3 | Testing | 2 week |
+| Phase 4 | Final Deployment | 1 week |
 
 
 ## 7. Expected Outcomes
-- Functional prototype
-- Measurable performance metrics
-- User or system benefits
+- Functional prototype:
+We definetly think we will have a functional prototype and can refine the app and logic. 
+- Measurable performance metrics:
+Our database will store all the data from the sensors and all other modules that collect data. This will be displayed on the app and made easy to see for the user. Perfomance metrics that will be included is water intake, food intake, temperature, humidity, cat weight, toy playing time, and cat emotional determination. 
+- User or system benefits:
+The benefits for the user is that they can track their cat's health easier and can see flucuations in data even if it is not noticable just by looking at your cat. This can keep the cat healthy and the user informed on their cats health. 
 
 
 ## 8. Conclusion
