@@ -172,5 +172,7 @@ Due to the fact that most of our components are modular and will eventually be i
 ## References
 - Datasheets
 - Research papers
-- Projects you get ideas from - GitHub repositories
+ - JL-TFMSFNet: https://www.sciencedirect.com/science/article/pii/S0957417424014878#d1e1222
+- Projects you get ideas from - GitHub repositories-
+  - DeepCat: https://github.com/Arwa-Fawzy/Cat-Emotional-Analysis?tab=readme-ov-file
 
