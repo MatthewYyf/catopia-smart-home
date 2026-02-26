@@ -44,9 +44,16 @@ The main objectives of this project are:
 
 ## 4. Proposed Solution
 Describe the details about your project
-- Have a weight sensor under the water bowl
-- Have a weight sensor under the food bowl
-- 
+
+- Health Monitoring:
+  - Food) To determine how much food will be in the bowl, a weight will be under the food bowl. Once a certain weight is hit, the food dispenser will halt.
+  - Water) To determine how much water will be in the bowl, a water level monitor will be attached to the bowl. Once a certain level is met, the water pump will halt.
+   
+- Engagement:
+  - Laser Pointer) Using a servo motor and attaching a laser pointer, we will be able to move the pointer through the app. This toy will most likely be mounted to the housing enclosure/near a camera, so you can see your cat playing in real time
+  
+- Emotional Determination:
+  
 
 
 ### 4.1 Project Description
