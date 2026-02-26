@@ -135,13 +135,18 @@ When the mobile application requests historical data, it retrieves data through 
 
 
 
+
 ## 5. Methodology
 Explain how the project will be developed:
 1. Requirement analysis
 
+Functional requirements include automatic food and water replenishment, automatic litter box cleaning, and stable data and video transmission to the mobile client. The client also needs to support data analysis, remote actuator control, and real-time video calls. Non-functional requirements include a load cell for accurate weight detection with an error range of ±10g, and an air quality sensor. The camera must provide stable video input.
+
       
 2. Hardware setup
+
 Hardware module will be individually validated before integration. Load cells will be tested using known reference weights. Environmental sensors will be verified through standard thermometers and hygrometers. The actuator will undergo functional and durability testing to ensure its reliability.
+
 3. Software development
 
 
