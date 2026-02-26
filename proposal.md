@@ -176,7 +176,8 @@ As detail as possible.
 
 ## 8. Conclusion
 Summarize the project’s value and feasibility.
-
+The pet industry is a huge market, with a global valuation of $273 billion market cap. Clearly, the pet owners will spend some serious dough when trying to make their pet's lives happy and healthy. Due to pet owner's wanting the best for their pet, the value of Catopia will be massive, as our project helps solve potential issues any cat owner might face: Busy or unpredictable day-to-day schedules, non-perfect monitoring of their pet, inability to interact with their pet when the owner is away etc.
+Due to the fact that most of our components are modular and will eventually be integrated into a full system, the modular components are extremely feasbile. We are using them exactly how they were designed, but connecting these modular components to the app will be a harder challenge. If we can figure out how to create an app with connections to our module's, we believe we can fully push out Catopia.
 
 ## References
 - Datasheets
