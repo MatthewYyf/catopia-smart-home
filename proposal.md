@@ -53,8 +53,8 @@ Describe the details about your project
   - Laser Pointer) Using a servo motor and attaching a laser pointer, we will be able to move the pointer through the app. This toy will most likely be mounted to the housing enclosure/near a camera, so you can see your cat playing in real time
   
 - Emotional Determination:
-  - Video) Using a camera and Pi, we will analyze the cat's body language and relay that with audio component.
-  - Audio) Using an audio sensor and Pi, we will analyze the cat's vocals and input with the cat's body language to determine the cat's emotional state.
+  - Video) Using a camera and Pi, we will analyze (with the help of DeepCat, mentioned more below) the cat's body language and relay that with audio component. 
+  - Audio) Using an audio sensor and Pi, we will analyze (with the help of JL-TFMSFNet, mentioned more below) the cat's vocals and input with the cat's body language to determine the cat's emotional state.
   - Screen) Using a screen, we will display the cat's emotional state through words.
   
 
