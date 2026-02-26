@@ -104,9 +104,9 @@ OpenCV (optional video processing)
 - - Alerts notifications
 - - Live video feed
 
-- The Catopia system consists of two computing units: a Raspberry Pi Pico as an embedded controller and a Raspberry Pi 5 as a backend server. The Pico, primarily programmed using Micro Python, is responsible for sensor data acquisition and actuator control. Sensor readings are serialized in JSON format and transmitted to the Raspberry Pi 5 via USB serial communication.
+- The Catopia system consists of two computing units: a Raspberry Pi Pico as an embedded controller and a Raspberry Pi 5 as a backend server. The Pico, primarily programmed using Micro Python, is responsible for sensor data acquisition and actuator control. Sensor readings are serialized in JSON format and transmitted to the Raspberry Pi 5 via USB serial communication.  
 
-\newline
+
 Multiple communication protocols are employed to separate functions across system components. USB Serial is used for reliable data transmission between the Raspberry Pi 5 and Pico. HTTP enables retrieval of the historical data and control commands across the server and mobile application. WebSocket is able to support real-time sensor updates and alert notifications.
 HLS (HTTP Live Streaming) is used for video delivery and HLS is easier to implement through IOS system.
 JSON is used as the standardized data exchange format across all software layers.
