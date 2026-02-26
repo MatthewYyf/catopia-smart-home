@@ -44,9 +44,19 @@ The main objectives of this project are:
 
 ## 4. Proposed Solution
 Describe the details about your project
-- Have a weight sensor under the water bowl
-- Have a weight sensor under the food bowl
-- 
+
+- Health Monitoring:
+  - Food) To determine how much food will be in the bowl, a weight will be under the food bowl. Once a certain weight is hit, the food dispenser will halt.
+  - Water) To determine how much water will be in the bowl, a water level monitor will be attached to the bowl. Once a certain level is met, the water pump will halt.
+   
+- Engagement:
+  - Laser Pointer) Using a servo motor and attaching a laser pointer, we will be able to move the pointer through the app. This toy will most likely be mounted to the housing enclosure/near a camera, so you can see your cat playing in real time
+  
+- Emotional Determination:
+  - Video) Using a camera and Pi, we will analyze the cat's body language and relay that with audio component.
+  - Audio) Using an audio sensor and Pi, we will analyze the cat's vocals and input with the cat's body language to determine the cat's emotional state.
+  - Screen) Using a screen, we will display the cat's emotional state through words.
+  
 
 
 ### 4.1 Project Description
@@ -69,6 +79,8 @@ As detailed as possible.
 | Food-safe containers | For food and water storage | 2 |
 | Tubes | For water system | 2 |
 | Mounting brackets + wiring | For all cat equipment | ? |
+| Audio Sensor | To listen to cat | 1 |
+| Screen | To relay cat's emotional state | 1 |
 
 - Schematic 
 
