@@ -83,10 +83,6 @@ Overall, Catopia separates sensing, processing, and user interaction into clear 
 - Libraries / Frameworks
 - -  JL-TFMSFNet: https://www.sciencedirect.com/science/article/pii/S0957417424014878#d1e1222
 - -  DeepCat: https://github.com/Arwa-Fawzy/Cat-Emotional-Analysis?tab=readme-ov-file
-- - MicroPython (Pico W)
-- - libcamera (Pi 5)
-- - Flask / FastAPI (backend)
-- - SQLite (database)
 OpenCV (optional video processing)
 - Communication Protocols (e.g., I2C, SPI, MQTT)
 - - USB Serial (Pico → Pi 5)
@@ -99,6 +95,10 @@ OpenCV (optional video processing)
 
 - - JSON (data format)
 - Software structure
+- - MicroPython (Pico W)
+- - libcamera (Pi 5)
+- - Flask / FastAPI (backend)
+- - SQLite (database)
 - Data flow
 - - Sensors
     -> Pico(MicroPython)
