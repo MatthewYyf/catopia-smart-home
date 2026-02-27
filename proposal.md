@@ -85,8 +85,8 @@ Overall, Catopia separates sensing, processing, and user interaction into clear 
 
 ### 4.3 Software Components
 - Libraries / Frameworks
--   JL-TFMSFNet: https://www.sciencedirect.com/science/article/pii/S0957417424014878#d1e1222
--   DeepCat: https://github.com/Arwa-Fawzy/Cat-Emotional-Analysis?tab=readme-ov-file
+- -  JL-TFMSFNet: https://www.sciencedirect.com/science/article/pii/S0957417424014878#d1e1222
+- -  DeepCat: https://github.com/Arwa-Fawzy/Cat-Emotional-Analysis?tab=readme-ov-file
 - - MicroPython (Pico W)
 - - libcamera (Pi 5)
 - - Flask / FastAPI (backend)
@@ -114,14 +114,6 @@ OpenCV (optional video processing)
 - - Daily health reports
 - - Alerts notifications
 - - Live video feed
-
-The Catopia system consists of two computing units: a Raspberry Pi Pico as an embedded controller and a Raspberry Pi 5 as a backend server. The Pico, primarily programmed using Micro Python, is responsible for sensor data acquisition and actuator control. Sensor readings are serialized in JSON format and transmitted to the Raspberry Pi 5 via USB serial communication.  
-
-Multiple communication protocols are employed to separate functions across system components. USB Serial is used for reliable data transmission between the Raspberry Pi 5 and Pico. HTTP enables retrieval of the historical data and control commands across the server and mobile application. WebSocket is able to support real-time sensor updates and alert notifications.
-HLS (HTTP Live Streaming) is used for video delivery and HLS is easier to implement through IOS system.
-JSON is used as the standardized data exchange format across all software layers.  
-
-The designed interface for user is through mobile app under IOS system environment. Users can view real-time environmental and  daily intake data, historical trend visualizations, and system healthy alerts. Also, the interactive controls allow remote activation of actuators such as the laser point. A media view enables live video streaming through HLS playback using AVPlayer.
 
 
 ## 5. Methodology
