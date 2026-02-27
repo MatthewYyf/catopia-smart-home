@@ -1,8 +1,7 @@
-# Project Title - Proposal
+# Catopia - Proposal
 
 
 ## 1. Team Information
-- **Team Name:** Catopia
 - **Team Members:**
   - **Matthew Yue** (matthewyue@brandeis.edu) – Mechanical Engineer & Data Scientist
   - **Garret Rieden** (grieden11@brandeis.edu) – Hardware Engineer
