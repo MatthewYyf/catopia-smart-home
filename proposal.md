@@ -123,9 +123,6 @@ JSON is used as the standardized data exchange format across all software layers
 
 The designed interface for user is through mobile app under IOS system environment. Users can view real-time environmental and  daily intake data, historical trend visualizations, and system healthy alerts. Also, the interactive controls allow remote activation of actuators such as the laser point. A media view enables live video streaming through HLS playback using AVPlayer.
 
-Frst of all, Pico will collect data from each sensors and serialized into JSON data object. After that, the data is transmitted through USB serial to the Raspberry Pi 5. Then it will be stored in the SQLite database, and processed for analysis.
-When the mobile application requests historical data, it retrieves data through RESTful API endpoints. For real-time monitoring, the backend pushes live updates to the client via WebSocket connections. Simultaneously, the Raspberry Pi Camera captures video, which is served through HLS streaming to the mobile app. This structured data flow ensures clear separation between acquisition, processing, storage, and presentation layers.
-
 
 ## 5. Methodology
 Explain how the project will be developed:
