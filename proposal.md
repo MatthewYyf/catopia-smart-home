@@ -11,7 +11,6 @@
 
 
 ## 2. Abstract
-Provide a concise summary (150–250 words) describing:
 - The problem you are addressing:
 We want to help treat and care for your cat more consistently. The problem we have found is that most cats are not cared for enough as owners are either under the misconception that cats are low maintenance or are away for long periods of time. Cats, therefore, become depressed and it's difficult for owners to see changes in their cats health, especially if the changes are small and would only be noticed if they were around their cat more often.
 - Brief description about your proposed project:
@@ -24,7 +23,6 @@ We think the impact of this project will help lead to more awareness for cat hea
 
 ## 3. Objectives
 The main objectives of this project are:
-- List the specific goals of the project
 -   Create working water pump, water weight sensor
 -   Create toy controlled by motor
 -   Implement working emotion determination
@@ -33,7 +31,6 @@ The main objectives of this project are:
 -   Working camera and mic usability
 
 ## 4. Proposed Solution
-Describe the details about your project
 
 - Health Monitoring:
   - Food) To determine how much food will be in the bowl, a weight will be under the food bowl. Once a certain weight is hit, the food dispenser will halt.
@@ -117,7 +114,6 @@ OpenCV (optional video processing)
 
 
 ## 5. Methodology
-Explain how the project will be developed:
   1. Requirement analysis
 Functional requirements include automatic food and water replenishment, automatic litter box cleaning, and stable data and video transmission to the mobile client. The client also needs to support data analysis, remote actuator control, and real-time video calls. Non-functional requirements include a load cell for accurate weight detection with an error range of ±10g, and an air quality sensor. The camera must provide stable video input.
 
@@ -147,7 +143,6 @@ Since Catopia requires being inside, we will deploy our system into a house! The
      - 5) Diagram our setup (Wiring, System architecture), as well as API documentation. 
 
 ## 6. Timeline
-As detail as possible.
 7 weeks left to make this project
 | Phase | Activities | Duration |
 |------|------------|----------|
