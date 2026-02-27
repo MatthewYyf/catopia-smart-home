@@ -29,8 +29,9 @@ The main objectives of this project are:
 -   Create working water pump, water weight sensor
 -   Create toy controlled by motor
 -   Implement working emotion determination
--   
-
+-   Create cat house
+-   Have working API, database, app interaction
+-   Working camera and mic usability
 
 ## 4. Proposed Solution
 Describe the details about your project
