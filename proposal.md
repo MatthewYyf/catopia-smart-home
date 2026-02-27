@@ -5,7 +5,7 @@
 - **Team Name:** Catopia
 - **Team Members:**
   - **Matthew Yue** (matthewyue@brandeis.edu) – Role  
-  - **Garret Rieden** (grieden11@brandeis.edu) – Father  
+  - **Garret Rieden** (grieden11@brandeis.edu) – Role
   - **Adam Rieden** (arieden@brandeis.edu) – Role  
   - **Yuxuan Liu** (yuxuanliu050613@brandeis.edu) – Role  
 - **Github Repository:** https://github.com/MatthewYyf/catopia-smart-home.git
@@ -29,8 +29,9 @@ The main objectives of this project are:
 -   Create working water pump, water weight sensor
 -   Create toy controlled by motor
 -   Implement working emotion determination
--   
-
+-   Create cat house
+-   Have working API, database, app interaction
+-   Working camera and mic usability
 
 ## 4. Proposed Solution
 Describe the details about your project
