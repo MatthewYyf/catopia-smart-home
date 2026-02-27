@@ -137,13 +137,13 @@ Functional requirements include automatic food and water replenishment, automati
 Hardware module will be individually validated before integration. Load cells will be tested using known reference weights. Environmental sensors will be verified through standard thermometers and hygrometers. The actuator will undergo functional and durability testing to ensure its reliability.
 
   3. Software development
-This will be in 4 layers, starting at 1) Pico Firmware, 2) Pi 5 backend, 3) Database, 4) Web Application
+This will be in 4 layers, starting at a) Pico Firmware, b) Pi 5 backend, c) Database, d) Web Application
      - 1) Pico firmware will read sensors, control actuators, send JSON packets X seconds, and recieve commands from the Pi
      - 2) Pi 5 backend will be a serial reader service (reading from USB serial and parsing JSON), database schema, REST API endpoints, and WebSocket for real-time updates (new sensor readings and alerts).
      - 3) The database will start simple posture and meow/non-meow classification, later building up to the full DeepCat and JL-TFMSFNET
      - 4) Web application will have a simple UI with statistics of the cat's health (water/food intake, weight, emotion etc), as well as a livefeed and a play screen.
   5. Integration and testing
-We will have 5 steps: 1)Unit testing, 2) Subsystem testing, 3) Full system test, 4) Stress testing, 5) Failure testing.
+We will have 5 steps: a) Unit testing, b) Subsystem testing, c) Full system test, d) Stress testing, e) Failure testing.
      - 1) Test each module alone, making sure they function as we expect.
      - 2) Test each physcial hardware piece (Pi, Pico etc) to make sure they can handle their respective application
      - 3) Simulate different scenarios (Water empty, food low, cat active) and see if our model outputs correct responses (Pump activates, alert sent, emotion is playful).
@@ -151,7 +151,7 @@ We will have 5 steps: 1)Unit testing, 2) Subsystem testing, 3) Full system test,
      - 5) Purposefully disconnect Wifi/Cables and make sure the system still operates without crashing/erroring.
        
   6. Deployment
-Since Catopia requires being inside, we will deploy our system into a house! Therefore, we will focus on 1)Installing system in a house, 2) Booting up Catopia, 3) Network configuration, 4) User setup process, 5) Documentation.
+Since Catopia requires being inside, we will deploy our system into a house! Therefore, we will focus on a) Installing system in a house, b) Booting up Catopia, c) Network configuration, d) User setup process, e) Documentation.
      - 1) Manage wires, securing Catopia and all of its modules.
      - 2) After bootup, start all of our services (backend, videostream etc.).
      - 3) Secure Wifi connection and HTTPS for API.
