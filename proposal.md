@@ -4,10 +4,10 @@
 ## 1. Team Information
 - **Team Name:** Catopia
 - **Team Members:**
-  - **Matthew Yue** (matthewyue@brandeis.edu) – Role  
-  - **Garret Rieden** (grieden11@brandeis.edu) – Role
-  - **Adam Rieden** (arieden@brandeis.edu) – Role  
-  - **Yuxuan Liu** (yuxuanliu050613@brandeis.edu) – Role  
+  - **Matthew Yue** (matthewyue@brandeis.edu) – Mechanical Engineer & Data Scientist
+  - **Garret Rieden** (grieden11@brandeis.edu) – Hardware Engineer
+  - **Adam Rieden** (arieden@brandeis.edu) – Frontend Developer
+  - **Yuxuan Liu** (yuxuanliu050613@brandeis.edu) – Backend Developer
 - **Github Repository:** https://github.com/MatthewYyf/catopia-smart-home.git
 
 
