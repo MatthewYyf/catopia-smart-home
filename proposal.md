@@ -13,7 +13,7 @@
 ## 2. Abstract
 - The problem you are addressing:
 We want to help treat and care for your cat more consistently. The problem we have found is that most cats are not cared for enough as owners are either under the misconception that cats are low maintenance or are away for long periods of time. Cats, therefore, become depressed and it's difficult for owners to see changes in their cats health, especially if the changes are small and would only be noticed if they were around their cat more often.
-- Brief description about your proposed project:
+- Brief description about proposed project:
 We are here to make an all-intelligent home for the owners to get for their cats and themselves. The cat home, Catopia, will allow the owner to monitor and care for their cat. Catopia will track and store data each day from each of the many sensors, like water intake, food intake, temperature and humidity tracker, camera's, and mic.
 - Key technologies involved:
 We will have a lot of sensors to track your cats health and use data that data to display on the app. The cat house will have motors, bluetooth, and audio/visual modules to interact with your cat through the app as well. 
@@ -78,7 +78,6 @@ Overall, Catopia separates sensing, processing, and user interaction into clear 
 | Audio Sensor | To listen to cat | 1 |
 | Screen | To relay cat's emotional state | 1 |
 
-- Schematic 
 
 ### 4.3 Software Components
 - Libraries / Frameworks
