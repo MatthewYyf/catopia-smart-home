@@ -136,12 +136,16 @@ Functional requirements include automatic food and water replenishment, automati
 Hardware module will be individually validated before integration. Load cells will be tested using known reference weights. Environmental sensors will be verified through standard thermometers and hygrometers. The actuator will undergo functional and durability testing to ensure its reliability.
 
   3. Software development
+This will be in 4 layers, starting at 1) Pico Firmware, 2) Pi 5 backend, 3) Database, 4) Web Application
+  -1) Pico firmware will read sensors, control actuators, send JSON packets X seconds, and recieve commands from the Pi
+  -2) Pi 5 backend will be a serial reader service (reading from USB serial and parsing JSON), database schema, REST API endpoints, and WebSocket for real-time updates (new sensor readings and alerts).
+  -3) The database will start simple posture and meow/non-meow classification, later building up to the full DeepCat and JL-TFMSFNET
+  -4) Web application will have a simple UI with statistics of the cat's health (water/food intake, weight, emotion etc), as well as a livefeed and a play screen.
 
-
-  4. Integration and testing
+  5. Integration and testing
 
        
-  5. Deployment
+  6. Deployment
 
 
 ## 6. Timeline
