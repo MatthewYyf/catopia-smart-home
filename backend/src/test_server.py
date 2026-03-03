@@ -46,9 +46,11 @@ def serial_reader():
 threading.Thread(target=serial_reader, daemon=True).start()
 
 # --- REST ENDPOINT ---
+from schemas import Command
+
 @app.post("/api/command")
-async def send_command(cmd: dict):
-    ser.write((json.dumps(cmd) + "\n").encode())
+async def send_command(cmd: Command):
+    ser.write((cmd.model_dump_json() + "\n").encode())
     return {"status": "sent"}
 
 @app.get("/api/state")
