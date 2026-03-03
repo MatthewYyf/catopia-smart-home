@@ -1,11 +1,14 @@
 import sys
 import json
 import time
-from machine import Pin
+from machine import Pin, ADC
 
 
 # tests LED connection to backend
 led = machine.Pin(16, machine.Pin.OUT)
+
+# test knob connection
+knob = ADC(0)
 
 def send(data):
     print(json.dumps(data))
@@ -18,7 +21,7 @@ while True:
                 cmd = json.loads(line)
 
                 # cmd type
-                if cmd["type"] == "TURN_ON_LIGHT":
+                if cmd["type"] == "LED_TOGGLE":
                     
                     send({"id": cmd["id"], "status": "ACCEPTED"})
                     
@@ -30,5 +33,9 @@ while True:
                 except:
                     pass
 
-        # send sensor update
-        # TBI
+    # send sensor update
+    send({
+        "sensor": {"knob": knob.read_u16()}
+    })
+
+    time.sleep(1)
