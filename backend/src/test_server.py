@@ -1,8 +1,10 @@
+import os
 import json
 import threading
 import serial
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, WebSocket
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 import uvicorn
 
 app = FastAPI()
@@ -10,17 +12,18 @@ app = FastAPI()
 # --- SERIAL SETUP ---
 # run ls /dev/tty.*
 # and replace with pico serial device
-ser = serial.Serial("SERIAL_DEVICE", 115200, timeout=1)
+ser = serial.Serial("/dev/tty.wlan-debug", 115200, timeout=1)
 
 latest_state = {}
 websocket_clients = []
 
 # -- STATIC FILE --
-app.mount("/static", StaticFiles(directory="static"), name="static")
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static"))
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 @app.get("/")
 async def root():
-    return FileResponse("static/index.html")
+    return FileResponse(os.path.join(static_dir, "index.html"))
 
 # --- SERIAL READER THREAD ---
 def serial_reader():
