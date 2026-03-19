@@ -1,21 +1,19 @@
-# Project Title - Proposal
+# Catopia - Proposal
 
 
 ## 1. Team Information
-- **Team Name:** Catopia
 - **Team Members:**
-  - **Matthew Yue** (matthewyue@brandeis.edu) – Role  
-  - **Garret Rieden** (grieden11@brandeis.edu) – Role
-  - **Adam Rieden** (arieden@brandeis.edu) – Role  
-  - **Yuxuan Liu** (yuxuanliu050613@brandeis.edu) – Role  
+  - **Matthew Yue** (matthewyue@brandeis.edu) – Mechanical Engineer & Data Scientist
+  - **Garret Rieden** (grieden11@brandeis.edu) – Hardware Engineer
+  - **Adam Rieden** (arieden@brandeis.edu) – Frontend Developer
+  - **Yuxuan Liu** (yuxuanliu050613@brandeis.edu) – Backend Developer
 - **Github Repository:** https://github.com/MatthewYyf/catopia-smart-home.git
 
 
 ## 2. Abstract
-Provide a concise summary (150–250 words) describing:
 - The problem you are addressing:
 We want to help treat and care for your cat more consistently. The problem we have found is that most cats are not cared for enough as owners are either under the misconception that cats are low maintenance or are away for long periods of time. Cats, therefore, become depressed and it's difficult for owners to see changes in their cats health, especially if the changes are small and would only be noticed if they were around their cat more often.
-- Brief description about your proposed project:
+- Brief description about proposed project:
 We are here to make an all-intelligent home for the owners to get for their cats and themselves. The cat home, Catopia, will allow the owner to monitor and care for their cat. Catopia will track and store data each day from each of the many sensors, like water intake, food intake, temperature and humidity tracker, camera's, and mic.
 - Key technologies involved:
 We will have a lot of sensors to track your cats health and use data that data to display on the app. The cat house will have motors, bluetooth, and audio/visual modules to interact with your cat through the app as well. 
@@ -25,7 +23,6 @@ We think the impact of this project will help lead to more awareness for cat hea
 
 ## 3. Objectives
 The main objectives of this project are:
-- List the specific goals of the project
 -   Create working water pump, water weight sensor
 -   Create toy controlled by motor
 -   Implement working emotion determination
@@ -34,7 +31,6 @@ The main objectives of this project are:
 -   Working camera and mic usability
 
 ## 4. Proposed Solution
-Describe the details about your project
 
 - Health Monitoring:
   - Food) To determine how much food will be in the bowl, a weight will be under the food bowl. Once a certain weight is hit, the food dispenser will halt.
@@ -82,16 +78,11 @@ Overall, Catopia separates sensing, processing, and user interaction into clear 
 | Audio Sensor | To listen to cat | 1 |
 | Screen | To relay cat's emotional state | 1 |
 
-- Schematic 
 
 ### 4.3 Software Components
 - Libraries / Frameworks
--   JL-TFMSFNet: https://www.sciencedirect.com/science/article/pii/S0957417424014878#d1e1222
--   DeepCat: https://github.com/Arwa-Fawzy/Cat-Emotional-Analysis?tab=readme-ov-file
-- - MicroPython (Pico W)
-- - libcamera (Pi 5)
-- - Flask / FastAPI (backend)
-- - SQLite (database)
+- -  JL-TFMSFNet: https://www.sciencedirect.com/science/article/pii/S0957417424014878#d1e1222
+- -  DeepCat: https://github.com/Arwa-Fawzy/Cat-Emotional-Analysis?tab=readme-ov-file
 OpenCV (optional video processing)
 - Communication Protocols (e.g., I2C, SPI, MQTT)
 - - USB Serial (Pico → Pi 5)
@@ -104,6 +95,10 @@ OpenCV (optional video processing)
 
 - - JSON (data format)
 - Software structure
+- - MicroPython (Pico W)
+- - libcamera (Pi 5)
+- - Flask / FastAPI (backend)
+- - SQLite (database)
 - Data flow
 - - Sensors
     -> Pico(MicroPython)
@@ -116,20 +111,8 @@ OpenCV (optional video processing)
 - - Alerts notifications
 - - Live video feed
 
-The Catopia system consists of two computing units: a Raspberry Pi Pico as an embedded controller and a Raspberry Pi 5 as a backend server. The Pico, primarily programmed using Micro Python, is responsible for sensor data acquisition and actuator control. Sensor readings are serialized in JSON format and transmitted to the Raspberry Pi 5 via USB serial communication.  
-
-Multiple communication protocols are employed to separate functions across system components. USB Serial is used for reliable data transmission between the Raspberry Pi 5 and Pico. HTTP enables retrieval of the historical data and control commands across the server and mobile application. WebSocket is able to support real-time sensor updates and alert notifications.
-HLS (HTTP Live Streaming) is used for video delivery and HLS is easier to implement through IOS system.
-JSON is used as the standardized data exchange format across all software layers.  
-
-The designed interface for user is through mobile app under IOS system environment. Users can view real-time environmental and  daily intake data, historical trend visualizations, and system healthy alerts. Also, the interactive controls allow remote activation of actuators such as the laser point. A media view enables live video streaming through HLS playback using AVPlayer.
-
-Frst of all, Pico will collect data from each sensors and serialized into JSON data object. After that, the data is transmitted through USB serial to the Raspberry Pi 5. Then it will be stored in the SQLite database, and processed for analysis.
-When the mobile application requests historical data, it retrieves data through RESTful API endpoints. For real-time monitoring, the backend pushes live updates to the client via WebSocket connections. Simultaneously, the Raspberry Pi Camera captures video, which is served through HLS streaming to the mobile app. This structured data flow ensures clear separation between acquisition, processing, storage, and presentation layers.
-
 
 ## 5. Methodology
-Explain how the project will be developed:
   1. Requirement analysis
 Functional requirements include automatic food and water replenishment, automatic litter box cleaning, and stable data and video transmission to the mobile client. The client also needs to support data analysis, remote actuator control, and real-time video calls. Non-functional requirements include a load cell for accurate weight detection with an error range of ±10g, and an air quality sensor. The camera must provide stable video input.
 
@@ -137,30 +120,28 @@ Functional requirements include automatic food and water replenishment, automati
 Hardware module will be individually validated before integration. Load cells will be tested using known reference weights. Environmental sensors will be verified through standard thermometers and hygrometers. The actuator will undergo functional and durability testing to ensure its reliability.
 
   3. Software development
-This will be in 4 layers, starting at 1) Pico Firmware, 2) Pi 5 backend, 3) Database, 4) Web Application
-      -1) Pico firmware will read sensors, control actuators, send JSON packets X seconds, and recieve commands from the Pi
-      -2) Pi 5 backend will be a serial reader service (reading from USB serial and parsing JSON), database schema, REST API endpoints, and WebSocket for real-time updates (new sensor readings and alerts).
-      -3) The database will start simple posture and meow/non-meow classification, later building up to the full DeepCat and JL-TFMSFNET
-      -4) Web application will have a simple UI with statistics of the cat's health (water/food intake, weight, emotion etc), as well as a livefeed and a play screen.
-
+This will be in 4 layers, starting at a) Pico Firmware, b) Pi 5 backend, c) Database, d) Web Application
+     - 1) Pico firmware will read sensors, control actuators, send JSON packets X seconds, and recieve commands from the Pi
+     - 2) Pi 5 backend will be a serial reader service (reading from USB serial and parsing JSON), database schema, REST API endpoints, and WebSocket for real-time updates (new sensor readings and alerts).
+     - 3) The database will start simple posture and meow/non-meow classification, later building up to the full DeepCat and JL-TFMSFNET
+     - 4) Web application will have a simple UI with statistics of the cat's health (water/food intake, weight, emotion etc), as well as a livefeed and a play screen.
   5. Integration and testing
-We will have 5 steps: 1)Unit testing, 2) Subsystem testing, 3) Full system test, 4) Stress testing, 5) Failure testing.
-     -1) Test each module alone, making sure they function as we expect.
-     -2) Test each physcial hardware piece (Pi, Pico etc) to make sure they can handle their respective application
-    -3) Simulate different scenarios (Water empty, food low, cat active) and see if our model outputs correct responses (Pump activates, alert sent, emotion is playful).
-    -4) Test and check if our system can handle a full day of activity.
-    -5) Purposefully disconnect Wifi/Cables and make sure the system still operates without crashing/erroring.
+We will have 5 steps: a) Unit testing, b) Subsystem testing, c) Full system test, d) Stress testing, e) Failure testing.
+     - 1) Test each module alone, making sure they function as we expect.
+     - 2) Test each physcial hardware piece (Pi, Pico etc) to make sure they can handle their respective application
+     - 3) Simulate different scenarios (Water empty, food low, cat active) and see if our model outputs correct responses (Pump activates, alert sent, emotion is playful).
+     - 4) Test and check if our system can handle a full day of activity.
+     - 5) Purposefully disconnect Wifi/Cables and make sure the system still operates without crashing/erroring.
        
   6. Deployment
-Since Catopia requires being inside, we will deploy our system into a house! Therefore, we will focus on 1)Installing system in a house, 2) Booting up Catopia, 3) Network configuration, 4) User setup process, 5) Documentation.
-     -1) Manage wires, securing Catopia and all of its modules.
-     -2) After bootup, start all of our services (backend, videostream etc.).
-     -3) Secure Wifi connection and HTTPS for API.
-     -4) Connect to the wifi and get app on browser.
-     -5) Diagram our setup (Wiring, System architecture), as well as API documentation. 
+Since Catopia requires being inside, we will deploy our system into a house! Therefore, we will focus on a) Installing system in a house, b) Booting up Catopia, c) Network configuration, d) User setup process, e) Documentation.
+     - 1) Manage wires, securing Catopia and all of its modules.
+     - 2) After bootup, start all of our services (backend, videostream etc.).
+     - 3) Secure Wifi connection and HTTPS for API.
+     - 4) Connect to the wifi and get app on browser.
+     - 5) Diagram our setup (Wiring, System architecture), as well as API documentation. 
 
 ## 6. Timeline
-As detail as possible.
 7 weeks left to make this project
 | Phase | Activities | Duration |
 |------|------------|----------|
