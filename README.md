@@ -4,11 +4,18 @@ Embedded systems project for a smart-home style dashboard and device API.
 
 ## Quick start
 
-1. Create and activate a virtual environment:
+1. Create and activate a virtual environment (choose one method):
 
+**Using venv:**
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+```
+
+**Using conda:**
+```bash
+conda create -n catopia python=3.10
+conda activate catopia
 ```
 
 2. Install dependencies:
