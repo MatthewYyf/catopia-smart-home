@@ -1,4 +1,4 @@
-# catopia-smart-home
+# Catopia Smart Home System
 
 Embedded systems project for a smart-home style dashboard and device API.
 
