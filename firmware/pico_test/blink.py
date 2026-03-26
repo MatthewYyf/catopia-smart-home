@@ -49,7 +49,7 @@ while True:
 
                 send({"id": cmd["id"], "status": "COMPLETED"})
         except:
-            pass
+            print("error")
 
     # send sensor update
     send({

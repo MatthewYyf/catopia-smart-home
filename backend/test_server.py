@@ -12,7 +12,7 @@ app = FastAPI()
 # --- SERIAL SETUP ---
 # run ls /dev/tty.*
 # and replace with pico serial device
-ser = serial.Serial("/dev/tty.wlan-debug", 115200, timeout=1)
+ser = serial.Serial("/dev/tty.usbmodem1101", 115200, timeout=1)
 
 latest_state = {}
 websocket_clients = []

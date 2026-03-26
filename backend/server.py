@@ -13,7 +13,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def root():
-    return FileResponse("static/index2.html")
+    return FileResponse("static/index.html")
 
 
 @app.post("/api/data")
