@@ -11,9 +11,9 @@ def turn_pump_on():
 def turn_pump_off():
     relay_pin = Pin(22, Pin.IN)
 
-# Run the schedule continuously
+# Run the pump
 while True:
     turn_pump_on()
-    utime.sleep(pump_on_time)  # Turn pump on
+    utime.sleep(pump_on_time)  
     turn_pump_off()
-    utime.sleep(pump_off_time)   # Turn pump off
+    utime.sleep(pump_off_time)   
