@@ -27,7 +27,8 @@ pip install -r requirements.txt
 3. Start the server:
 
 ```bash
-python backend/server.py
+cd backend
+python server.py
 ```
 
 4. Open the app:
