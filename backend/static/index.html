@@ -3,107 +3,87 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Pico Test: LED + Knob</title>
+    <title>Pico Test</title>
     <style>
-      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
-      button { padding: 12px 16px; font-size: 16px; cursor: pointer; }
-      .row { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
-      .pill { display:inline-block; padding: 2px 10px; border-radius: 999px; background:#eee; font-size:12px; }
-      pre { margin-top: 16px; padding: 12px; background: #f7f7f7; border-radius: 10px; overflow:auto; }
-      .big { font-size: 20px; font-weight: 700; }
-      .muted { color:#666; font-size: 13px; }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 24px;
+      }
+      button {
+        padding: 10px 16px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .card {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 16px;
+        max-width: 420px;
+      }
+      .value {
+        font-size: 24px;
+        font-weight: bold;
+      }
+      pre {
+        background: #f5f5f5;
+        padding: 12px;
+        border-radius: 8px;
+      }
     </style>
   </head>
   <body>
-    <h2>Pico Test Page</h2>
+    <div class="card">
+      <h2>Pico W Control</h2>
 
-    <div class="row">
+      <p>
+        Knob value:
+        <span id="knob" class="value">--</span>
+      </p>
+
+      <p>
+        LED state:
+        <span id="led" class="value">--</span>
+      </p>
+
       <button id="toggleBtn">Toggle LED</button>
-      <div>
-        Knob: <span id="knobValue" class="big">—</span>
-      </div>
+
+      <h3>Latest raw state</h3>
+      <pre id="raw">(waiting...)</pre>
     </div>
 
-    <pre id="log">(waiting for websocket data…)</pre>
-
     <script>
-      const wsStatusEl = document.getElementById("wsStatus");
-      const knobValueEl = document.getElementById("knobValue");
-      const logEl = document.getElementById("log");
+      const knobEl = document.getElementById("knob");
+      const ledEl = document.getElementById("led");
+      const rawEl = document.getElementById("raw");
       const toggleBtn = document.getElementById("toggleBtn");
 
-      function logLine(msg) {
-        const ts = new Date().toLocaleTimeString();
-        logEl.textContent = `[${ts}] ${msg}\n` + logEl.textContent;
+      async function refreshState() {
+        try {
+          const res = await fetch("/api/state");
+          const data = await res.json();
+
+          knobEl.textContent = data.knob ?? "--";
+          ledEl.textContent = data.led === 1 ? "ON" : data.led === 0 ? "OFF" : "--";
+          rawEl.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          rawEl.textContent = "Error loading state: " + err;
+        }
       }
 
-      // ---- LED toggle button -> backend REST ----
       toggleBtn.addEventListener("click", async () => {
-        toggleBtn.disabled = true;
         try {
-          const res = await fetch("/api/command", {
+          await fetch("/api/command", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: "c-" + Date.now(), type: "LED_TOGGLE" })
+            body: JSON.stringify({ type: "LED_TOGGLE" })
           });
-
-          if (!res.ok) {
-            const text = await res.text();
-            throw new Error(`HTTP ${res.status}: ${text}`);
-          }
-          logLine("Sent LED_TOGGLE");
-        } catch (e) {
-          logLine("ERROR sending LED_TOGGLE: " + e.message);
-          alert(e.message);
-        } finally {
-          toggleBtn.disabled = false;
+        } catch (err) {
+          rawEl.textContent = "Error sending command: " + err;
         }
       });
 
-      // ---- WebSocket -> knob data ----
-      function connectWs() {
-        const proto = location.protocol === "https:" ? "wss" : "ws";
-        const ws = new WebSocket(`${proto}://${location.host}/ws`);
-
-        ws.onopen = () => {
-          wsStatusEl.textContent = "WS: connected";
-          logLine("WebSocket connected");
-        };
-
-        ws.onclose = () => {
-          wsStatusEl.textContent = "WS: disconnected (retrying…)";
-          logLine("WebSocket disconnected; retrying…");
-          setTimeout(connectWs, 800);
-        };
-
-        ws.onerror = () => {
-          wsStatusEl.textContent = "WS: error";
-          logLine("WebSocket error");
-        };
-
-        ws.onmessage = (event) => {
-          // Expect JSON like: {"knob":123} OR {"sensor":{"knob":123}} etc.
-          try {
-            const data = JSON.parse(event.data);
-
-            let knob = null;
-            if (typeof data.knob === "number") knob = data.knob;
-            else if (data.sensor && typeof data.sensor.knob === "number") knob = data.sensor.knob;
-            else if (data.sensors && typeof data.sensors.knob === "number") knob = data.sensors.knob;
-
-            if (knob !== null) {
-              knobValueEl.textContent = knob;
-            }
-
-            logLine("WS recv: " + JSON.stringify(data));
-          } catch {
-            // If backend sends non-JSON, just log raw text
-            logLine("WS recv (raw): " + event.data);
-          }
-        };
-      }
-
-      connectWs();
+      refreshState();
+      setInterval(refreshState, 1000);
     </script>
   </body>
 </html>
