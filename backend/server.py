@@ -13,7 +13,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def root():
-    return FileResponse("static/index.html")
+    return FileResponse("static/index2.html")
 
 
 @app.post("/api/data")
@@ -34,6 +34,7 @@ async def queue_command(cmd: dict):
     global pending_command
     # Example: {"type": "LED_TOGGLE"}
     pending_command = cmd
+    print(cmd)
     return {"status": "queued"}
 
 

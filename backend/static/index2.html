@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catopia — Smart Cat Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #110d07;
+  --bg2:       #1a1208;
+  --surface:   #221910;
+  --surface2:  #2e2118;
+  --border:    rgba(200,134,58,0.18);
+  --border2:   rgba(200,134,58,0.32);
+  --amber:     #c8863a;
+  --amber-l:   #e8a85a;
+  --amber-d:   #9a6020;
+  --amber-glow:rgba(200,134,58,0.12);
+  --cream:     #f5ead6;
+  --text:      #ede4d4;
+  --text-mid:  #b09878;
+  --text-dim:  #7a6850;
+  --green:     #5a9e6f;
+  --red:       #c05040;
+  --blue:      #4a80b0;
+  --radius:    16px;
+  --nav-w:     220px;
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: 'DM Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ═══════════ SIDEBAR NAV ═══════════ */
+.nav {
+  width: var(--nav-w);
+  min-height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+  padding: 28px 0 24px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.logo-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--amber-glow), rgba(200,134,58,0.06));
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.logo-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1;
+}
+
+.logo-text p {
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+.nav-section {
+  padding: 0 12px;
+  margin-bottom: 6px;
+}
+
+.nav-section-label {
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 8px 8px 6px;
+  display: block;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text-mid);
+  font-size: 12px;
+  font-weight: 400;
+  border: 1px solid transparent;
+  margin-bottom: 2px;
+}
+
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+
+.nav-item.active {
+  background: var(--amber-glow);
+  border-color: var(--border);
+  color: var(--amber-l);
+}
+
+.nav-item .ni-icon { font-size: 15px; width: 20px; text-align: center; }
+
+.nav-item .ni-badge {
+  margin-left: auto;
+  background: var(--amber);
+  color: var(--bg);
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 20px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.nav-bottom {
+  margin-top: auto;
+  padding: 16px 12px 0;
+  border-top: 1px solid var(--border);
+}
+
+.cat-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+
+.cat-avatar {
+  width: 32px; height: 32px;
+  background: var(--amber-glow);
+  border: 1px solid var(--border2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+
+.cat-info p { font-size: 11px; color: var(--text); font-weight: 500; }
+.cat-info span { font-size: 9px; color: var(--text-dim); }
+
+/* ═══════════ MAIN AREA ═══════════ */
+.main {
+  margin-left: var(--nav-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.topbar {
+  height: 60px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  position: sticky; top: 0; z-index: 50;
+}
+
+.topbar-left h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  color: var(--cream);
+  font-weight: 700;
+}
+
+.topbar-left span {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-left: 10px;
+  letter-spacing: 0.5px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(90,158,111,0.1);
+  border: 1px solid rgba(90,158,111,0.25);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 10px;
+  color: var(--green);
+  letter-spacing: 0.5px;
+}
+
+.pulse {
+  width: 7px; height: 7px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(90,158,111,0.5); }
+  50% { box-shadow: 0 0 0 5px rgba(90,158,111,0); }
+}
+
+.icon-btn {
+  width: 34px; height: 34px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+  color: var(--text-mid);
+}
+
+.icon-btn:hover { background: var(--amber-glow); border-color: var(--border2); color: var(--amber-l); }
+
+/* ═══════════ PAGE CONTENT ═══════════ */
+.page { display: none; flex: 1; padding: 28px; }
+.page.active { display: block; animation: fadein 0.25s ease; }
+
+@keyframes fadein { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+
+/* ═══════════ DASHBOARD PAGE ═══════════ */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 16px;
+}
+
+.widget {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.widget:hover { border-color: var(--border2); }
+
+.widget::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--amber-d), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.widget:hover::before { opacity: 1; }
+
+.widget-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.widget-label .wi {
+  width: 18px; height: 18px;
+  background: var(--amber-glow);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+}
+
+.widget-value {
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--cream);
+  line-height: 1;
+}
+
+.widget-value.amber { color: var(--amber-l); }
+.widget-value.green { color: var(--green); }
+.widget-value.small { font-size: 22px; }
+
+.widget-sub {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+.progress-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+
+.progress-fill.amber { background: linear-gradient(90deg, var(--amber-d), var(--amber-l)); }
+.progress-fill.green { background: linear-gradient(90deg, #3a7e55, var(--green)); }
+.progress-fill.blue  { background: linear-gradient(90deg, #2a6090, var(--blue)); }
+
+/* Wide widget */
+.widget.wide { grid-column: span 2; }
+.widget.full { grid-column: span 3; }
+
+/* Controls widget */
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.ctrl-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--text);
+}
+
+.ctrl-btn:hover {
+  background: var(--amber-glow);
+  border-color: var(--border2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(200,134,58,0.1);
+}
+
+.ctrl-btn:active { transform: scale(0.97); transition: transform 0.08s; }
+
+.ctrl-btn.on {
+  background: rgba(200,134,58,0.12);
+  border-color: rgba(200,134,58,0.45);
+}
+
+.ctrl-icon { font-size: 18px; }
+.ctrl-text { flex: 1; }
+.ctrl-name { font-size: 11px; font-weight: 500; color: var(--text); }
+.ctrl-state { font-size: 9px; color: var(--text-dim); }
+.ctrl-btn.on .ctrl-state { color: var(--amber); }
+
+.toggle {
+  width: 32px; height: 17px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 11px; height: 11px;
+  background: var(--text-dim);
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.ctrl-btn.on .toggle { background: var(--amber-d); border-color: var(--amber); }
+.ctrl-btn.on .toggle::after { left: 17px; background: var(--amber-l); }
+
+/* Feed big button */
+.feed-btn {
+  width: 100%;
+  background: linear-gradient(135deg, rgba(200,134,58,0.14), rgba(200,134,58,0.06));
+  border: 1px solid rgba(200,134,58,0.4);
+  border-radius: 14px;
+  padding: 20px 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s;
+  margin-top: 8px;
+  color: var(--text);
+}
+
+.feed-btn:hover {
+  background: linear-gradient(135deg, rgba(200,134,58,0.22), rgba(200,134,58,0.1));
+  box-shadow: 0 6px 24px rgba(200,134,58,0.12);
+  transform: translateY(-1px);
+}
+
+.feed-btn:active { transform: scale(0.99); }
+
+.feed-btn .fi { font-size: 28px; }
+.feed-btn .ft h3 {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--amber-l);
+  line-height: 1;
+}
+.feed-btn .ft p { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+.feed-btn .fa {
+  margin-left: auto;
+  width: 36px; height: 36px;
+  background: rgba(200,134,58,0.15);
+  border: 1px solid rgba(200,134,58,0.35);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+.feed-btn:hover .fa { background: rgba(200,134,58,0.25); }
+
+/* Activity feed */
+.activity-list { margin-top: 8px; }
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.activity-item:last-child { border-bottom: none; }
+
+.act-icon {
+  width: 30px; height: 30px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.act-text { flex: 1; }
+.act-text p { font-size: 11px; color: var(--text); }
+.act-text span { font-size: 9px; color: var(--text-dim); }
+
+.act-badge {
+  font-size: 9px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+.act-badge.ok { background: rgba(90,158,111,0.12); color: var(--green); }
+.act-badge.warn { background: rgba(200,134,58,0.12); color: var(--amber-l); }
+
+/* ═══════════ CAMERA PAGE ═══════════ */
+.cam-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.cam-feed {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  aspect-ratio: 16/10;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.cam-feed:hover { border-color: var(--border2); }
+
+.cam-preview {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  background:
+    radial-gradient(ellipse at 40% 60%, rgba(40,30,15,0.9) 0%, rgba(20,14,8,0.95) 100%);
+}
+
+.cam-preview .cp-icon { font-size: 40px; opacity: 0.3; }
+.cam-preview .cp-text { font-size: 11px; color: var(--text-dim); }
+
+.cam-label {
+  position: absolute;
+  bottom: 12px; left: 12px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 10px;
+  color: var(--text-mid);
+  display: flex; align-items: center; gap: 5px;
+}
+
+.cam-rec {
+  position: absolute;
+  top: 12px; right: 12px;
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(192,80,64,0.15);
+  border: 1px solid rgba(192,80,64,0.3);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 9px;
+  color: var(--red);
+}
+.rec-dot { width: 6px; height: 6px; background: var(--red); border-radius: 50%; animation: pulse-red 1s ease-in-out infinite; }
+@keyframes pulse-red { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+/* ═══════════ SCHEDULE PAGE ═══════════ */
+.schedule-list { display: flex; flex-direction: column; gap: 10px; }
+
+.sched-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: border-color 0.2s;
+}
+
+.sched-item:hover { border-color: var(--border2); }
+
+.sched-time {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--amber-l);
+  min-width: 70px;
+  line-height: 1;
+}
+
+.sched-time span {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  display: block;
+  margin-top: 3px;
+  letter-spacing: 1px;
+}
+
+.sched-info { flex: 1; }
+.sched-info h4 { font-size: 13px; color: var(--text); font-weight: 500; }
+.sched-info p { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+.sched-toggle {
+  width: 44px; height: 24px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.sched-toggle::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  background: var(--text-dim);
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.sched-toggle.on { background: var(--amber-d); border-color: var(--amber); }
+.sched-toggle.on::after { left: 23px; background: var(--amber-l); }
+
+/* ═══════════ SETTINGS PAGE ═══════════ */
+.settings-sections { display: flex; flex-direction: column; gap: 24px; max-width: 600px; }
+
+.settings-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: var(--cream);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.setting-row:last-child { border-bottom: none; }
+
+.setting-label p { font-size: 12px; color: var(--text); }
+.setting-label span { font-size: 10px; color: var(--text-dim); }
+
+.setting-control input[type=range] {
+  -webkit-appearance: none;
+  width: 120px;
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  outline: none;
+}
+.setting-control input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--amber);
+  cursor: pointer;
+}
+
+.setting-control select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* ═══════════ PAGE HEADER ═══════════ */
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.page-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--cream);
+  font-weight: 700;
+}
+
+.page-header p {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.page-header .ph-right { display: flex; gap: 8px; }
+
+.outline-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.outline-btn:hover { background: var(--amber-glow); border-color: var(--border2); color: var(--amber-l); }
+
+/* ═══════════ NOTIFICATIONS ═══════════ */
+.notif-list { display: flex; flex-direction: column; gap: 10px; }
+
+.notif {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.notif.green-b { border-left-color: var(--green); }
+.notif.red-b { border-left-color: var(--red); }
+
+.notif-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.notif-body h4 { font-size: 12px; color: var(--text); font-weight: 500; }
+.notif-body p { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+.notif-time { margin-left: auto; font-size: 9px; color: var(--text-dim); white-space: nowrap; }
+
+/* ═══════════ TOAST ═══════════ */
+.toast-container {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 11px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  animation: toast-in 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  pointer-events: all;
+}
+
+@keyframes toast-in {
+  from { opacity:0; transform: translateX(20px); }
+  to { opacity:1; transform: none; }
+}
+
+.toast.out { animation: toast-out 0.25s ease both; }
+@keyframes toast-out {
+  to { opacity:0; transform: translateX(20px); }
+}
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 900px) {
+  :root { --nav-w: 60px; }
+  .nav-logo { padding: 0 10px 20px; justify-content: center; }
+  .logo-text { display: none; }
+  .nav-section-label { display: none; }
+  .nav-item { justify-content: center; padding: 12px; }
+  .nav-item .ni-text { display: none; }
+  .nav-item .ni-badge { display: none; }
+  .cat-profile { justify-content: center; }
+  .cat-info { display: none; }
+  .dash-grid { grid-template-columns: 1fr 1fr; }
+  .widget.full { grid-column: span 2; }
+  .widget.wide { grid-column: span 2; }
+  .cam-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  :root { --nav-w: 0px; }
+  .nav { display: none; }
+  .dash-grid { grid-template-columns: 1fr; }
+  .widget.wide, .widget.full { grid-column: span 1; }
+}
+
+.ni-text { font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="logo-icon">🐱</div>
+    <div class="logo-text">
+      <h1>Catopia</h1>
+      <p>Smart Home</p>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-section-label">Overview</span>
+    <div class="nav-item active" onclick="showPage('test', this)">
+        <span class="ni-icon">🧪</span>
+        <span class="ni-text">Test</span>
+      </div>
+    <div class="nav-item" onclick="showPage('dashboard', this)">
+      <span class="ni-icon">⊞</span>
+      <span class="ni-text">Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="showPage('test', this)">
+  <span class="ni-icon">🧪</span>
+  <span class="ni-text">Test</span>
+</div>
+    <div class="nav-item" onclick="showPage('cameras', this)">
+      <span class="ni-icon">📷</span>
+      <span class="ni-text">Cameras</span>
+    </div>
+    <div class="nav-item" onclick="showPage('activity', this)">
+      <span class="ni-icon">📋</span>
+      <span class="ni-text">Activity</span>
+      <span class="ni-badge">3</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-section-label">Manage</span>
+    <div class="nav-item" onclick="showPage('schedule', this)">
+      <span class="ni-icon">🕐</span>
+      <span class="ni-text">Schedule</span>
+    </div>
+    <div class="nav-item" onclick="showPage('settings', this)">
+      <span class="ni-icon">⚙</span>
+      <span class="ni-text">Settings</span>
+    </div>
+  </div>
+
+  <div class="nav-bottom">
+    <div class="cat-profile">
+      <div class="cat-avatar">🐈</div>
+      <div class="cat-info">
+        <p>Mochi</p>
+        <span>3 yrs · Tabby</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 id="page-title">Dashboard</h2>
+      <span id="page-time"></span>
+    </div>
+    <div class="topbar-right">
+      <div class="status-pill">
+        <div class="pulse"></div>
+        Connected
+      </div>
+      <div class="icon-btn" title="Notifications" onclick="showPage('activity', document.querySelector('.nav-item:nth-child(3)'))">🔔</div>
+      <div class="icon-btn" title="Settings" onclick="showPage('settings', document.querySelectorAll('.nav-item')[4])">⚙</div>
+    </div>
+  </div>
+
+<!-- TEST PAGE -->
+
+<div class="page active" id="page-test">
+    <div class="page-header">
+      <div>
+        <h2>Test Page</h2>
+        <p>Component playground</p>
+      </div>
+    </div>
+  
+    <div class="dash-grid">
+
+        <div class="widget">
+            <div class="widget-label"><div class="wi">💡</div> LED Light</div>
+            <div class="ctrl-btn" onclick="toggleCtrl(this)" style="margin-top:8px">
+              <span class="ctrl-icon">💡</span>
+              <div class="ctrl-text">
+                <div class="ctrl-name">LED</div>
+                <div class="ctrl-state">Off</div>
+              </div>
+              <div class="toggle"></div>
+            </div>
+          </div>
+
+          <div class="widget">
+            <div class="widget-label"><div class="wi">💧</div> Water Pump</div>
+            <div class="ctrl-btn" onclick="toggleCtrl(this)" style="margin-top:8px">
+              <span class="ctrl-icon">💧</span>
+              <div class="ctrl-text">
+                <div class="ctrl-name">Water Pump</div>
+                <div class="ctrl-state">Off</div>
+              </div>
+              <div class="toggle"></div>
+            </div>
+          </div>
+
+          <div class="widget" style="grid-column: span 3">
+                <div class="widget-label"><div class="wi">⚖️</div> Weight</div>
+                <div class="widget-value amber">
+                  <span id="weight-value">--</span>
+                  <small style="font-size:14px;color:var(--text-dim)">kg</small>
+                </div>
+                <div class="progress-bar"><div class="progress-fill amber" style="width:55%"></div></div>
+              </div>
+    </div>
+    
+  </div>
+
+  <!-- ═══ DASHBOARD PAGE ═══ -->
+  <div class="page" id="page-dashboard">
+    <div class="page-header">
+      <div>
+        <h2>Good morning, Mochi 🐱</h2>
+        <p>Everything looks comfortable at home.</p>
+      </div>
+      <div class="ph-right">
+        <button class="outline-btn" onclick="refreshStats()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+
+      <!-- Temp -->
+      <div class="widget">
+        <div class="widget-label"><div class="wi">🌡</div> Temperature</div>
+        <div class="widget-value amber" id="temp-val">72</div>
+        <div class="widget-sub">°F · Optimal range 68–76°F</div>
+        <div class="progress-bar"><div class="progress-fill amber" id="temp-bar" style="width:55%"></div></div>
+      </div>
+
+      <!-- Water -->
+      <div class="widget">
+        <div class="widget-label"><div class="wi">💧</div> Water Level</div>
+        <div class="widget-value green" id="water-val">84</div>
+        <div class="widget-sub">% · Refill when below 20%</div>
+        <div class="progress-bar"><div class="progress-fill green" id="water-bar" style="width:84%"></div></div>
+      </div>
+
+      <!-- Food -->
+      <div class="widget">
+        <div class="widget-label"><div class="wi">🥣</div> Food Level</div>
+        <div class="widget-value amber" id="food-val">60</div>
+        <div class="widget-sub">% · Last filled 3 days ago</div>
+        <div class="progress-bar"><div class="progress-fill amber" id="food-bar" style="width:60%"></div></div>
+      </div>
+
+      <!-- Feed + Controls -->
+      <div class="widget wide">
+        <div class="widget-label"><div class="wi">🎮</div> Controls</div>
+        <button class="feed-btn" onclick="triggerFeed(this)">
+          <span class="fi">🍽</span>
+          <div class="ft">
+            <h3>Feed Mochi</h3>
+            <p>Last fed at 8:01 AM · 2h 34m ago</p>
+          </div>
+          <div class="fa">→</div>
+        </button>
+        <div class="controls-grid" style="margin-top:10px">
+          <div class="ctrl-btn" onclick="toggleCtrl(this)">
+            <span class="ctrl-icon">🎯</span>
+            <div class="ctrl-text">
+              <div class="ctrl-name">Laser</div>
+              <div class="ctrl-state">Off</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+          <div class="ctrl-btn" onclick="toggleCtrl(this)">
+            <span class="ctrl-icon">🚪</span>
+            <div class="ctrl-text">
+              <div class="ctrl-name">Cat Door</div>
+              <div class="ctrl-state">Off</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+          <div class="ctrl-btn" onclick="toggleCtrl(this)">
+            <span class="ctrl-icon">💡</span>
+            <div class="ctrl-text">
+              <div class="ctrl-name">Lights</div>
+              <div class="ctrl-state">Off</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+          <div class="ctrl-btn" onclick="toggleCtrl(this)">
+            <span class="ctrl-icon">🎵</span>
+            <div class="ctrl-text">
+              <div class="ctrl-name">Music</div>
+              <div class="ctrl-state">Off</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity snippet -->
+      <div class="widget full">
+        <div class="widget-label" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:6px"><div class="wi">📋</div> Recent Activity</span> <span style="cursor:pointer;color:var(--amber);font-size:9px" onclick="showPage('activity', document.querySelectorAll('.nav-item')[2])">View all →</span></div>
+        <div class="activity-list">
+          <div class="activity-item"><div class="act-icon">🍽</div><div class="act-text"><p>Auto-feed dispensed</p><span>Today, 8:01 AM</span></div><span class="act-badge ok">Success</span></div>
+          <div class="activity-item"><div class="act-icon">🚪</div><div class="act-text"><p>Cat door — Mochi entered</p><span>Today, 7:47 AM</span></div><span class="act-badge ok">Event</span></div>
+          <div class="activity-item"><div class="act-icon">💡</div><div class="act-text"><p>Lights auto-off (sunrise)</p><span>Today, 6:30 AM</span></div><span class="act-badge ok">Auto</span></div>
+          <div class="activity-item"><div class="act-icon">⚠️</div><div class="act-text"><p>Food level below 65%</p><span>Yesterday, 11:20 PM</span></div><span class="act-badge warn">Alert</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ CAMERAS PAGE ═══ -->
+  <div class="page" id="page-cameras">
+    <div class="page-header">
+      <div>
+        <h2>Live Cameras</h2>
+        <p>4 cameras · All online</p>
+      </div>
+      <div class="ph-right">
+        <button class="outline-btn">⬇ Export</button>
+      </div>
+    </div>
+    <div class="cam-grid">
+      <div class="cam-feed">
+        <div class="cam-preview">
+          <div class="cp-icon">📷</div>
+          <div class="cp-text">Living Room — No motion</div>
+        </div>
+        <div class="cam-label">🟢 LIVE · HD</div>
+        <div class="cam-rec"><div class="rec-dot"></div> REC</div>
+      </div>
+      <div class="cam-feed">
+        <div class="cam-preview">
+          <div class="cp-icon">📷</div>
+          <div class="cp-text">Kitchen — Motion detected</div>
+        </div>
+        <div class="cam-label">🟢 LIVE · HD</div>
+        <div class="cam-rec"><div class="rec-dot"></div> REC</div>
+      </div>
+      <div class="cam-feed">
+        <div class="cam-preview">
+          <div class="cp-icon">📷</div>
+          <div class="cp-text">Bedroom — No motion</div>
+        </div>
+        <div class="cam-label">🟢 LIVE · HD</div>
+      </div>
+      <div class="cam-feed">
+        <div class="cam-preview">
+          <div class="cp-icon">📷</div>
+          <div class="cp-text">Front Door — Standby</div>
+        </div>
+        <div class="cam-label">🟡 STANDBY</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ACTIVITY PAGE ═══ -->
+  <div class="page" id="page-activity">
+    <div class="page-header">
+      <div>
+        <h2>Activity Log</h2>
+        <p>All events and notifications</p>
+      </div>
+      <div class="ph-right">
+        <button class="outline-btn">Clear all</button>
+      </div>
+    </div>
+    <div class="notif-list">
+      <div class="notif"><div class="notif-icon">🍽</div><div class="notif-body"><h4>Feed dispensed</h4><p>Auto-schedule at 8:01 AM · 40g portion delivered</p></div><div class="notif-time">2h ago</div></div>
+      <div class="notif green-b"><div class="notif-icon">🚪</div><div class="notif-body"><h4>Mochi returned home</h4><p>Cat door triggered · Indoor mode re-activated</p></div><div class="notif-time">2h 14m ago</div></div>
+      <div class="notif"><div class="notif-icon">💡</div><div class="notif-body"><h4>Lights turned off automatically</h4><p>Sunrise sensor activated · Overhead lights off</p></div><div class="notif-time">4h ago</div></div>
+      <div class="notif red-b"><div class="notif-icon">⚠️</div><div class="notif-body"><h4>Food level alert</h4><p>Level dropped below 65% — consider refilling hopper</p></div><div class="notif-time">Yesterday</div></div>
+      <div class="notif green-b"><div class="notif-icon">💧</div><div class="notif-body"><h4>Water fountain refilled</h4><p>Manual refill detected · Level now at 84%</p></div><div class="notif-time">Yesterday</div></div>
+      <div class="notif"><div class="notif-icon">🎯</div><div class="notif-body"><h4>Laser play session ended</h4><p>15-minute session completed · Mochi active</p></div><div class="notif-time">2 days ago</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ SCHEDULE PAGE ═══ -->
+  <div class="page" id="page-schedule">
+    <div class="page-header">
+      <div>
+        <h2>Schedule</h2>
+        <p>Automated routines for Mochi</p>
+      </div>
+      <div class="ph-right">
+        <button class="outline-btn">+ Add</button>
+      </div>
+    </div>
+    <div class="schedule-list">
+      <div class="sched-item"><div class="sched-time">7:00 <span>AM · Daily</span></div><div class="sched-info"><h4>Morning Feed</h4><p>Dispense 40g dry food · Auto portion</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="sched-item"><div class="sched-time">8:00 <span>AM · Weekdays</span></div><div class="sched-info"><h4>Lights On</h4><p>Overhead + nightlight · Sunrise override</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="sched-item"><div class="sched-time">12:00 <span>PM · Daily</span></div><div class="sched-info"><h4>Midday Feed</h4><p>Dispense 20g top-up portion</p></div><div class="sched-toggle" onclick="this.classList.toggle('on')"></div></div>
+      <div class="sched-item"><div class="sched-time">3:00 <span>PM · Daily</span></div><div class="sched-info"><h4>Laser Play</h4><p>15-minute laser session · Auto random mode</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="sched-item"><div class="sched-time">6:00 <span>PM · Daily</span></div><div class="sched-info"><h4>Evening Feed</h4><p>Dispense 40g dry food + wet food reminder</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="sched-item"><div class="sched-time">10:00 <span>PM · Daily</span></div><div class="sched-info"><h4>Night Mode</h4><p>Dim lights · Lock cat door · Quiet hours</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ SETTINGS PAGE ═══ -->
+  <div class="page" id="page-settings">
+    <div class="page-header">
+      <div>
+        <h2>Settings</h2>
+        <p>Configure your Catopia hub</p>
+      </div>
+    </div>
+    <div class="settings-sections">
+      <div>
+        <h3>Cat Profile</h3>
+        <div class="setting-row"><div class="setting-label"><p>Name</p><span>Your cat's name</span></div><div class="setting-control"><select><option>Mochi</option><option>Luna</option><option>Whiskers</option></select></div></div>
+        <div class="setting-row"><div class="setting-label"><p>Breed</p><span>Used to calibrate portions</span></div><div class="setting-control"><select><option>Tabby</option><option>Persian</option><option>Siamese</option><option>Maine Coon</option></select></div></div>
+        <div class="setting-row"><div class="setting-label"><p>Daily Portion</p><span>Total grams per day</span></div><div class="setting-control"><input type="range" min="50" max="200" value="100"></div></div>
+      </div>
+      <div>
+        <h3>Environment</h3>
+        <div class="setting-row"><div class="setting-label"><p>Target Temperature</p><span>Ideal indoor temp (°F)</span></div><div class="setting-control"><input type="range" min="60" max="80" value="72"></div></div>
+        <div class="setting-row"><div class="setting-label"><p>Temperature Unit</p><span></span></div><div class="setting-control"><select><option>Fahrenheit</option><option>Celsius</option></select></div></div>
+        <div class="setting-row"><div class="setting-label"><p>Low Food Alert</p><span>Alert threshold</span></div><div class="setting-control"><select><option>20%</option><option>30%</option><option>50%</option></select></div></div>
+      </div>
+      <div>
+        <h3>Notifications</h3>
+        <div class="setting-row"><div class="setting-label"><p>Push Notifications</p><span>Alerts on your phone</span></div><div class="setting-control"><select><option>Enabled</option><option>Disabled</option></select></div></div>
+        <div class="setting-row"><div class="setting-label"><p>Quiet Hours</p><span>Suppress alerts</span></div><div class="setting-control"><select><option>10pm – 7am</option><option>Off</option><option>Custom</option></select></div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .main -->
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toasts"></div>
+
+<script>
+// ── Time ──
+function updateTime() {
+  const el = document.getElementById('page-time');
+  const now = new Date();
+  el.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+}
+updateTime();
+setInterval(updateTime, 10000);
+
+// ── Navigation ──
+function showPage(name, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  const titles = { dashboard: 'Dashboard', cameras: 'Cameras', activity: 'Activity', schedule: 'Schedule', settings: 'Settings' };
+  document.getElementById('page-title').textContent = titles[name] || name;
+}
+
+// ── Toast ──
+function toast(msg, icon = '✓') {
+  const wrap = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span>${icon}</span> ${msg}`;
+  wrap.appendChild(t);
+  setTimeout(() => {
+    t.classList.add('out');
+    setTimeout(() => t.remove(), 300);
+  }, 2800);
+}
+
+// ── Controls ──
+async function toggleCtrl(btn) {
+  const name = btn.querySelector('.ctrl-name').textContent;
+  const state = btn.querySelector('.ctrl-state');
+
+  const commandMap = {
+    'LED':        'LED_TOGGLE',
+    'Water Pump': 'PUMP_TOGGLE',
+  };
+
+  const command = commandMap[name];
+
+  if (command) {
+    // Optimistically update UI right away
+    btn.classList.toggle('on');
+    const isOn = btn.classList.contains('on');
+    state.textContent = isOn ? 'On' : 'Off';
+    toast(`${name} turned ${isOn ? 'on' : 'off'}`, '💡');
+
+    try {
+      const payload = { type: command };
+      console.log('POST /api/command →', JSON.stringify(payload, null, 2));
+
+      await fetch('/api/command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      // Revert UI if the request failed
+      btn.classList.toggle('on');
+      state.textContent = btn.classList.contains('on') ? 'On' : 'Off';
+      toast(`Failed to toggle ${name}`, '⚠️');
+    }
+  } else {
+    // UI-only buttons
+    btn.classList.toggle('on');
+    state.textContent = btn.classList.contains('on') ? 'On' : 'Off';
+    toast(`${name} turned ${btn.classList.contains('on') ? 'on' : 'off'}`, '💡');
+  }
+}
+
+async function refreshState() {
+  try {
+    const res = await fetch('/api/state');
+    const data = await res.json();
+
+    // Sync LED button
+    syncCtrlBtn('LED', data.led === 1);
+
+    // Sync Water Pump button
+    // syncCtrlBtn('Water Pump', data.pump === 1);
+
+    // Update weight widget
+    if (data.weight !== null && data.weight !== undefined) {
+      document.getElementById('weight-value').textContent = data.weight;
+    }
+
+  } catch (err) {
+    console.error('Error loading state:', err);
+  }
+}
+
+// Poll every second
+refreshState();
+setInterval(refreshState, 1000);
+// ── Feed ──
+function triggerFeed(btn) {
+  const h = btn.querySelector('h3');
+  const p = btn.querySelector('p');
+  const a = btn.querySelector('.fa');
+  btn.style.pointerEvents = 'none';
+  h.textContent = 'Dispensing…';
+  p.textContent = 'Portion on the way!';
+  a.textContent = '⏳';
+  setTimeout(() => {
+    h.textContent = 'Mochi is eating!';
+    p.textContent = '40g dispensed · Just now';
+    a.textContent = '✓';
+    a.style.color = 'var(--green)';
+    toast('🍽 Mochi has been fed!');
+    setTimeout(() => {
+      h.textContent = 'Feed Mochi';
+      p.textContent = 'Last fed just now';
+      a.textContent = '→';
+      a.style.color = '';
+      btn.style.pointerEvents = '';
+    }, 4000);
+  }, 1600);
+}
+
+
+// ── Refresh stats ──
+function refreshStats() {
+  toast('Stats refreshed', '↻');
+}
+</script>
+</body>
+</html>
