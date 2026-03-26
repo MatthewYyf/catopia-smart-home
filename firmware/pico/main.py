@@ -45,6 +45,10 @@ def handle_command(cmd):
     elif cmd_type == "WATER_OFF":
         hw.pump.off()
 
+    elif cmd_type == "DISPENSE":
+        print(params)
+        # add dispense mechanism
+
     elif cmd_type == "PING":
         print("Received ping")
 

@@ -5,7 +5,7 @@ import uvicorn
 
 app = FastAPI()
 
-latest_data = {"led": None, "pump": None, "load": None}
+latest_data = {"led": None, "pump": None, "weight": 30}
 pending_command = None
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

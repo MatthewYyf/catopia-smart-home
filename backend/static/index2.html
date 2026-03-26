@@ -779,6 +779,30 @@ body {
 }
 
 .ni-text { font-size: 12px; }
+
+.key-cap {
+  width: 36px; height: 36px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-bottom: 3px solid var(--amber-d);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 500; color: var(--text-mid);
+  transition: all 0.08s;
+  user-select: none;
+}
+
+.key-cap.pressed {
+  background: var(--amber-glow2);
+  border-color: var(--amber);
+  border-bottom-width: 1px;
+  color: var(--amber-l);
+  transform: translateY(2px);
+}
+
+@keyframes pulse-red {
+  0%,100% { opacity:1; } 50% { opacity:0.3; }
+}
 </style>
 </head>
 <body>
@@ -803,14 +827,15 @@ body {
       <span class="ni-icon">⊞</span>
       <span class="ni-text">Dashboard</span>
     </div>
-    <div class="nav-item" onclick="showPage('test', this)">
-  <span class="ni-icon">🧪</span>
-  <span class="ni-text">Test</span>
-</div>
     <div class="nav-item" onclick="showPage('cameras', this)">
       <span class="ni-icon">📷</span>
       <span class="ni-text">Cameras</span>
     </div>
+    <div class="nav-item" onclick="showPage('play', this)">
+      <span class="ni-icon">🎯</span>
+      <span class="ni-text">Play</span>
+    </div>
+
     <div class="nav-item" onclick="showPage('activity', this)">
       <span class="ni-icon">📋</span>
       <span class="ni-text">Activity</span>
@@ -865,7 +890,7 @@ body {
 <div class="page active" id="page-test">
     <div class="page-header">
       <div>
-        <h2>Test Page</h2>
+        <h2>Test Hardware Interactions</h2>
         <p>Component playground</p>
       </div>
     </div>
@@ -896,6 +921,75 @@ body {
             </div>
           </div>
 
+          <div class="widget">
+            <div class="widget-label"><div class="wi">🍽</div> Dispense Food</div>
+          
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+          
+              <!-- Weight input -->
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <span style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim)">Amount (grams)</span>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <input
+                    id="dispense-input"
+                    type="number"
+                    min="5" max="150" value="40"
+                    style="
+                      flex:1;
+                      background:var(--surface2);
+                      border:1px solid var(--border);
+                      border-radius:10px;
+                      padding:10px 14px;
+                      font-family:'DM Mono',monospace;
+                      font-size:16px;
+                      font-weight:500;
+                      color:var(--amber-l);
+                      outline:none;
+                      width:100%;
+                    "
+                    oninput="updateDispenseLabel(this.value)"
+                  />
+                  <span style="font-size:11px;color:var(--text-dim);white-space:nowrap">g</span>
+                </div>
+              </div>
+          
+              <!-- Quick amounts -->
+              <div style="display:flex;gap:6px">
+                <div onclick="setDispense(10)"  style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">10g</div>
+                <div onclick="setDispense(20)"  style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">20g</div>
+                <div onclick="setDispense(40)"  style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">40g</div>
+                <div onclick="setDispense(80)"  style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">80g</div>
+              </div>
+          
+              <!-- Dispense button -->
+              <button
+                id="dispense-food-btn"
+                onclick="dispenseFood()"
+                style="
+                  width:100%;
+                  background:linear-gradient(135deg,#c8863a,#a06020);
+                  border:none;
+                  border-radius:12px;
+                  padding:14px;
+                  font-family:'Playfair Display',serif;
+                  font-style:italic;
+                  font-size:15px;
+                  font-weight:600;
+                  color:#fff;
+                  cursor:pointer;
+                  transition:all 0.2s;
+                  box-shadow:0 4px 16px rgba(200,134,58,0.25);
+                "
+                onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(200,134,58,0.35)'"
+                onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(200,134,58,0.25)'"
+              >
+                🍽 Dispense
+              </button>
+          
+            </div>
+          </div>
+          
+  <!---- Weight ---->
           <div class="widget" style="grid-column: span 3">
                 <div class="widget-label"><div class="wi">⚖️</div> Weight</div>
                 <div class="widget-value amber">
@@ -1048,6 +1142,177 @@ body {
           <div class="cp-text">Front Door — Standby</div>
         </div>
         <div class="cam-label">🟡 STANDBY</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-play">
+    <div class="page-header">
+      <div>
+        <h2>Play with Mochi 🎯</h2>
+        <p>Control the laser pointer in real-time</p>
+      </div>
+      <div class="ph-right">
+        <button class="outline-btn" onclick="toggleLaserFromPlay()">🎯 Laser</button>
+      </div>
+    </div>
+  
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+  
+      <!-- Camera Feed -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="
+          background:var(--surface);
+          border:1px solid var(--border);
+          border-radius:var(--radius);
+          overflow:hidden;
+          aspect-ratio:16/9;
+          position:relative;
+        ">
+          <!-- Camera placeholder -->
+          <div style="
+            width:100%;height:100%;
+            display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;
+            background:radial-gradient(ellipse at 40% 60%, rgba(40,30,15,0.9), rgba(15,10,4,0.98));
+          ">
+            <span style="font-size:48px;opacity:0.2">📷</span>
+            <span style="font-size:11px;color:var(--text-dim)">Camera feed — Living Room</span>
+          </div>
+  
+          <!-- Laser dot overlay -->
+          <div id="laser-dot" style="
+            position:absolute;
+            width:14px;height:14px;
+            background:radial-gradient(circle, #ff4444, #ff000088);
+            border-radius:50%;
+            box-shadow:0 0 12px 4px rgba(255,50,50,0.6), 0 0 24px 8px rgba(255,0,0,0.2);
+            left:50%;top:50%;
+            transform:translate(-50%,-50%);
+            transition:left 0.08s ease, top 0.08s ease;
+            pointer-events:none;
+            display:none;
+          "></div>
+  
+          <!-- REC badge -->
+          <div style="position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:5px;background:rgba(192,80,64,0.15);border:1px solid rgba(192,80,64,0.3);border-radius:6px;padding:4px 8px;font-size:9px;color:var(--red)">
+            <div style="width:6px;height:6px;background:var(--red);border-radius:50%;animation:pulse-red 1s ease-in-out infinite"></div>
+            REC
+          </div>
+  
+          <!-- Active indicator -->
+          <div id="laser-active-badge" style="display:none;position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:5px;background:rgba(255,50,50,0.15);border:1px solid rgba(255,50,50,0.35);border-radius:6px;padding:4px 10px;font-size:9px;color:#ff6060">
+            🎯 Laser Active
+          </div>
+  
+          <!-- WASD overlay hint -->
+          <div id="focus-hint" style="
+            position:absolute;inset:0;
+            display:flex;align-items:center;justify-content:center;
+            background:rgba(10,7,3,0.55);
+            backdrop-filter:blur(2px);
+            cursor:pointer;
+            transition:opacity 0.2s;
+          " onclick="activateControl()">
+            <div style="text-align:center">
+              <div style="font-size:28px;margin-bottom:8px">🎯</div>
+              <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:16px;color:var(--cream);margin-bottom:4px">Click to control</div>
+              <div style="font-size:10px;color:var(--text-dim)">Use WASD or arrow keys to move the laser</div>
+            </div>
+          </div>
+  
+        </div>
+  
+        <!-- Active controls bar -->
+        <div id="control-bar" style="
+          display:none;
+          background:var(--surface);
+          border:1px solid rgba(255,80,80,0.25);
+          border-radius:12px;
+          padding:12px 18px;
+          display:none;
+          align-items:center;
+          justify-content:space-between;
+        ">
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#ff8080">
+            <div style="width:8px;height:8px;background:#ff4444;border-radius:50%;animation:pulse-red 1s ease-in-out infinite"></div>
+            Keyboard control active
+          </div>
+          <button onclick="deactivateControl()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text-mid);font-family:'DM Mono',monospace;font-size:10px;padding:6px 12px;border-radius:8px;cursor:pointer">
+            ✕ Stop
+          </button>
+        </div>
+      </div>
+  
+      <!-- Right panel -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+  
+        <!-- WASD guide -->
+        <div class="widget">
+          <div class="widget-label"><div class="wi">⌨️</div> Keyboard Controls</div>
+  
+          <!-- WASD visual -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin:20px 0 16px">
+            <div style="display:flex;gap:6px">
+              <div class="key-cap" id="key-w">W</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <div class="key-cap" id="key-a">A</div>
+              <div class="key-cap" id="key-s">S</div>
+              <div class="key-cap" id="key-d">D</div>
+            </div>
+            <div style="font-size:9px;color:var(--text-dim);margin-top:4px;letter-spacing:1px">— or —</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <div class="key-cap" id="key-up">↑</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <div class="key-cap" id="key-left">←</div>
+              <div class="key-cap" id="key-down">↓</div>
+              <div class="key-cap" id="key-right">→</div>
+            </div>
+          </div>
+  
+          <!-- Direction descriptions -->
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
+              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">W / ↑</span></span>
+              <span style="color:var(--text-mid)">Move laser up</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
+              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">S / ↓</span></span>
+              <span style="color:var(--text-mid)">Move laser down</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
+              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">A / ←</span></span>
+              <span style="color:var(--text-mid)">Move laser left</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
+              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">D / →</span></span>
+              <span style="color:var(--text-mid)">Move laser right</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
+              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">ESC</span></span>
+              <span style="color:var(--text-mid)">Stop controlling</span>
+            </div>
+          </div>
+        </div>
+
+  
+        <!-- Speed control -->
+        <div class="widget">
+          <div class="widget-label"><div class="wi">⚡</div> Move Speed</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <div class="speed-btn" onclick="selectSpeed(this)" style="flex:1;text-align:center;padding:10px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-size:10px;color:var(--text-mid);cursor:pointer">
+              <span style="font-size:16px;display:block;margin-bottom:4px">🐌</span>Slow
+            </div>
+            <div class="speed-btn selected" onclick="selectSpeed(this)" style="flex:1;text-align:center;padding:10px 8px;background:var(--amber-glow);border:1px solid var(--border2);border-radius:10px;font-size:10px;color:var(--amber-l);cursor:pointer">
+              <span style="font-size:16px;display:block;margin-bottom:4px">🐈</span>Normal
+            </div>
+            <div class="speed-btn" onclick="selectSpeed(this)" style="flex:1;text-align:center;padding:10px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-size:10px;color:var(--text-mid);cursor:pointer">
+              <span style="font-size:16px;display:block;margin-bottom:4px">⚡</span>Fast
+            </div>
+          </div>
+        </div>
+  
       </div>
     </div>
   </div>
@@ -1207,9 +1472,8 @@ async function refreshState() {
   try {
     const res = await fetch('/api/state');
     const data = await res.json();
-
     // Sync LED button
-    syncCtrlBtn('LED', data.led === 1);
+    // syncCtrlBtn('LED', data.led === 1);
 
     // Sync Water Pump button
     // syncCtrlBtn('Water Pump', data.pump === 1);
@@ -1252,11 +1516,201 @@ function triggerFeed(btn) {
   }, 1600);
 }
 
+function setDispense(g) {
+  document.getElementById('dispense-input').value = g;
+  updateDispenseLabel(g);
+}
+
+// function updateDispenseLabel(g) {
+//   document.getElementById('dispense-btn-label').textContent = g + 'g';
+// }
+
+async function dispenseFood() {
+  const grams = parseInt(document.getElementById('dispense-input').value);
+  if (!grams || grams < 5 || grams > 150) {
+    toast('Enter a valid amount (5–150g)', '⚠️');
+    return;
+  }
+
+  const btn = document.getElementById('dispense-food-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Dispensing…';
+
+  try {
+    const payload = { type: 'DISPENSE', params: {grams: grams}};
+    console.log('POST /api/command →', JSON.stringify(payload, null, 2));
+
+    await fetch('/api/command', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    toast(`🍽 Dispensing ${grams}g for Mochi!`);
+  } catch (err) {
+    toast('Failed to dispense', '⚠️');
+    console.error(err);
+  } finally {
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = '🍽 Dispense Now';
+    }, 3000);
+  }
+}
+
+let controlActive = false;
+let laserX = 50; // percent
+let laserY = 50;
+const speedMap = { '🐌': 2, '🐈': 5, '⚡': 10 };
+let moveSpeed = 5;
+
+const keyMap = {
+  'w': 'up',   'ArrowUp':    'up',
+  's': 'down', 'ArrowDown':  'down',
+  'a': 'left', 'ArrowLeft':  'left',
+  'd': 'right','ArrowRight': 'right',
+};
+
+const keyElMap = {
+  'w': 'key-w', 'ArrowUp':    'key-up',
+  's': 'key-s', 'ArrowDown':  'key-down',
+  'a': 'key-a', 'ArrowLeft':  'key-left',
+  'd': 'key-d', 'ArrowRight': 'key-right',
+};
+
+async function activateControl() {
+  controlActive = true;
+  document.getElementById('focus-hint').style.display = 'none';
+  document.getElementById('control-bar').style.display = 'flex';
+  document.getElementById('laser-dot').style.display = 'block';
+  document.getElementById('laser-active-badge').style.display = 'flex';
+
+  try {
+    const payload = { type: 'LASER_TOGGLE' };
+    console.log('POST /api/command →', JSON.stringify(payload, null, 2));
+    await fetch('/api/command', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    console.error('Failed to activate laser:', err);
+  }
+
+  toast('🎯 Laser control active — use WASD to move', '🎯');
+}
+
+function deactivateControl() {
+  controlActive = false;
+  document.getElementById('focus-hint').style.display = 'flex';
+  document.getElementById('control-bar').style.display = 'none';
+  document.getElementById('laser-dot').style.display = 'none';
+  document.getElementById('laser-active-badge').style.display = 'none';
+}
+
+function selectSpeed(el) {
+  document.querySelectorAll('.speed-btn').forEach(b => {
+    b.classList.remove('selected');
+    b.style.background = 'var(--surface2)';
+    b.style.borderColor = 'var(--border)';
+    b.style.color = 'var(--text-mid)';
+  });
+  el.classList.add('selected');
+  el.style.background = 'var(--amber-glow)';
+  el.style.borderColor = 'var(--border2)';
+  el.style.color = 'var(--amber-l)';
+  const icon = el.querySelector('span').textContent;
+  moveSpeed = speedMap[icon] ?? 5;
+}
+
+document.addEventListener('keydown', (e) => {
+  if (!controlActive) return;
+  if (e.key === 'Escape') { deactivateControl(); return; }
+
+  const dir = keyMap[e.key];
+  if (!dir) return;
+  e.preventDefault();
+
+  // Highlight key cap
+  const keyElId = keyElMap[e.key];
+  if (keyElId) document.getElementById(keyElId)?.classList.add('pressed');
+
+  // Move dot instantly
+  if (dir === 'up')    laserY = Math.max(5,  laserY - moveSpeed);
+  if (dir === 'down')  laserY = Math.min(95, laserY + moveSpeed);
+  if (dir === 'left')  laserX = Math.max(5,  laserX - moveSpeed);
+  if (dir === 'right') laserX = Math.min(95, laserX + moveSpeed);
+
+  document.getElementById('laser-dot').style.left = laserX + '%';
+  document.getElementById('laser-dot').style.top  = laserY + '%';
+
+  // Send to backend — fire and forget, no await
+  sendLaserMove(dir);
+});
+
+// Throttle — only send to backend at most every 50ms
+let lastSent = 0;
+function sendLaserMove(dir) {
+  const now = Date.now();
+  if (now - lastSent < 10) return;  // drop if too soon
+  lastSent = now;
+
+  const payload = { type: 'LASER_MOVE', params: { direction: dir, x: laserX, y: laserY } };
+  console.log('POST /api/command →', JSON.stringify(payload, null, 2));
+
+  fetch('/api/command', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.error('Laser move failed:', err));
+}
+
+// document.addEventListener('keydown', async (e) => {
+//   if (!controlActive) return;
+//   if (e.key === 'Escape') { deactivateControl(); return; }
+
+//   const dir = keyMap[e.key];
+//   if (!dir) return;
+//   e.preventDefault();
+
+//   // Highlight key cap
+//   const keyElId = keyElMap[e.key];
+//   if (keyElId) document.getElementById(keyElId)?.classList.add('pressed');
+
+//   // Move dot
+//   if (dir === 'up')    laserY = Math.max(5,  laserY - moveSpeed);
+//   if (dir === 'down')  laserY = Math.min(95, laserY + moveSpeed);
+//   if (dir === 'left')  laserX = Math.max(5,  laserX - moveSpeed);
+//   if (dir === 'right') laserX = Math.min(95, laserX + moveSpeed);
+
+//   const dot = document.getElementById('laser-dot');
+//   dot.style.left = laserX + '%';
+//   dot.style.top  = laserY + '%';
+
+//   // Send to backend
+//   try {
+//     const payload = { type: 'LASER_MOVE', params: { direction: dir, x: laserX, y: laserY } };
+//     console.log('POST /api/command →', JSON.stringify(payload, null, 2));
+//     await fetch('/api/command', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify(payload)
+//     });
+//   } catch (err) {
+//     console.error('Laser move failed:', err);
+//   }
+// });
+
+document.addEventListener('keyup', (e) => {
+  const keyElId = keyElMap[e.key];
+  if (keyElId) document.getElementById(keyElId)?.classList.remove('pressed');
+});
 
 // ── Refresh stats ──
 function refreshStats() {
   toast('Stats refreshed', '↻');
 }
+
 </script>
 </body>
 </html>
