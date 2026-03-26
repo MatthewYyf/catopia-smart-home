@@ -1,19 +1,6 @@
 # catopia-smart-home
 
-Simple starter project for a smart-home style dashboard and device API.
-
-## What this project does
-
-- Serves a static frontend from `backend/static/index.html`
-- Receives sensor/device data
-- Exposes current state to the frontend
-- Queues commands for a connected device (for example, a Pico)
-
-## Tech stack
-
-- Python
-- FastAPI
-- Uvicorn
+Embedded systems project for a smart-home style dashboard and device API.
 
 ## Quick start
 
@@ -27,7 +14,7 @@ source .venv/bin/activate
 2. Install dependencies:
 
 ```bash
-pip install fastapi uvicorn
+pip install -r requirements.txt
 ```
 
 3. Start the server:
