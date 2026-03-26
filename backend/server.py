@@ -5,7 +5,7 @@ import uvicorn
 
 app = FastAPI()
 
-latest_data = {"knob": None, "led": None}
+latest_data = {"led": None, "pump": None, "load": None}
 pending_command = None
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -26,6 +26,7 @@ async def receive_data(data: dict):
 
 @app.get("/api/state")
 async def get_state():
+    print(latest_data)
     return latest_data
 
 

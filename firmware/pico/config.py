@@ -8,10 +8,13 @@ PI_IP = "10.42.0.1"
 
 # ----- GPIO assignments -----
 LED_PIN = "LED"          # onboard LED
-WATER_PUMP_PIN = 15
+WATER_PUMP_PIN = 22
 FEEDER_STEP_PIN = 16
 FEEDER_DIR_PIN = 17
 KNOB_ADC_PIN = 26
+FORCE_SENSOR_PIN = 28
+# STEPPER_DIR_PIN = 
+# STEPPER_STEP_PIN =
 
 # ----- Logic levels -----
 ACTIVE_HIGH = 1
