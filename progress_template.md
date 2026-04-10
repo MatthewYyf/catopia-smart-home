@@ -92,7 +92,6 @@ As detail as possible.
 
 ### 7.2 Updated Workload Distributions
 
-	@@ -100,17 +50,14 @@ As detail as possible.
 Explain your live demonstration plan in details
 
 ## 9. Contributions
@@ -100,6 +99,13 @@ Adam
 - Water pump and code
 - Force Sensor and code
 - Researching cat meows
+
+Matthew
+- Built the frontend and backend and abstraction for additional devices
+- Wrote Pico firmware for device controls
+- Connected frontend ↔ backend ↔ hardware into one system
+- Set up device/command structure for controlling components
+- Designed a 3D auger feeder for automatic food dispensing
 
 ## 10. Conclusion
 Brief reflection on current status, remaining challenges and plans.
