@@ -74,7 +74,9 @@ Our results include having the front end communicate with the water pump by able
 
 ## 6. Challenges and Solutions
 Our first current challenges is processing sensor data accurately, especially from the pressure sensor. We found that the pressure sensor does not directly output values in standard weight units, so we cannot use its raw data reading as actual food or water weight measurements. Consequently, we need to calibrate the sensor through testing and convert the raw data into real weight values. On top of that, the pressure sensor is highly sensitive, and even very small forces can cause large fluctuations in the data readings. Our current approach is to use an available conversion formula. But because this conversion function is not linear, we still need to refine the calibration process and improve measurement stability. Solving this problem is important because accurate food and water weight tracking is one of the most basic and essential functions of the Catopia.
+
 The second major challenge is implementing a database for the Catopia software system. At present, our server can receive live data from the Raspberry Pi Pico and return the latest system state, but it does not permanently store the cat’s daily data. This means that our system could not provide permanent storage for user’s daily data. We also cannot analyze long-term trends, generate daily reports, or compare changes in the cat’s behavior and health over time without a database. Another challenge is deciding how to structure the data. Since the system need to store different kinds of information, including time-stamped sensor readings, device states, feeding and,  and possibly future camera or emotion-analysis results.
+
 Our current solution is to add a lightweight database layer to the backend, most likely using SQLite first because it is simple to integrate with Python. We plan to design tables for sensor readings, command logs, and daily summaries so that every important event can be recorded with a timestamp. Once this is implemented, the backend will maintain historical records that can support graphs, reports, and future health analysis features. This will make the system much more reliable and useful, since storing daily data is one of the core goals of Catopia.
 Also, some challenges are still recording and interpreting the cats meows. 
 
@@ -93,7 +95,7 @@ As detail as possible.
 
 ### 7.2 Updated Workload Distributions
 
-## Demo Plan
+## 8. Demo Plan
 Explain your live demonstration plan in details
 - Garret's Ideas:
 - In class:
