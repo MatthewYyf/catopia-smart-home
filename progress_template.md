@@ -61,7 +61,9 @@ Overall, Catopia separates sensing, processing, and user interaction into clear 
 - **Embedded Functions:** Reads sensor values, controls hardware such as the LED, water pump, and feeder-related devices, and sends data to the backend while fetching queued commands
 - **Software Architecture:** Frontend -> Backend -> Pico W communication loop for real-time monitoring and device control
 ## 5. Progress
-Progress Summary
+Significant progress has been made on both the hardware and software components of Catopia. On the hardware side, the main devices, including the water pump, force sensors, and servo motors, are now functioning properly.
+On the software side, the core system architecture has been completed, consisting of the backend, Pico firmware, and frontend dashboard. The FastAPI backend currently supports the required REST endpoints for data transfer, command handling, and real-time state updates. The Pico firmware is structured modularly to manage sensors and actuators while transmitting data to the backend every second. In addition, the frontend dashboard has been developed to display live system data and allow user control through the web interface.
+Overall, the project has reached a working prototype stage in which the hardware and software systems are going to be successfully integrated and communicating as intended.
 
 ### 5.1 Hardware Progress
 Got the water pump, force sensors, servo motors, video camera working.
