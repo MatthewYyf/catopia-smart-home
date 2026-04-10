@@ -42,7 +42,7 @@ Overall, Catopia separates sensing, processing, and user interaction into clear 
 | PIR Infrared Sensor | Locate Cat | 1 |
 | Camera Module | Watch cat from App | 1 |
 | Water Level Monitor | Check how much water is in the bowl | 1 |
-| Servo Motor | Move Cat Toy | 1 |
+| Servo Motor | Move Cat Toy/Laser | 2 |
 | Water Pump | Pour water into cat bowl | 1 |
 | Wi-fi / Bluetooth module | Connect modules and to app | 1 |
 | Housing Enclosure | Main structure everything surrounds or mounted on | 1 |
@@ -64,7 +64,7 @@ Overall, Catopia separates sensing, processing, and user interaction into clear 
 Progress Summary
 
 ### 5.1 Hardware Progress
-Got the water pump, force sensors, ....etc working
+Got the water pump, force sensors, servo motors, ..etc working
 
 ### 5.2 Software Progress
 On the software side, we have built the core software architecture of Catopia around three connected layers, the backend, the Pico firmware, and the frontend web template. The backend is developed in Python using FastAPI and is served with Uvicorn as the ASGI server. It acts as the communication layer between the frontend browsers and the embedded devices, handling sensor data, queueing commands, and maintaining the latest real-time system state through difference devices.At this stage, the backend already supports the key REST endpoints needed for the prototype. GET / to serve the frontend(index.html), POST /api/data to receive sensor data from the Pico, GET /api/state to return the latest system state, and POST /api/command plus GET /api/command to queue and deliver commands. On the embedded side, we write the Pico firmware in an object-oriented structure that interfaces with GPIO and ADC ports, controls the LED, water pump, and kibble dispenser, and sends sensor readings to the backend every second over HTTP. We have also defined modular device abstractions such as PumpDevice, LoadSensor, and KibbleDispenser to keep the firmware organized. After that , for our frontend, we have developed a web dashboard using HTML, CSS, and JavaScript that communicates with the backend through the REST API, sends commands for LED, pump, and dispensing control, and fetches live system state per second. Overall, we have already developed the main software system architecture of Catopia, connecting the frontend, backend, and Pico into one working communication pipeline.
@@ -108,8 +108,8 @@ Matthew
 - Designed a 3D auger feeder for automatic food dispensing
 
 Garret
--Video streaming and code
--Servo motors for pan/tilt and code
+- Video streaming and code
+- Servo motors for pan/tilt and code
 
 ## 10. Conclusion
 Brief reflection on current status, remaining challenges and plans.
