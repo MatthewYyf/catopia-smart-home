@@ -93,6 +93,16 @@ As detail as possible.
 ### 7.2 Updated Workload Distributions
 
 Explain your live demonstration plan in details
+- Garret's Ideas:
+- In class:
+- Show off the modules separately, demonstrating the water bowl and food bowl are refilled to the set weight.
+- Show off the food auger.
+- In our website, show the water/food data live updating as more water/food is added to the bowls (and vice versa).
+- Show off the livestream.
+- Show off the play feature, controlling the laser with the servo motors through the livestream.
+- Prerecord cat meows (as we probably wont have a live cat on hand) and demonstrate our audio sensor and cat meow research can correctly interpret the cat's mood.
+- Potentially prerecorded video, to present in class:
+- A cat's movement/posture/behavior being correctly identified through our research.
 
 ## 9. Contributions
 Adam
