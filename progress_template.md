@@ -127,7 +127,11 @@ Garret
 
 ## 10. Conclusion
 Brief reflection on current status, remaining challenges and plans.
+At the current stage, Catopia has successfully progressed from a conceptual design into a working prototype with both hardware and software subsystems in place. The project now includes a functioning communication pipeline between the frontend dashboard, backend server, and Raspberry Pi Pico W, along with operational hardware components such as the water pump, force sensors, servo motors, and camera module. These milestones demonstrate that the core smart-home infrastructure for automated cat care is functioning as intended.
 
+Despite this progress, several important challenges remain. Sensor calibration, particularly for accurate weight measurement, still requires refinement to ensure reliable food and water tracking. In addition, the integration of long-term data storage, live video streaming, and cat emotion analysis through audio and visual inputs remains an ongoing development focus. Power management and ensuring stable hardware performance independent of a wall outlet are also key technical issues that must be resolved.
+
+Moving forward, the team plans to complete full hardware integration, improve system reliability, implement database support for historical data analysis, and finalize the remaining smart features for the live demonstration. Overall, the project is on track toward delivering a stable and comprehensive smart cat home system by the final presentation.
 ## References
 - Datasheets
 - Research papers
