@@ -8,17 +8,16 @@
   - **Garret Rieden** (grieden11@brandeis.edu) – Hardware Engineer
   - **Adam Rieden** (arieden@brandeis.edu) – Frontend Developer
   - **Yuxuan Liu** (yuxuanliu050613@brandeis.edu) – Backend Developer
-- **Github Repository:**https://github.com/MatthewYyf/catopia-smart-home.git
+- **Github Repository:** https://github.com/MatthewYyf/catopia-smart-home.git
 
 
 ## 2. Abstract
 Provide a concise summary (150–250 words) describing:
-- your project:
+- project introduction:
 We are here to make an all-intelligent home for the owners to get for their cats and themselves. The cat home, Catopia, will allow the owner to monitor and care for their cat. Catopia will track and store data each day from each of the many sensors, like water intake, food intake, temperature and humidity tracker, camera's, and mic.
-- progress:
-A decent amount of hardware has been figured out and will be integrated into the catopia system in the coming weeks. The web app has come along very well and 
-- future plans:
-
+- current progress:
+At the current stage, we have completed the core prototype communication loop between the hardware components, backend, and user interface. In our current development setup, the laptop runs the backend server, while the Raspberry Pi provides the hotspot and the Raspberry Pi Pico W connects through that network to exchange data with the server. The Pico W can send device data to the backend and poll for commands. Then the backend serves the dashboard and manages control requests. We have also made strong progress on several hardware subsystems, including the stepper motor, water pump, pressure sensor, camera streaming tests, and interactive servo control.
+- future plans: Over the next few weeks, we plan to finish hardware integration, calibrate sensors, improve data storage and reliability, and connect unfinished features such as live video, automated feeding and watering behavior, and cat emotion analysis into a stable demo.
 
 
 
@@ -93,6 +92,7 @@ Progress Summary
 Got the water pump, force sensors, ....etc working
 
 ### 5.2 Software Progress
+On the software side, we have built the core software architecture of Catopia around three connected layers, the backend, the Pico firmware, and the frontend web template. The backend is developed in Python using FastAPI and is served with Uvicorn as the ASGI server. It acts as the communication layer between the frontend browsers and the embedded devices, handling sensor data, queueing commands, and maintaining the latest real-time system state through difference devices.At this stage, the backend already supports the key REST endpoints needed for the prototype. GET / to serve the frontend(index.html), POST /api/data to receive sensor data from the Pico, GET /api/state to return the latest system state, and POST /api/command plus GET /api/command to queue and deliver commands. On the embedded side, we write the Pico firmware in an object-oriented structure that interfaces with GPIO and ADC ports, controls the LED, water pump, and kibble dispenser, and sends sensor readings to the backend every second over HTTP. We have also defined modular device abstractions such as PumpDevice, LoadSensor, and KibbleDispenser to keep the firmware organized. After that , for our frontend, we have developed a web dashboard using HTML, CSS, and JavaScript that communicates with the backend through the REST API, sends commands for LED, pump, and dispensing control, and fetches live system state per second. Overall, we have already developed the main software system architecture of Catopia, connecting the frontend, backend, and Pico into one working communication pipeline.
 
 ### 5.3 Current Results
 
