@@ -9,11 +9,10 @@
 
 
 ## 2. Abstract
-Provide a concise summary (150–250 words) describing:
 - project introduction:
 We are here to make an all-intelligent home for the owners to get for their cats and themselves. The cat home, Catopia, will allow the owner to monitor and care for their cat. Catopia will track and store data each day from each of the many sensors, like water intake, food intake, temperature and humidity tracker, camera's, and mic.
 - current progress:
-At the current stage, we have completed the core prototype communication loop between the hardware components, backend, and user interface. In our current development setup, the laptop runs the backend server, while the Raspberry Pi provides the hotspot and the Raspberry Pi Pico W connects through that network to exchange data with the server. The Pico W can send device data to the backend and poll for commands. Then the backend serves the dashboard and manages control requests. We have also made strong progress on several hardware subsystems, including the stepper motor, water pump, pressure sensor, camera streaming tests, and interactive servo control.
+At the current stage, we have completed the core prototype communication loop between the hardware components, backend, and user interface. In our current development setup, the laptop runs the backend server, while the Raspberry Pi provides the hotspot and the Raspberry Pi Pico connects through that network to exchange data with the server. The Pico can send device data to the backend and poll for commands. Then the backend serves the dashboard and manages control requests. We have also made strong progress on several hardware subsystems, including the stepper motor, water pump, pressure sensor, camera streaming tests, and interactive servo control.
 - future plans: Over the next few weeks, we plan to finish hardware integration, calibrate sensors, improve data storage and reliability, and connect unfinished features such as live video, automated feeding and watering behavior, and cat emotion analysis into a stable demo.
 
 
@@ -21,9 +20,7 @@ At the current stage, we have completed the core prototype communication loop be
 ## 3. Project Overview
 
 ### 4.1 Project Description
-High-level description of the system.
-As detailed as possible.
-Catopia is a smart cat home system that integrates automated care, health monitoring, and emotional analysis into one connected platform. The system uses two computing units: a Raspberry Pi Pico W for sensor data collection and actuator control, and a Raspberry Pi 5 for data processing, storage, and backend services.
+Catopia is a smart cat home system that integrates automated care, health monitoring, and emotional analysis into one connected platform. The system uses two computing units: a Raspberry Pi Pico for sensor data collection and actuator control, and a Raspberry Pi 5 for data processing, storage, and backend services.
 
 The Pico collects data from sensors measuring food intake (pressure sensor), water level, temperature, humidity, motion, and audio. It also controls actuators such as the water pump and a servo-powered laser toy. Sensor data is serialized in JSON and sent via USB serial to the Raspberry Pi 5.
 
@@ -54,12 +51,12 @@ Overall, Catopia separates sensing, processing, and user interaction into clear 
 ### 4.3 Software Components
 - **Backend:** FastAPI (Python), served with Uvicorn
 - **Frontend:** Browser-based dashboard built with HTML, CSS, and JavaScript
-- **Embedded Software:** MicroPython running on the Raspberry Pi Pico W
-- **Communication Methods:** Wi-Fi local network / hotspot, HTTP REST API, JSON data exchange
-- **Backend Functions:** Receives telemetry data from the Pico W, stores the latest system state in memory, and queues commands from the frontend for the Pico W
+- **Embedded Software:** MicroPython running on the Raspberry Pi Pico 
+- **Communication Methods:** local network / hotspot, REST API, JSON data exchange
+- **Backend Functions:** Receives data from the Pico, stores the latest system state, and queues commands from the frontend for the Pico 
 - **Frontend Functions:** Displays live system and sensor state, sends commands for LED, pump, and dispensing control, and refreshes data every second through polling
 - **Embedded Functions:** Reads sensor values, controls hardware such as the LED, water pump, and feeder-related devices, and sends data to the backend while fetching queued commands
-- **Software Architecture:** Frontend -> Backend -> Pico W communication loop for real-time monitoring and device control
+- **Software Architecture:** Frontend -> Backend -> Pico communication loop for real-time monitoring and device control
 ## 5. Progress
 Significant progress has been made on both the hardware and software components of Catopia. On the hardware side, the main devices, including the water pump, force sensors, and servo motors, are now functioning properly.
 On the software side, the core system architecture has been completed, consisting of the backend, Pico firmware, and frontend dashboard. The FastAPI backend currently supports the required REST endpoints for data transfer, command handling, and real-time state updates. The Pico firmware is structured modularly to manage sensors and actuators while transmitting data to the backend every second. In addition, the frontend dashboard has been developed to display live system data and allow user control through the web interface.
@@ -77,7 +74,7 @@ Our results include having the front end communicate with the water pump by able
 
 ## 6. Challenges and Solutions
 Our first current challenges is processing sensor data accurately, especially from the pressure sensor. We found that the pressure sensor does not directly output values in standard weight units, so we cannot use its raw data reading as actual food or water weight measurements. Consequently, we need to calibrate the sensor through testing and convert the raw data into real weight values. On top of that, the pressure sensor is highly sensitive, and even very small forces can cause large fluctuations in the data readings. Our current approach is to use an available conversion formula. But because this conversion function is not linear, we still need to refine the calibration process and improve measurement stability. Solving this problem is important because accurate food and water weight tracking is one of the most basic and essential functions of the Catopia.
-The second major challenge is implementing a database for the Catopia software system. At present, our server can receive live data from the Raspberry Pi Pico W and return the latest system state, but it does not permanently store the cat’s daily data. This means that our system could not provide permanent storage for user’s daily data. We also cannot analyze long-term trends, generate daily reports, or compare changes in the cat’s behavior and health over time without a database. Another challenge is deciding how to structure the data. Since the system need to store different kinds of information, including time-stamped sensor readings, device states, feeding and,  and possibly future camera or emotion-analysis results.
+The second major challenge is implementing a database for the Catopia software system. At present, our server can receive live data from the Raspberry Pi Pico and return the latest system state, but it does not permanently store the cat’s daily data. This means that our system could not provide permanent storage for user’s daily data. We also cannot analyze long-term trends, generate daily reports, or compare changes in the cat’s behavior and health over time without a database. Another challenge is deciding how to structure the data. Since the system need to store different kinds of information, including time-stamped sensor readings, device states, feeding and,  and possibly future camera or emotion-analysis results.
 Our current solution is to add a lightweight database layer to the backend, most likely using SQLite first because it is simple to integrate with Python. We plan to design tables for sensor readings, command logs, and daily summaries so that every important event can be recorded with a timestamp. Once this is implemented, the backend will maintain historical records that can support graphs, reports, and future health analysis features. This will make the system much more reliable and useful, since storing daily data is one of the core goals of Catopia.
 Also, some challenges are still recording and interpreting the cats meows. 
 
@@ -96,6 +93,7 @@ As detail as possible.
 
 ### 7.2 Updated Workload Distributions
 
+## Demo Plan
 Explain your live demonstration plan in details
 - Garret's Ideas:
 - In class:
@@ -125,9 +123,12 @@ Garret
 - Video streaming and code
 - Servo motors for pan/tilt and code
 
+Yuxuan
+- Helped build and test the software system
+
 ## 10. Conclusion
 Brief reflection on current status, remaining challenges and plans.
-At the current stage, Catopia has successfully progressed from a conceptual design into a working prototype with both hardware and software subsystems in place. The project now includes a functioning communication pipeline between the frontend dashboard, backend server, and Raspberry Pi Pico W, along with operational hardware components such as the water pump, force sensors, servo motors, and camera module. These milestones demonstrate that the core smart-home infrastructure for automated cat care is functioning as intended.
+At the current stage, Catopia has successfully progressed from a conceptual design into a working prototype with both hardware and software subsystems in place. The project now includes a functioning communication pipeline between the frontend dashboard, backend server, and Raspberry Pi Pico, along with operational hardware components such as the water pump, force sensors, servo motors, and camera module. These milestones demonstrate that the core smart-home infrastructure for automated cat care is functioning as intended.
 
 Despite this progress, several important challenges remain. Sensor calibration, particularly for accurate weight measurement, still requires refinement to ensure reliable food and water tracking. In addition, the integration of long-term data storage, live video streaming, and cat emotion analysis through audio and visual inputs remains an ongoing development focus. Power management and ensuring stable hardware performance independent of a wall outlet are also key technical issues that must be resolved.
 
