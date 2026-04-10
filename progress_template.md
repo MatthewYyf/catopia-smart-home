@@ -107,6 +107,10 @@ Matthew
 - Set up device/command structure for controlling components
 - Designed a 3D auger feeder for automatic food dispensing
 
+Garret
+-Video streaming and code
+-Servo motors for pan/tilt and code
+
 ## 10. Conclusion
 Brief reflection on current status, remaining challenges and plans.
 
