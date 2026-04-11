@@ -9,26 +9,34 @@
 
 
 ## 2. Abstract
-- project introduction:
-We are here to make an all-intelligent home for the owners to get for their cats and themselves. The cat home, Catopia, will allow the owner to monitor and care for their cat. Catopia will track and store data each day from each of the many sensors, like water intake, food intake, temperature and humidity tracker, camera's, and mic.
-- current progress:
-At the current stage, we have completed the core prototype communication loop between the hardware components, backend, and user interface. In our current development setup, the laptop runs the backend server, while the Raspberry Pi provides the hotspot and the Raspberry Pi Pico connects through that network to exchange data with the server. The Pico can send device data to the backend and poll for commands. Then the backend serves the dashboard and manages control requests. We have also made strong progress on several hardware subsystems, including the stepper motor, water pump, pressure sensor, camera streaming tests, and interactive servo control.
-- future plans: Over the next few weeks, we plan to finish hardware integration, calibrate sensors, improve data storage and reliability, and connect unfinished features such as live video, automated feeding and watering behavior, and cat emotion analysis into a stable demo.
+- Project Introduction
+Catopia is an integrated smart home system designed to automate and monitor essential aspects of cat care. The system enables owners to remotely track and manage their pet’s food intake, water consumption, environmental conditions, and behavior through a connected hardware and software platform.
 
+- Current Progress
+At the current stage, we have completed a working prototype that establishes end-to-end communication between hardware components, the backend server, and the user interface. In our setup, a Raspberry Pi provides a local network, while a Raspberry Pi Pico handles sensor data collection and actuator control. The Pico continuously sends device data to the backend and polls for commands, while the backend manages system state and serves the frontend dashboard.
 
+We have successfully implemented and tested several core hardware subsystems, including the water pump, stepper motor-based feeder, pressure sensors, camera streaming, and servo-based interaction system. These components can be individually controlled and monitored through the web interface.
+
+- Future Plans
+Over the next few weeks, we will focus on completing full system integration, improving sensor calibration for reliable measurements, implementing persistent data storage, and stabilizing key features such as automated feeding/watering, live video, and basic cat behavior analysis for the final demonstration.
 
 ## 3. Project Overview
 
 ### 4.1 Project Description
-Catopia is a smart cat home system that integrates automated care, health monitoring, and emotional analysis into one connected platform. The system uses two computing units: a Raspberry Pi Pico for sensor data collection and actuator control, and a Raspberry Pi 5 for data processing, storage, and backend services.
 
-The Pico collects data from sensors measuring food intake (pressure sensor), water level, temperature, humidity, motion, and audio. It also controls actuators such as the water pump and a servo-powered laser toy. Sensor data is serialized in JSON and sent via USB serial to the Raspberry Pi 5.
+Catopia is a smart cat care system designed to automate feeding, watering, and basic monitoring through a connected hardware and software platform. The system is built around two main components: a Raspberry Pi Pico for low-level hardware control and a backend server that manages data and user interaction.
 
-The Raspberry Pi 5 stores data in an SQLite database and performs higher-level analysis. For emotional detection, the system uses DeepCat for video-based body language analysis and JL-TFMSFNet for audio-based vocal analysis. These outputs are combined to estimate the cat’s emotional state.
+The Raspberry Pi Pico is responsible for interfacing directly with sensors and actuators. It reads data from force sensors to estimate food and water levels and controls devices such as the water pump, stepper motor-based feeder, and servo motors for the laser toy. The Pico periodically sends sensor readings to the backend and retrieves queued commands for device control.
 
-A mobile iOS app connects to the backend through REST APIs and WebSockets, allowing users to monitor real-time data, view historical trends, watch live video via HLS, receive alerts, and remotely control interactive features.
+The system also collects data related to the cat’s behavior and well-being, primarily through measuring its metrics and monitoring food and water intake. This data is transmitted to the backend, where it is stored and processed to generate simple metrics such as daily intake and feeding frequency. These summaries are displayed on the frontend dashboard, enabling users to track patterns and identify potential irregularities in the cat’s physical and psychological wellbeing.
 
-Overall, Catopia separates sensing, processing, and user interaction into clear layers, creating a modular and scalable smart pet care system.
+The system includes a preliminary audio-based feature to interpret cat vocalizations. Audio input is analyzed to classify simple categories such as hunger or attention-seeking using a lightweight or rule-based approach. Due to limited data and scope, this feature is implemented using prerecorded samples for demonstration purposes. It serves as a proof of concept for integrating behavioral signals into the system rather than a fully developed model.
+
+The backend server, implemented using FastAPI, acts as the central communication layer between the embedded system and the user interface. It receives incoming data from the Pico, maintains the current system state, and exposes REST endpoints for retrieving data and sending commands. The backend also serves a web-based dashboard that allows users to monitor system status and control devices in real time.
+
+The frontend is a browser-based interface built with HTML, CSS, and JavaScript. It displays live information such as food and water levels and provides controls for interacting with the system, including activating the pump, dispensing food, and controlling the laser toy. The interface communicates with the backend through HTTP requests and updates periodically to reflect the latest system state.
+
+Overall, Catopia is structured as a modular system with clear separation between hardware control, backend processing, and user interaction. This design allows individual components to be developed and tested independently while supporting integration into a unified system.
 
 ### 4.2 Hardware Components
 | Component | Description | Quantity |
@@ -57,11 +65,13 @@ Overall, Catopia separates sensing, processing, and user interaction into clear 
 - **Frontend Functions:** Displays live system and sensor state, sends commands for LED, pump, and dispensing control, and refreshes data every second through polling
 - **Embedded Functions:** Reads sensor values, controls hardware such as the LED, water pump, and feeder-related devices, and sends data to the backend while fetching queued commands
 - **Software Architecture:** Frontend -> Backend -> Pico communication loop for real-time monitoring and device control
-## 5. Progress
-Significant progress has been made on both the hardware and software components of Catopia. On the hardware side, the main devices, including the water pump, force sensors, and servo motors, are now functioning properly.
-On the software side, the core system architecture has been completed, consisting of the backend, Pico firmware, and frontend dashboard. The FastAPI backend currently supports the required REST endpoints for data transfer, command handling, and real-time state updates. The Pico firmware is structured modularly to manage sensors and actuators while transmitting data to the backend every second. In addition, the frontend dashboard has been developed to display live system data and allow user control through the web interface.
-Overall, the project has reached a working prototype stage in which the hardware and software systems are going to be successfully integrated and communicating as intended.
 
+## 5. Progress
+Significant progress has been made on both the hardware and software components of Catopia. On the hardware side, key devices including the water pump, force sensors, servo motors, and camera module have been successfully tested and are functioning independently.
+
+On the software side, we have developed the core system architecture consisting of three main layers: the backend server, Pico firmware, and frontend dashboard. The FastAPI backend supports REST endpoints for data transfer, command handling, and real-time state updates. The Pico firmware is modularized to manage sensors and actuators while transmitting data at a regular interval (~1 Hz). The frontend dashboard displays live system data and allows users to send control commands through the web interface.
+
+At this stage, we have achieved a working prototype with end-to-end communication between the frontend and several hardware components. While individual subsystems are operational, ongoing work is focused on fully integrating all components into a single cohesive system.
 ### 5.1 Hardware Progress
 Got the water pump, force sensors, servo motors, video camera working.
 An issue we are encountering is the power supply. If we are not connecting the power through the wall outlet (to the Pi), our externals might not have the correct power. Looking through the hardware specifications for each external (such as our servos or water pump), we can figure out how much the external draws. Understanding voltage and current, as well as being able to understand if our circuit is giving enough power (we can check this with a multimeter), will allow our Catopia project to be independent on the wall outlet (allowing free placement anywhere in the house).
@@ -73,12 +83,11 @@ On the software side, we have built the core software architecture of Catopia ar
 At this point, we have end-to-end communication working between the frontend and several hardware components — the water pump and the video camera. We also have a number of individual components working on their own, with completed abstractions on the software side, though they still need to be fully wired together into one cohesive system. The web application itself runs as expected; it's mainly waiting on the remaining hardware connections to be completed before everything functions together as intended.
 
 ## 6. Challenges and Solutions
-Our first current challenges is processing sensor data accurately, especially from the pressure sensor. We found that the pressure sensor does not directly output values in standard weight units, so we cannot use its raw data reading as actual food or water weight measurements. Consequently, we need to calibrate the sensor through testing and convert the raw data into real weight values. On top of that, the pressure sensor is highly sensitive, and even very small forces can cause large fluctuations in the data readings. Our current approach is to use an available conversion formula. But because this conversion function is not linear, we still need to refine the calibration process and improve measurement stability. Solving this problem is important because accurate food and water weight tracking is one of the most basic and essential functions of the Catopia.
+One major challenge is accurately processing sensor data from the pressure sensors used to measure food and water weight. The raw sensor outputs do not directly correspond to standard weight units, requiring calibration and conversion. Additionally, the sensor readings exhibit high variance due to noise and sensitivity to small disturbances. To address this, we are developing calibration procedures and applying filtering techniques to stabilize readings and improve measurement accuracy.
 
-The second major challenge is implementing a database for the Catopia software system. At present, our server can receive live data from the Raspberry Pi Pico and return the latest system state, but it does not permanently store the cat’s daily data. This means that our system could not provide permanent storage for user’s daily data. We also cannot analyze long-term trends, generate daily reports, or compare changes in the cat’s behavior and health over time without a database. Another challenge is deciding how to structure the data. Since the system need to store different kinds of information, including time-stamped sensor readings, device states, feeding and,  and possibly future camera or emotion-analysis results.
+Another key challenge is the lack of persistent data storage. Currently, the backend maintains only the latest system state, which limits the ability to analyze long-term trends or generate historical reports. To address this, we plan to integrate a lightweight SQLite database to store time-stamped sensor data, command logs, and daily summaries. This will enable features such as trend visualization and behavioral analysis over time.
 
-Our current solution is to add a lightweight database layer to the backend, most likely using SQLite first because it is simple to integrate with Python. We plan to design tables for sensor readings, command logs, and daily summaries so that every important event can be recorded with a timestamp. Once this is implemented, the backend will maintain historical records that can support graphs, reports, and future health analysis features. This will make the system much more reliable and useful, since storing daily data is one of the core goals of Catopia.
-Also, some challenges are still recording and interpreting the cats meows. 
+We are also exploring approaches for interpreting cat vocalizations, which presents challenges in both data collection and model integration. For the purposes of the demo, we plan to implement a simplified version using prerecorded audio inputs and basic classification.
 
 
 ## 7. Updated Plans
@@ -125,7 +134,7 @@ Yuxuan Liu
 - Implement temperature and humidity monitoring system  
 
 ## 8. Demo Plan
-Explain your live demonstration plan in details
+The demo will simulate a real user scenario where the system detects and responds to changes in food and water levels.”
 
 1. Hardware Modules (Individual Demonstrations)
 - Demonstrate water bowl auto-refill to target weight
