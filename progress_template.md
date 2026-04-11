@@ -95,6 +95,32 @@ As detail as possible.
 
 ### 7.2 Updated Workload Distributions
 
+Matthew Yue
+- Lead integration of hardware, backend, and frontend into a unified system  
+- Finalize and polish the frontend user interface  
+- Design and fabricate 3D models and physical components (e.g., feeder system)  
+- Develop and implement cat sentiment detection (model research, training, and integration)  
+- Research feline health metrics and behavioral indicators  
+- Implement data analytics features (daily reports, trends, insights)  
+
+Garret Rieden
+- Design and refine circuitry for servo motors and Raspberry Pi Pico (laser toy system)  
+- Assist with general hardware wiring and circuit integration across components  
+- Implement PIR motion sensor for cat detection and activity tracking  
+- Support development of cat sentiment analysis (hardware and integration support)  
+
+Yuxuan Liu
+- Implement database layer for persistent data storage  
+- Support integration between hardware and backend systems
+- Research feline health metrics and behavioral indicators 
+- Implement data analytics features (daily reports, trends, insights)  
+
+### Adam Rieden
+- Implement cat body weight tracking system (scale integration)  
+- Develop water level sensing system (separate from weight-based measurement)  
+- Build audio system for meow detection and voice playback  
+- Implement temperature and humidity monitoring system  
+
 ## 8. Demo Plan
 Explain your live demonstration plan in details
 
