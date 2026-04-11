@@ -84,14 +84,17 @@ Also, some challenges are still recording and interpreting the cats meows.
 ## 7. Updated Plans
 
 ### 7.1 Updated Timeline
-As detail as possible.
-3 weeks left
 | Phase | Activities | Duration |
 |------|------------|----------|
-| Phase 1| Research | 1/2 weeks|
-| Phase 2| Development | 1 1/2 weeks |
-| Phase 3| Testing | 1/2 week |
-| Phase 4| Final Deployment | 1/2 week |
+| Phase 1 | Hardware integration (pump, feeder, toy) into one system | 3–4 days |
+| Phase 2 | Implement automated refill logic + sensor calibration | 3–4 days |
+| Phase 3 | Backend/frontend synchronization and system stabilization | 2–3 days |
+| Phase 4 | Database + basic data analytics implementation | 2–3 days |
+| Phase 5 | Add remaining sensors (temp/humidity, PIR) + camera integration | 3–4 days |
+| Phase 6 | Implement basic audio/emotion detection | 2–3 days |
+| Phase 7 | UI/UX polish and system reliability improvements | 2–3 days |
+| Phase 8 | Testing, debugging, and full system validation | 2–3 days |
+| Phase 9 | Demo preparation, rehearsal, and backup materials | 2 days |
 
 ### 7.2 Updated Workload Distributions
 
