@@ -339,11 +339,9 @@ body {
 .progress-fill.green { background: linear-gradient(90deg, #3a7e55, var(--green)); }
 .progress-fill.blue  { background: linear-gradient(90deg, #2a6090, var(--blue)); }
 
-/* Wide widget */
 .widget.wide { grid-column: span 2; }
 .widget.full { grid-column: span 3; }
 
-/* Controls widget */
 .controls-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -407,7 +405,6 @@ body {
 .ctrl-btn.on .toggle { background: var(--amber-d); border-color: var(--amber); }
 .ctrl-btn.on .toggle::after { left: 17px; background: var(--amber-l); }
 
-/* Feed big button */
 .feed-btn {
   width: 100%;
   background: linear-gradient(135deg, rgba(200,134,58,0.14), rgba(200,134,58,0.06));
@@ -452,7 +449,6 @@ body {
 }
 .feed-btn:hover .fa { background: rgba(200,134,58,0.25); }
 
-/* Activity feed */
 .activity-list { margin-top: 8px; }
 
 .activity-item {
@@ -754,6 +750,207 @@ body {
   to { opacity:0; transform: translateX(20px); }
 }
 
+/* ═══════════ VOICE MEMOS ═══════════ */
+
+/* Record button states */
+.record-btn {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.record-btn.idle {
+  background: linear-gradient(135deg, rgba(192,80,64,0.25), rgba(192,80,64,0.1));
+  border: 2px solid rgba(192,80,64,0.5);
+  color: var(--red);
+}
+
+.record-btn.idle:hover {
+  background: linear-gradient(135deg, rgba(192,80,64,0.4), rgba(192,80,64,0.2));
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(192,80,64,0.3);
+}
+
+.record-btn.recording {
+  background: linear-gradient(135deg, rgba(192,80,64,0.5), rgba(192,80,64,0.3));
+  border: 2px solid var(--red);
+  color: #fff;
+  animation: record-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes record-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(192,80,64,0.5); }
+  50%      { box-shadow: 0 0 0 12px rgba(192,80,64,0); }
+}
+
+/* Waveform bars */
+.waveform {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 32px;
+}
+
+.waveform .bar {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--amber);
+  opacity: 0.4;
+  transition: height 0.1s ease;
+}
+
+.waveform.active .bar {
+  opacity: 1;
+  animation: wave-idle 1s ease-in-out infinite;
+}
+
+.waveform.active .bar:nth-child(1) { animation-delay: 0.0s; }
+.waveform.active .bar:nth-child(2) { animation-delay: 0.1s; }
+.waveform.active .bar:nth-child(3) { animation-delay: 0.2s; }
+.waveform.active .bar:nth-child(4) { animation-delay: 0.3s; }
+.waveform.active .bar:nth-child(5) { animation-delay: 0.15s; }
+.waveform.active .bar:nth-child(6) { animation-delay: 0.05s; }
+.waveform.active .bar:nth-child(7) { animation-delay: 0.25s; }
+.waveform.active .bar:nth-child(8) { animation-delay: 0.35s; }
+
+@keyframes wave-idle {
+  0%,100% { height: 6px; }
+  50%      { height: 28px; }
+}
+
+/* Memo cards */
+.memo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color 0.2s;
+  animation: fadein 0.25s ease both;
+}
+
+.memo-card:hover { border-color: var(--border2); }
+
+.memo-card.playing {
+  border-color: rgba(200,134,58,0.5);
+  background: rgba(200,134,58,0.05);
+}
+
+.memo-play-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  color: var(--amber-l);
+}
+
+.memo-play-btn:hover {
+  background: var(--amber-glow);
+  border-color: var(--amber);
+  transform: scale(1.08);
+}
+
+.memo-play-btn.playing {
+  background: rgba(200,134,58,0.2);
+  border-color: var(--amber);
+  animation: record-pulse 1.5s ease-in-out infinite;
+}
+
+.memo-info { flex: 1; min-width: 0; }
+
+.memo-label {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 1px dashed transparent;
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memo-label:hover { border-bottom-color: var(--border2); color: var(--amber-l); }
+
+.memo-meta { font-size: 9px; color: var(--text-dim); margin-top: 3px; }
+
+/* Playback progress bar inside memo card */
+.memo-progress-wrap {
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  margin-top: 8px;
+  cursor: pointer;
+  display: none;
+}
+
+.memo-card.playing .memo-progress-wrap { display: block; }
+
+.memo-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--amber-d), var(--amber-l));
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.25s linear;
+}
+
+.memo-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.memo-action-btn {
+  width: 28px; height: 28px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s;
+  color: var(--text-dim);
+}
+
+.memo-action-btn:hover { background: var(--amber-glow); border-color: var(--border2); color: var(--amber-l); }
+.memo-action-btn.danger:hover { background: rgba(192,80,64,0.12); border-color: rgba(192,80,64,0.35); color: var(--red); }
+
+/* Inline rename input */
+.memo-label-input {
+  background: var(--surface2);
+  border: 1px solid var(--amber);
+  border-radius: 6px;
+  color: var(--cream);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  padding: 3px 8px;
+  outline: none;
+  width: 200px;
+}
+
+/* Empty state */
+.memo-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+}
+.memo-empty .me-icon { font-size: 40px; opacity: 0.25; margin-bottom: 12px; }
+.memo-empty p { font-size: 12px; }
+
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 900px) {
   :root { --nav-w: 60px; }
@@ -799,10 +996,6 @@ body {
   color: var(--amber-l);
   transform: translateY(2px);
 }
-
-@keyframes pulse-red {
-  0%,100% { opacity:1; } 50% { opacity:0.3; }
-}
 </style>
 </head>
 <body>
@@ -820,9 +1013,9 @@ body {
   <div class="nav-section">
     <span class="nav-section-label">Overview</span>
     <div class="nav-item active" onclick="showPage('test', this)">
-        <span class="ni-icon">🧪</span>
-        <span class="ni-text">Test</span>
-      </div>
+      <span class="ni-icon">🧪</span>
+      <span class="ni-text">Test</span>
+    </div>
     <div class="nav-item" onclick="showPage('dashboard', this)">
       <span class="ni-icon">⊞</span>
       <span class="ni-text">Dashboard</span>
@@ -835,11 +1028,14 @@ body {
       <span class="ni-icon">🎯</span>
       <span class="ni-text">Play</span>
     </div>
-
     <div class="nav-item" onclick="showPage('activity', this)">
       <span class="ni-icon">📋</span>
       <span class="ni-text">Activity</span>
       <span class="ni-badge">3</span>
+    </div>
+    <div class="nav-item" id="nav-memos" onclick="showPage('memos', this)">
+      <span class="ni-icon">🎙</span>
+      <span class="ni-text">Voice Memos</span>
     </div>
   </div>
 
@@ -885,9 +1081,8 @@ body {
     </div>
   </div>
 
-<!-- TEST PAGE -->
-
-<div class="page active" id="page-test">
+  <!-- ═══ TEST PAGE ═══ -->
+  <div class="page active" id="page-test">
     <div class="page-header">
       <div>
         <h2>Test Hardware Interactions</h2>
@@ -896,110 +1091,66 @@ body {
     </div>
   
     <div class="dash-grid">
+      <div class="widget">
+        <div class="widget-label"><div class="wi">💡</div> LED Light</div>
+        <div class="ctrl-btn" onclick="toggleCtrl(this)" style="margin-top:8px">
+          <span class="ctrl-icon">💡</span>
+          <div class="ctrl-text">
+            <div class="ctrl-name">LED</div>
+            <div class="ctrl-state">Off</div>
+          </div>
+          <div class="toggle"></div>
+        </div>
+      </div>
 
-        <div class="widget">
-            <div class="widget-label"><div class="wi">💡</div> LED Light</div>
-            <div class="ctrl-btn" onclick="toggleCtrl(this)" style="margin-top:8px">
-              <span class="ctrl-icon">💡</span>
-              <div class="ctrl-text">
-                <div class="ctrl-name">LED</div>
-                <div class="ctrl-state">Off</div>
-              </div>
-              <div class="toggle"></div>
+      <div class="widget">
+        <div class="widget-label"><div class="wi">💧</div> Water Pump</div>
+        <div class="ctrl-btn" onclick="toggleCtrl(this)" style="margin-top:8px">
+          <span class="ctrl-icon">💧</span>
+          <div class="ctrl-text">
+            <div class="ctrl-name">Water Pump</div>
+            <div class="ctrl-state">Off</div>
+          </div>
+          <div class="toggle"></div>
+        </div>
+      </div>
+
+      <div class="widget">
+        <div class="widget-label"><div class="wi">🍽</div> Dispense Food</div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim)">Amount (grams)</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input id="dispense-input" type="number" min="5" max="150" value="40"
+                style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--amber-l);outline:none;width:100%"
+                oninput="updateDispenseLabel(this.value)"/>
+              <span style="font-size:11px;color:var(--text-dim);white-space:nowrap">g</span>
             </div>
           </div>
-
-          <div class="widget">
-            <div class="widget-label"><div class="wi">💧</div> Water Pump</div>
-            <div class="ctrl-btn" onclick="toggleCtrl(this)" style="margin-top:8px">
-              <span class="ctrl-icon">💧</span>
-              <div class="ctrl-text">
-                <div class="ctrl-name">Water Pump</div>
-                <div class="ctrl-state">Off</div>
-              </div>
-              <div class="toggle"></div>
-            </div>
+          <div style="display:flex;gap:6px">
+            <div onclick="setDispense(10)" style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">10g</div>
+            <div onclick="setDispense(20)" style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">20g</div>
+            <div onclick="setDispense(40)" style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">40g</div>
+            <div onclick="setDispense(80)" style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">80g</div>
           </div>
+          <button id="dispense-food-btn" onclick="dispenseFood()"
+            style="width:100%;background:linear-gradient(135deg,#c8863a,#a06020);border:none;border-radius:12px;padding:14px;font-family:'Playfair Display',serif;font-style:italic;font-size:15px;font-weight:600;color:#fff;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(200,134,58,0.25)"
+            onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(200,134,58,0.35)'"
+            onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(200,134,58,0.25)'">
+            🍽 Dispense
+          </button>
+        </div>
+      </div>
 
-          <div class="widget">
-            <div class="widget-label"><div class="wi">🍽</div> Dispense Food</div>
-          
-            <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
-          
-              <!-- Weight input -->
-              <div style="display:flex;flex-direction:column;gap:6px">
-                <span style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim)">Amount (grams)</span>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <input
-                    id="dispense-input"
-                    type="number"
-                    min="5" max="150" value="40"
-                    style="
-                      flex:1;
-                      background:var(--surface2);
-                      border:1px solid var(--border);
-                      border-radius:10px;
-                      padding:10px 14px;
-                      font-family:'DM Mono',monospace;
-                      font-size:16px;
-                      font-weight:500;
-                      color:var(--amber-l);
-                      outline:none;
-                      width:100%;
-                    "
-                    oninput="updateDispenseLabel(this.value)"
-                  />
-                  <span style="font-size:11px;color:var(--text-dim);white-space:nowrap">g</span>
-                </div>
-              </div>
-          
-              <!-- Quick amounts -->
-              <div style="display:flex;gap:6px">
-                <div onclick="setDispense(10)"  style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">10g</div>
-                <div onclick="setDispense(20)"  style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">20g</div>
-                <div onclick="setDispense(40)"  style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">40g</div>
-                <div onclick="setDispense(80)"  style="flex:1;text-align:center;padding:7px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-mid);cursor:pointer" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">80g</div>
-              </div>
-          
-              <!-- Dispense button -->
-              <button
-                id="dispense-food-btn"
-                onclick="dispenseFood()"
-                style="
-                  width:100%;
-                  background:linear-gradient(135deg,#c8863a,#a06020);
-                  border:none;
-                  border-radius:12px;
-                  padding:14px;
-                  font-family:'Playfair Display',serif;
-                  font-style:italic;
-                  font-size:15px;
-                  font-weight:600;
-                  color:#fff;
-                  cursor:pointer;
-                  transition:all 0.2s;
-                  box-shadow:0 4px 16px rgba(200,134,58,0.25);
-                "
-                onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(200,134,58,0.35)'"
-                onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(200,134,58,0.25)'"
-              >
-                🍽 Dispense
-              </button>
-          
-            </div>
-          </div>
-          
-  <!---- Weight ---->
-          <div class="widget" style="grid-column: span 3">
-                <div class="widget-label"><div class="wi">⚖️</div> Weight</div>
-                <div class="widget-value amber">
-                  <span id="weight-value">--</span>
-                  <small style="font-size:14px;color:var(--text-dim)">kg</small>
-                </div>
-                <div class="progress-bar"><div class="progress-fill amber" style="width:55%"></div></div>
-              </div>
+      <div class="widget" style="grid-column: span 3">
+        <div class="widget-label"><div class="wi">⚖️</div> Weight</div>
+        <div class="widget-value amber">
+          <span id="weight-value">--</span>
+          <small style="font-size:14px;color:var(--text-dim)">kg</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill amber" style="width:55%"></div></div>
+      </div>
     </div>
-    
   </div>
 
   <!-- ═══ DASHBOARD PAGE ═══ -->
@@ -1013,34 +1164,25 @@ body {
         <button class="outline-btn" onclick="refreshStats()">↻ Refresh</button>
       </div>
     </div>
-
     <div class="dash-grid">
-
-      <!-- Temp -->
       <div class="widget">
         <div class="widget-label"><div class="wi">🌡</div> Temperature</div>
         <div class="widget-value amber" id="temp-val">72</div>
         <div class="widget-sub">°F · Optimal range 68–76°F</div>
         <div class="progress-bar"><div class="progress-fill amber" id="temp-bar" style="width:55%"></div></div>
       </div>
-
-      <!-- Water -->
       <div class="widget">
         <div class="widget-label"><div class="wi">💧</div> Water Level</div>
         <div class="widget-value green" id="water-val">84</div>
         <div class="widget-sub">% · Refill when below 20%</div>
         <div class="progress-bar"><div class="progress-fill green" id="water-bar" style="width:84%"></div></div>
       </div>
-
-      <!-- Food -->
       <div class="widget">
         <div class="widget-label"><div class="wi">🥣</div> Food Level</div>
         <div class="widget-value amber" id="food-val">60</div>
         <div class="widget-sub">% · Last filled 3 days ago</div>
         <div class="progress-bar"><div class="progress-fill amber" id="food-bar" style="width:60%"></div></div>
       </div>
-
-      <!-- Feed + Controls -->
       <div class="widget wide">
         <div class="widget-label"><div class="wi">🎮</div> Controls</div>
         <button class="feed-btn" onclick="triggerFeed(this)">
@@ -1054,34 +1196,26 @@ body {
         <div class="controls-grid" style="margin-top:10px">
           <div class="ctrl-btn" onclick="toggleCtrl(this)">
             <span class="ctrl-icon">🎯</span>
-            <div class="ctrl-text">
-              <div class="ctrl-name">Laser</div>
-              <div class="ctrl-state">Off</div>
-            </div>
+            <div class="ctrl-text"><div class="ctrl-name">Laser</div><div class="ctrl-state">Off</div></div>
             <div class="toggle"></div>
           </div>
           <div class="ctrl-btn" onclick="toggleCtrl(this)">
             <span class="ctrl-icon">🚪</span>
-            <div class="ctrl-text">
-              <div class="ctrl-name">Cat Door</div>
-              <div class="ctrl-state">Off</div>
-            </div>
+            <div class="ctrl-text"><div class="ctrl-name">Cat Door</div><div class="ctrl-state">Off</div></div>
             <div class="toggle"></div>
           </div>
           <div class="ctrl-btn" onclick="toggleCtrl(this)">
             <span class="ctrl-icon">💡</span>
-            <div class="ctrl-text">
-              <div class="ctrl-name">Lights</div>
-              <div class="ctrl-state">Off</div>
-            </div>
+            <div class="ctrl-text"><div class="ctrl-name">Lights</div><div class="ctrl-state">Off</div></div>
             <div class="toggle"></div>
           </div>
         </div>
       </div>
-
-      <!-- Activity snippet -->
       <div class="widget full">
-        <div class="widget-label" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:6px"><div class="wi">📋</div> Recent Activity</span> <span style="cursor:pointer;color:var(--amber);font-size:9px" onclick="showPage('activity', document.querySelectorAll('.nav-item')[2])">View all →</span></div>
+        <div class="widget-label" style="justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:6px"><div class="wi">📋</div> Recent Activity</span>
+          <span style="cursor:pointer;color:var(--amber);font-size:9px" onclick="showPage('activity', document.querySelectorAll('.nav-item')[2])">View all →</span>
+        </div>
         <div class="activity-list">
           <div class="activity-item"><div class="act-icon">🍽</div><div class="act-text"><p>Auto-feed dispensed</p><span>Today, 8:01 AM</span></div><span class="act-badge ok">Success</span></div>
           <div class="activity-item"><div class="act-icon">🚪</div><div class="act-text"><p>Cat door — Mochi entered</p><span>Today, 7:47 AM</span></div><span class="act-badge ok">Event</span></div>
@@ -1089,7 +1223,6 @@ body {
           <div class="activity-item"><div class="act-icon">⚠️</div><div class="act-text"><p>Food level below 65%</p><span>Yesterday, 11:20 PM</span></div><span class="act-badge warn">Alert</span></div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -1106,41 +1239,28 @@ body {
     </div>
     <div class="cam-grid">
       <img src="/stream.mjpg" />
-
       <div class="cam-feed">
-        <div class="cam-preview">
-          <div class="cp-icon">📷</div>
-          <div class="cp-text">Living Room — No motion</div>
-        </div>
-        <div class="cam-label">🟢 LIVE · HD</div>
-        <div class="cam-rec"><div class="rec-dot"></div> REC</div>
-      </div>
-
-      <div class="cam-feed">
-        <div class="cam-preview">
-          <div class="cp-icon">📷</div>
-          <div class="cp-text">Kitchen — Motion detected</div>
-        </div>
+        <div class="cam-preview"><div class="cp-icon">📷</div><div class="cp-text">Living Room — No motion</div></div>
         <div class="cam-label">🟢 LIVE · HD</div>
         <div class="cam-rec"><div class="rec-dot"></div> REC</div>
       </div>
       <div class="cam-feed">
-        <div class="cam-preview">
-          <div class="cp-icon">📷</div>
-          <div class="cp-text">Bedroom — No motion</div>
-        </div>
+        <div class="cam-preview"><div class="cp-icon">📷</div><div class="cp-text">Kitchen — Motion detected</div></div>
+        <div class="cam-label">🟢 LIVE · HD</div>
+        <div class="cam-rec"><div class="rec-dot"></div> REC</div>
+      </div>
+      <div class="cam-feed">
+        <div class="cam-preview"><div class="cp-icon">📷</div><div class="cp-text">Bedroom — No motion</div></div>
         <div class="cam-label">🟢 LIVE · HD</div>
       </div>
       <div class="cam-feed">
-        <div class="cam-preview">
-          <div class="cp-icon">📷</div>
-          <div class="cp-text">Front Door — Standby</div>
-        </div>
+        <div class="cam-preview"><div class="cp-icon">📷</div><div class="cp-text">Front Door — Standby</div></div>
         <div class="cam-label">🟡 STANDBY</div>
       </div>
     </div>
   </div>
 
+  <!-- ═══ PLAY PAGE ═══ -->
   <div class="page" id="page-play">
     <div class="page-header">
       <div>
@@ -1151,83 +1271,30 @@ body {
         <button class="outline-btn" onclick="toggleLaserFromPlay()">🎯 Laser</button>
       </div>
     </div>
-  
     <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
-  
-      <!-- Camera Feed -->
       <div style="display:flex;flex-direction:column;gap:16px">
-        <div style="
-          background:var(--surface);
-          border:1px solid var(--border);
-          border-radius:var(--radius);
-          overflow:hidden;
-          aspect-ratio:16/9;
-          position:relative;
-        ">
-          <!-- Camera placeholder -->
-          <div style="
-            width:100%;height:100%;
-            display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;
-            background:radial-gradient(ellipse at 40% 60%, rgba(40,30,15,0.9), rgba(15,10,4,0.98));
-          ">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;aspect-ratio:16/9;position:relative;">
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:radial-gradient(ellipse at 40% 60%, rgba(40,30,15,0.9), rgba(15,10,4,0.98));">
             <span style="font-size:48px;opacity:0.2">📷</span>
             <span style="font-size:11px;color:var(--text-dim)">Camera feed — Living Room</span>
           </div>
-  
-          <!-- Laser dot overlay -->
-          <div id="laser-dot" style="
-            position:absolute;
-            width:14px;height:14px;
-            background:radial-gradient(circle, #ff4444, #ff000088);
-            border-radius:50%;
-            box-shadow:0 0 12px 4px rgba(255,50,50,0.6), 0 0 24px 8px rgba(255,0,0,0.2);
-            left:50%;top:50%;
-            transform:translate(-50%,-50%);
-            transition:left 0.08s ease, top 0.08s ease;
-            pointer-events:none;
-            display:none;
-          "></div>
-  
-          <!-- REC badge -->
+          <div id="laser-dot" style="position:absolute;width:14px;height:14px;background:radial-gradient(circle, #ff4444, #ff000088);border-radius:50%;box-shadow:0 0 12px 4px rgba(255,50,50,0.6), 0 0 24px 8px rgba(255,0,0,0.2);left:50%;top:50%;transform:translate(-50%,-50%);transition:left 0.08s ease, top 0.08s ease;pointer-events:none;display:none;"></div>
           <div style="position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:5px;background:rgba(192,80,64,0.15);border:1px solid rgba(192,80,64,0.3);border-radius:6px;padding:4px 8px;font-size:9px;color:var(--red)">
             <div style="width:6px;height:6px;background:var(--red);border-radius:50%;animation:pulse-red 1s ease-in-out infinite"></div>
             REC
           </div>
-  
-          <!-- Active indicator -->
           <div id="laser-active-badge" style="display:none;position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:5px;background:rgba(255,50,50,0.15);border:1px solid rgba(255,50,50,0.35);border-radius:6px;padding:4px 10px;font-size:9px;color:#ff6060">
             🎯 Laser Active
           </div>
-  
-          <!-- WASD overlay hint -->
-          <div id="focus-hint" style="
-            position:absolute;inset:0;
-            display:flex;align-items:center;justify-content:center;
-            background:rgba(10,7,3,0.55);
-            backdrop-filter:blur(2px);
-            cursor:pointer;
-            transition:opacity 0.2s;
-          " onclick="activateControl()">
+          <div id="focus-hint" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,7,3,0.55);backdrop-filter:blur(2px);cursor:pointer;transition:opacity 0.2s;" onclick="activateControl()">
             <div style="text-align:center">
               <div style="font-size:28px;margin-bottom:8px">🎯</div>
               <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:16px;color:var(--cream);margin-bottom:4px">Click to control</div>
               <div style="font-size:10px;color:var(--text-dim)">Use WASD or arrow keys to move the laser</div>
             </div>
           </div>
-  
         </div>
-  
-        <!-- Active controls bar -->
-        <div id="control-bar" style="
-          display:none;
-          background:var(--surface);
-          border:1px solid rgba(255,80,80,0.25);
-          border-radius:12px;
-          padding:12px 18px;
-          display:none;
-          align-items:center;
-          justify-content:space-between;
-        ">
+        <div id="control-bar" style="display:none;background:var(--surface);border:1px solid rgba(255,80,80,0.25);border-radius:12px;padding:12px 18px;align-items:center;justify-content:space-between;">
           <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#ff8080">
             <div style="width:8px;height:8px;background:#ff4444;border-radius:50%;animation:pulse-red 1s ease-in-out infinite"></div>
             Keyboard control active
@@ -1237,62 +1304,32 @@ body {
           </button>
         </div>
       </div>
-  
-      <!-- Right panel -->
       <div style="display:flex;flex-direction:column;gap:16px">
-  
-        <!-- WASD guide -->
         <div class="widget">
           <div class="widget-label"><div class="wi">⌨️</div> Keyboard Controls</div>
-  
-          <!-- WASD visual -->
           <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin:20px 0 16px">
-            <div style="display:flex;gap:6px">
-              <div class="key-cap" id="key-w">W</div>
-            </div>
+            <div style="display:flex;gap:6px"><div class="key-cap" id="key-w">W</div></div>
             <div style="display:flex;gap:6px">
               <div class="key-cap" id="key-a">A</div>
               <div class="key-cap" id="key-s">S</div>
               <div class="key-cap" id="key-d">D</div>
             </div>
             <div style="font-size:9px;color:var(--text-dim);margin-top:4px;letter-spacing:1px">— or —</div>
-            <div style="display:flex;gap:6px;margin-top:2px">
-              <div class="key-cap" id="key-up">↑</div>
-            </div>
+            <div style="display:flex;gap:6px;margin-top:2px"><div class="key-cap" id="key-up">↑</div></div>
             <div style="display:flex;gap:6px">
               <div class="key-cap" id="key-left">←</div>
               <div class="key-cap" id="key-down">↓</div>
               <div class="key-cap" id="key-right">→</div>
             </div>
           </div>
-  
-          <!-- Direction descriptions -->
           <div style="display:flex;flex-direction:column;gap:6px">
-            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
-              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">W / ↑</span></span>
-              <span style="color:var(--text-mid)">Move laser up</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
-              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">S / ↓</span></span>
-              <span style="color:var(--text-mid)">Move laser down</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
-              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">A / ←</span></span>
-              <span style="color:var(--text-mid)">Move laser left</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
-              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">D / →</span></span>
-              <span style="color:var(--text-mid)">Move laser right</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px">
-              <span style="color:var(--text-dim)"><span style="color:var(--amber-l);font-weight:500">ESC</span></span>
-              <span style="color:var(--text-mid)">Stop controlling</span>
-            </div>
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px"><span style="color:var(--amber-l);font-weight:500">W / ↑</span><span style="color:var(--text-mid)">Move laser up</span></div>
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px"><span style="color:var(--amber-l);font-weight:500">S / ↓</span><span style="color:var(--text-mid)">Move laser down</span></div>
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px"><span style="color:var(--amber-l);font-weight:500">A / ←</span><span style="color:var(--text-mid)">Move laser left</span></div>
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px"><span style="color:var(--amber-l);font-weight:500">D / →</span><span style="color:var(--text-mid)">Move laser right</span></div>
+            <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:10px"><span style="color:var(--amber-l);font-weight:500">ESC</span><span style="color:var(--text-mid)">Stop controlling</span></div>
           </div>
         </div>
-
-  
-        <!-- Speed control -->
         <div class="widget">
           <div class="widget-label"><div class="wi">⚡</div> Move Speed</div>
           <div style="display:flex;gap:8px;margin-top:8px">
@@ -1307,7 +1344,6 @@ body {
             </div>
           </div>
         </div>
-  
       </div>
     </div>
   </div>
@@ -1315,13 +1351,8 @@ body {
   <!-- ═══ ACTIVITY PAGE ═══ -->
   <div class="page" id="page-activity">
     <div class="page-header">
-      <div>
-        <h2>Activity Log</h2>
-        <p>All events and notifications</p>
-      </div>
-      <div class="ph-right">
-        <button class="outline-btn">Clear all</button>
-      </div>
+      <div><h2>Activity Log</h2><p>All events and notifications</p></div>
+      <div class="ph-right"><button class="outline-btn">Clear all</button></div>
     </div>
     <div class="notif-list">
       <div class="notif"><div class="notif-icon">🍽</div><div class="notif-body"><h4>Feed dispensed</h4><p>Auto-schedule at 8:01 AM · 40g portion delivered</p></div><div class="notif-time">2h ago</div></div>
@@ -1333,16 +1364,79 @@ body {
     </div>
   </div>
 
+  <!-- ═══ VOICE MEMOS PAGE ═══ -->
+  <div class="page" id="page-memos">
+    <div class="page-header">
+      <div>
+        <h2>Voice Memos 🎙</h2>
+        <p id="memo-count-label">Loading memos…</p>
+      </div>
+    </div>
+
+    <!-- Record panel -->
+    <div style="
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    ">
+      <!-- Big record button -->
+      <button class="record-btn idle" id="record-btn" onclick="toggleRecording()">🎙</button>
+
+      <!-- Status area -->
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <span id="record-status-text" style="font-size:12px;color:var(--text-mid)">Press to record a message for Mochi</span>
+          <span id="record-timer" style="font-family:'Playfair Display',serif;font-size:18px;color:var(--amber-l);display:none">0:00</span>
+        </div>
+
+        <!-- Waveform bars (visible while recording) -->
+        <div class="waveform" id="record-waveform">
+          <div class="bar" style="height:6px"></div>
+          <div class="bar" style="height:10px"></div>
+          <div class="bar" style="height:6px"></div>
+          <div class="bar" style="height:14px"></div>
+          <div class="bar" style="height:8px"></div>
+          <div class="bar" style="height:6px"></div>
+          <div class="bar" style="height:12px"></div>
+          <div class="bar" style="height:6px"></div>
+        </div>
+
+        <!-- Label input (visible after recording stops, before save) -->
+        <div id="save-row" style="display:none;align-items:center;gap:8px;margin-top:8px">
+          <input id="memo-label-input" type="text" placeholder="Name this memo…" value="Voice Memo"
+            style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--cream);font-family:'DM Mono',monospace;font-size:11px;padding:8px 12px;outline:none;width:200px"
+          />
+          <button onclick="saveMemo()" style="background:linear-gradient(135deg,#c8863a,#a06020);border:none;border-radius:9px;padding:8px 16px;font-family:'DM Mono',monospace;font-size:11px;color:#fff;cursor:pointer">
+            💾 Save
+          </button>
+          <button onclick="discardMemo()" style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);cursor:pointer">
+            Discard
+          </button>
+        </div>
+      </div>
+
+      <!-- Mic permission hint -->
+      <div id="mic-hint" style="display:none;font-size:10px;color:var(--red);max-width:160px;text-align:center">
+        ⚠️ Microphone access denied. Check browser settings.
+      </div>
+    </div>
+
+    <!-- Saved memos list -->
+    <div id="memo-list" style="display:flex;flex-direction:column;gap:10px">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
   <!-- ═══ SCHEDULE PAGE ═══ -->
   <div class="page" id="page-schedule">
     <div class="page-header">
-      <div>
-        <h2>Schedule</h2>
-        <p>Automated routines for Mochi</p>
-      </div>
-      <div class="ph-right">
-        <button class="outline-btn">+ Add</button>
-      </div>
+      <div><h2>Schedule</h2><p>Automated routines for Mochi</p></div>
+      <div class="ph-right"><button class="outline-btn">+ Add</button></div>
     </div>
     <div class="schedule-list">
       <div class="sched-item"><div class="sched-time">7:00 <span>AM · Daily</span></div><div class="sched-info"><h4>Morning Feed</h4><p>Dispense 40g dry food · Auto portion</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
@@ -1357,10 +1451,7 @@ body {
   <!-- ═══ SETTINGS PAGE ═══ -->
   <div class="page" id="page-settings">
     <div class="page-header">
-      <div>
-        <h2>Settings</h2>
-        <p>Configure your Catopia hub</p>
-      </div>
+      <div><h2>Settings</h2><p>Configure your Catopia hub</p></div>
     </div>
     <div class="settings-sections">
       <div>
@@ -1404,8 +1495,9 @@ function showPage(name, navEl) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   if (navEl) navEl.classList.add('active');
-  const titles = { dashboard: 'Dashboard', cameras: 'Cameras', activity: 'Activity', schedule: 'Schedule', settings: 'Settings' };
+  const titles = { dashboard: 'Dashboard', cameras: 'Cameras', activity: 'Activity', schedule: 'Schedule', settings: 'Settings', memos: 'Voice Memos', play: 'Play', test: 'Test' };
   document.getElementById('page-title').textContent = titles[name] || name;
+  if (name === 'memos') loadMemos();
 }
 
 // ── Toast ──
@@ -1425,38 +1517,21 @@ function toast(msg, icon = '✓') {
 async function toggleCtrl(btn) {
   const name = btn.querySelector('.ctrl-name').textContent;
   const state = btn.querySelector('.ctrl-state');
-
-  const commandMap = {
-    'LED':        'LED_TOGGLE',
-    'Water Pump': 'PUMP_TOGGLE',
-  };
-
+  const commandMap = { 'LED': 'LED_TOGGLE', 'Water Pump': 'PUMP_TOGGLE' };
   const command = commandMap[name];
-
   if (command) {
-    // Optimistically update UI right away
     btn.classList.toggle('on');
     const isOn = btn.classList.contains('on');
     state.textContent = isOn ? 'On' : 'Off';
     toast(`${name} turned ${isOn ? 'on' : 'off'}`, '💡');
-
     try {
-      const payload = { type: command };
-      console.log('POST /api/command →', JSON.stringify(payload, null, 2));
-
-      await fetch('/api/command', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      await fetch('/api/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: command }) });
     } catch (err) {
-      // Revert UI if the request failed
       btn.classList.toggle('on');
       state.textContent = btn.classList.contains('on') ? 'On' : 'Off';
       toast(`Failed to toggle ${name}`, '⚠️');
     }
   } else {
-    // UI-only buttons
     btn.classList.toggle('on');
     state.textContent = btn.classList.contains('on') ? 'On' : 'Off';
     toast(`${name} turned ${btn.classList.contains('on') ? 'on' : 'off'}`, '💡');
@@ -1467,111 +1542,45 @@ async function refreshState() {
   try {
     const res = await fetch('/api/state');
     const data = await res.json();
-    // Sync LED button
-    // syncCtrlBtn('LED', data.led === 1);
-
-    // Sync Water Pump button
-    // syncCtrlBtn('Water Pump', data.pump === 1);
-
-    // Update weight widget
     if (data.weight !== null && data.weight !== undefined) {
       document.getElementById('weight-value').textContent = data.weight;
     }
-
-  } catch (err) {
-    console.error('Error loading state:', err);
-  }
+  } catch (err) { console.error('Error loading state:', err); }
 }
-
-// Poll every second
 refreshState();
 setInterval(refreshState, 1000);
+
 // ── Feed ──
 function triggerFeed(btn) {
-  const h = btn.querySelector('h3');
-  const p = btn.querySelector('p');
-  const a = btn.querySelector('.fa');
+  const h = btn.querySelector('h3'), p = btn.querySelector('p'), a = btn.querySelector('.fa');
   btn.style.pointerEvents = 'none';
-  h.textContent = 'Dispensing…';
-  p.textContent = 'Portion on the way!';
-  a.textContent = '⏳';
+  h.textContent = 'Dispensing…'; p.textContent = 'Portion on the way!'; a.textContent = '⏳';
   setTimeout(() => {
-    h.textContent = 'Mochi is eating!';
-    p.textContent = '40g dispensed · Just now';
-    a.textContent = '✓';
-    a.style.color = 'var(--green)';
+    h.textContent = 'Mochi is eating!'; p.textContent = '40g dispensed · Just now'; a.textContent = '✓'; a.style.color = 'var(--green)';
     toast('🍽 Mochi has been fed!');
-    setTimeout(() => {
-      h.textContent = 'Feed Mochi';
-      p.textContent = 'Last fed just now';
-      a.textContent = '→';
-      a.style.color = '';
-      btn.style.pointerEvents = '';
-    }, 4000);
+    setTimeout(() => { h.textContent = 'Feed Mochi'; p.textContent = 'Last fed just now'; a.textContent = '→'; a.style.color = ''; btn.style.pointerEvents = ''; }, 4000);
   }, 1600);
 }
 
-function setDispense(g) {
-  document.getElementById('dispense-input').value = g;
-  updateDispenseLabel(g);
-}
-
-// function updateDispenseLabel(g) {
-//   document.getElementById('dispense-btn-label').textContent = g + 'g';
-// }
+function setDispense(g) { document.getElementById('dispense-input').value = g; }
 
 async function dispenseFood() {
   const grams = parseInt(document.getElementById('dispense-input').value);
-  if (!grams || grams < 5 || grams > 150) {
-    toast('Enter a valid amount (5–150g)', '⚠️');
-    return;
-  }
-
+  if (!grams || grams < 5 || grams > 150) { toast('Enter a valid amount (5–150g)', '⚠️'); return; }
   const btn = document.getElementById('dispense-food-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Dispensing…';
-
+  btn.disabled = true; btn.textContent = '⏳ Dispensing…';
   try {
-    const payload = { type: 'DISPENSE', params: {grams: grams}};
-    console.log('POST /api/command →', JSON.stringify(payload, null, 2));
-
-    await fetch('/api/command', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
+    await fetch('/api/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'DISPENSE', params: { grams } }) });
     toast(`🍽 Dispensing ${grams}g for Mochi!`);
-  } catch (err) {
-    toast('Failed to dispense', '⚠️');
-    console.error(err);
-  } finally {
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.innerHTML = '🍽 Dispense Now';
-    }, 3000);
-  }
+  } catch (err) { toast('Failed to dispense', '⚠️'); }
+  finally { setTimeout(() => { btn.disabled = false; btn.innerHTML = '🍽 Dispense'; }, 3000); }
 }
 
-let controlActive = false;
-let laserX = 50; // percent
-let laserY = 50;
+// ── Laser play ──
+let controlActive = false, laserX = 50, laserY = 50, moveSpeed = 5;
 const speedMap = { '🐌': 2, '🐈': 5, '⚡': 10 };
-let moveSpeed = 5;
-
-const keyMap = {
-  'w': 'up',   'ArrowUp':    'up',
-  's': 'down', 'ArrowDown':  'down',
-  'a': 'left', 'ArrowLeft':  'left',
-  'd': 'right','ArrowRight': 'right',
-};
-
-const keyElMap = {
-  'w': 'key-w', 'ArrowUp':    'key-up',
-  's': 'key-s', 'ArrowDown':  'key-down',
-  'a': 'key-a', 'ArrowLeft':  'key-left',
-  'd': 'key-d', 'ArrowRight': 'key-right',
-};
+const keyMap = { 'w':'up','ArrowUp':'up','s':'down','ArrowDown':'down','a':'left','ArrowLeft':'left','d':'right','ArrowRight':'right' };
+const keyElMap = { 'w':'key-w','ArrowUp':'key-up','s':'key-s','ArrowDown':'key-down','a':'key-a','ArrowLeft':'key-left','d':'key-d','ArrowRight':'key-right' };
 
 async function activateControl() {
   controlActive = true;
@@ -1579,19 +1588,7 @@ async function activateControl() {
   document.getElementById('control-bar').style.display = 'flex';
   document.getElementById('laser-dot').style.display = 'block';
   document.getElementById('laser-active-badge').style.display = 'flex';
-
-  try {
-    const payload = { type: 'LASER_TOGGLE' };
-    console.log('POST /api/command →', JSON.stringify(payload, null, 2));
-    await fetch('/api/command', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-  } catch (err) {
-    console.error('Failed to activate laser:', err);
-  }
-
+  try { await fetch('/api/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'LASER_TOGGLE' }) }); } catch {}
   toast('🎯 Laser control active — use WASD to move', '🎯');
 }
 
@@ -1604,108 +1601,334 @@ function deactivateControl() {
 }
 
 function selectSpeed(el) {
-  document.querySelectorAll('.speed-btn').forEach(b => {
-    b.classList.remove('selected');
-    b.style.background = 'var(--surface2)';
-    b.style.borderColor = 'var(--border)';
-    b.style.color = 'var(--text-mid)';
-  });
-  el.classList.add('selected');
-  el.style.background = 'var(--amber-glow)';
-  el.style.borderColor = 'var(--border2)';
-  el.style.color = 'var(--amber-l)';
-  const icon = el.querySelector('span').textContent;
-  moveSpeed = speedMap[icon] ?? 5;
+  document.querySelectorAll('.speed-btn').forEach(b => { b.classList.remove('selected'); b.style.background='var(--surface2)'; b.style.borderColor='var(--border)'; b.style.color='var(--text-mid)'; });
+  el.classList.add('selected'); el.style.background='var(--amber-glow)'; el.style.borderColor='var(--border2)'; el.style.color='var(--amber-l)';
+  moveSpeed = speedMap[el.querySelector('span').textContent] ?? 5;
+}
+
+let lastSent = 0;
+function sendLaserMove(dir) {
+  const now = Date.now(); if (now - lastSent < 10) return; lastSent = now;
+  fetch('/api/command', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'LASER_MOVE', params:{ direction:dir, x:laserX, y:laserY }}) }).catch(()=>{});
 }
 
 document.addEventListener('keydown', (e) => {
   if (!controlActive) return;
   if (e.key === 'Escape') { deactivateControl(); return; }
-
-  const dir = keyMap[e.key];
-  if (!dir) return;
-  e.preventDefault();
-
-  // Highlight key cap
-  const keyElId = keyElMap[e.key];
-  if (keyElId) document.getElementById(keyElId)?.classList.add('pressed');
-
-  // Move dot instantly
-  if (dir === 'up')    laserY = Math.max(5,  laserY - moveSpeed);
-  if (dir === 'down')  laserY = Math.min(95, laserY + moveSpeed);
-  if (dir === 'left')  laserX = Math.max(5,  laserX - moveSpeed);
-  if (dir === 'right') laserX = Math.min(95, laserX + moveSpeed);
-
-  document.getElementById('laser-dot').style.left = laserX + '%';
-  document.getElementById('laser-dot').style.top  = laserY + '%';
-
-  // Send to backend — fire and forget, no await
+  const dir = keyMap[e.key]; if (!dir) return; e.preventDefault();
+  const keyElId = keyElMap[e.key]; if (keyElId) document.getElementById(keyElId)?.classList.add('pressed');
+  if (dir==='up') laserY=Math.max(5,laserY-moveSpeed); if (dir==='down') laserY=Math.min(95,laserY+moveSpeed);
+  if (dir==='left') laserX=Math.max(5,laserX-moveSpeed); if (dir==='right') laserX=Math.min(95,laserX+moveSpeed);
+  document.getElementById('laser-dot').style.left = laserX+'%'; document.getElementById('laser-dot').style.top = laserY+'%';
   sendLaserMove(dir);
 });
 
-// Throttle — only send to backend at most every 50ms
-let lastSent = 0;
-function sendLaserMove(dir) {
-  const now = Date.now();
-  if (now - lastSent < 10) return;  // drop if too soon
-  lastSent = now;
-
-  const payload = { type: 'LASER_MOVE', params: { direction: dir, x: laserX, y: laserY } };
-  console.log('POST /api/command →', JSON.stringify(payload, null, 2));
-
-  fetch('/api/command', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  }).catch(err => console.error('Laser move failed:', err));
-}
-
-// document.addEventListener('keydown', async (e) => {
-//   if (!controlActive) return;
-//   if (e.key === 'Escape') { deactivateControl(); return; }
-
-//   const dir = keyMap[e.key];
-//   if (!dir) return;
-//   e.preventDefault();
-
-//   // Highlight key cap
-//   const keyElId = keyElMap[e.key];
-//   if (keyElId) document.getElementById(keyElId)?.classList.add('pressed');
-
-//   // Move dot
-//   if (dir === 'up')    laserY = Math.max(5,  laserY - moveSpeed);
-//   if (dir === 'down')  laserY = Math.min(95, laserY + moveSpeed);
-//   if (dir === 'left')  laserX = Math.max(5,  laserX - moveSpeed);
-//   if (dir === 'right') laserX = Math.min(95, laserX + moveSpeed);
-
-//   const dot = document.getElementById('laser-dot');
-//   dot.style.left = laserX + '%';
-//   dot.style.top  = laserY + '%';
-
-//   // Send to backend
-//   try {
-//     const payload = { type: 'LASER_MOVE', params: { direction: dir, x: laserX, y: laserY } };
-//     console.log('POST /api/command →', JSON.stringify(payload, null, 2));
-//     await fetch('/api/command', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(payload)
-//     });
-//   } catch (err) {
-//     console.error('Laser move failed:', err);
-//   }
-// });
-
 document.addEventListener('keyup', (e) => {
-  const keyElId = keyElMap[e.key];
-  if (keyElId) document.getElementById(keyElId)?.classList.remove('pressed');
+  const keyElId = keyElMap[e.key]; if (keyElId) document.getElementById(keyElId)?.classList.remove('pressed');
 });
 
-// ── Refresh stats ──
-function refreshStats() {
-  toast('Stats refreshed', '↻');
+function refreshStats() { toast('Stats refreshed', '↻'); }
+
+// ═══════════════════════════════════════════
+// ══  VOICE MEMOS                          ══
+// ═══════════════════════════════════════════
+
+let mediaRecorder = null;
+let audioChunks = [];
+let recordingBlob = null;
+let timerInterval = null;
+let recordSeconds = 0;
+let currentAudio = null;   // the <audio> element currently playing
+let currentMemoId = null;  // id of the memo card being played
+
+// ── Format helpers ──
+function fmtTime(sec) {
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return `${m}:${s.toString().padStart(2,'0')}`;
 }
 
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:true });
+}
+
+function fmtBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1024*1024) return (b/1024).toFixed(0) + ' KB';
+  return (b/(1024*1024)).toFixed(1) + ' MB';
+}
+
+// ── Recording ──
+async function toggleRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording();
+  } else {
+    await startRecording();
+  }
+}
+
+async function startRecording() {
+  // Clear any pending unsaved recording
+  recordingBlob = null;
+  audioChunks = [];
+  document.getElementById('save-row').style.display = 'none';
+
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (err) {
+    document.getElementById('mic-hint').style.display = 'block';
+    toast('Microphone access denied', '⚠️');
+    return;
+  }
+  document.getElementById('mic-hint').style.display = 'none';
+
+  // Prefer webm/opus; fall back to whatever the browser supports
+  const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+    ? 'audio/webm;codecs=opus'
+    : MediaRecorder.isTypeSupported('audio/webm')
+      ? 'audio/webm'
+      : '';
+
+  mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+  mediaRecorder.onstop = () => {
+    recordingBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+    stream.getTracks().forEach(t => t.stop());
+    showSaveRow();
+  };
+
+  mediaRecorder.start(100); // collect chunks every 100ms
+
+  // UI: recording state
+  const btn = document.getElementById('record-btn');
+  btn.className = 'record-btn recording';
+  btn.textContent = '⏹';
+  document.getElementById('record-status-text').textContent = 'Recording… tap to stop';
+  document.getElementById('record-timer').style.display = 'inline';
+  document.getElementById('record-waveform').classList.add('active');
+  document.getElementById('save-row').style.display = 'none';
+
+  recordSeconds = 0;
+  document.getElementById('record-timer').textContent = '0:00';
+  timerInterval = setInterval(() => {
+    recordSeconds++;
+    document.getElementById('record-timer').textContent = fmtTime(recordSeconds);
+  }, 1000);
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  clearInterval(timerInterval);
+
+  // UI: back to idle
+  const btn = document.getElementById('record-btn');
+  btn.className = 'record-btn idle';
+  btn.textContent = '🎙';
+  document.getElementById('record-status-text').textContent = 'Recording stopped — name and save below';
+  document.getElementById('record-timer').style.display = 'none';
+  document.getElementById('record-waveform').classList.remove('active');
+}
+
+function showSaveRow() {
+  const row = document.getElementById('save-row');
+  row.style.display = 'flex';
+  // Default label = "Voice Memo MM/DD HH:MM"
+  const now = new Date();
+  document.getElementById('memo-label-input').value =
+    `Memo ${now.toLocaleDateString('en-US',{month:'short',day:'numeric'})} ${now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
+}
+
+async function saveMemo() {
+  if (!recordingBlob) { toast('Nothing to save', '⚠️'); return; }
+  const label = document.getElementById('memo-label-input').value.trim() || 'Voice Memo';
+  const ext = recordingBlob.type.includes('ogg') ? 'ogg' : 'webm';
+  const file = new File([recordingBlob], `memo.${ext}`, { type: recordingBlob.type });
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('label', label);
+
+  try {
+    const res = await fetch('/api/memos', { method: 'POST', body: fd });
+    if (!res.ok) throw new Error('Upload failed');
+    toast('🎙 Memo saved!');
+    recordingBlob = null;
+    document.getElementById('save-row').style.display = 'none';
+    document.getElementById('record-status-text').textContent = 'Press to record a message for Mochi';
+    loadMemos();
+  } catch (err) {
+    toast('Failed to save memo', '⚠️');
+    console.error(err);
+  }
+}
+
+function discardMemo() {
+  recordingBlob = null;
+  document.getElementById('save-row').style.display = 'none';
+  document.getElementById('record-status-text').textContent = 'Press to record a message for Mochi';
+  toast('Recording discarded', '🗑');
+}
+
+// ── Load & render memos ──
+async function loadMemos() {
+  const list = document.getElementById('memo-list');
+  const countLabel = document.getElementById('memo-count-label');
+  try {
+    const res = await fetch('/api/memos');
+    const memos = await res.json();
+    countLabel.textContent = memos.length === 0 ? 'No memos yet' : `${memos.length} memo${memos.length !== 1 ? 's' : ''} saved`;
+    if (memos.length === 0) {
+      list.innerHTML = `
+        <div class="memo-empty">
+          <div class="me-icon">🎙</div>
+          <p>No voice memos yet. Record your first message for Mochi!</p>
+        </div>`;
+      return;
+    }
+    list.innerHTML = memos.map(m => renderMemoCard(m)).join('');
+  } catch (err) {
+    countLabel.textContent = 'Error loading memos';
+    console.error(err);
+  }
+}
+
+function renderMemoCard(m) {
+  return `
+    <div class="memo-card" id="memocard-${m.id}">
+      <button class="memo-play-btn" id="playbtn-${m.id}" onclick="togglePlay('${m.id}', '${m.url}')">▶</button>
+      <div class="memo-info">
+        <div class="memo-label" id="label-${m.id}" onclick="startRename('${m.id}')" title="Click to rename">${escHtml(m.label)}</div>
+        <div class="memo-meta">${fmtDate(m.created_at)} · ${fmtBytes(m.size_bytes)}</div>
+        <div class="memo-progress-wrap" id="prog-wrap-${m.id}" onclick="seekMemo(event, '${m.id}')">
+          <div class="memo-progress-fill" id="prog-${m.id}"></div>
+        </div>
+      </div>
+      <div class="memo-actions">
+        <div class="memo-action-btn" title="Download" onclick="downloadMemo('${m.url}', '${escHtml(m.label)}')">⬇</div>
+        <div class="memo-action-btn danger" title="Delete" onclick="deleteMemo('${m.id}')">🗑</div>
+      </div>
+    </div>`;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Playback ──
+function togglePlay(id, url) {
+  if (currentAudio && currentMemoId === id) {
+    // Pause currently playing
+    currentAudio.pause();
+    currentAudio = null;
+    currentMemoId = null;
+    setPlayingState(id, false);
+    return;
+  }
+
+  // Stop any other playing memo
+  if (currentAudio) {
+    currentAudio.pause();
+    if (currentMemoId) setPlayingState(currentMemoId, false);
+  }
+
+  const audio = new Audio(url);
+  currentAudio = audio;
+  currentMemoId = id;
+  setPlayingState(id, true);
+
+  audio.ontimeupdate = () => {
+    if (audio.duration) {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      const fill = document.getElementById('prog-' + id);
+      if (fill) fill.style.width = pct + '%';
+    }
+  };
+
+  audio.onended = () => {
+    currentAudio = null; currentMemoId = null;
+    setPlayingState(id, false);
+    const fill = document.getElementById('prog-' + id);
+    if (fill) fill.style.width = '0%';
+  };
+
+  audio.onerror = () => { toast('Could not play memo', '⚠️'); setPlayingState(id, false); };
+
+  audio.play().catch(err => { toast('Playback failed', '⚠️'); console.error(err); setPlayingState(id, false); });
+}
+
+function setPlayingState(id, playing) {
+  const card = document.getElementById('memocard-' + id);
+  const btn  = document.getElementById('playbtn-' + id);
+  if (!card || !btn) return;
+  if (playing) {
+    card.classList.add('playing');
+    btn.classList.add('playing');
+    btn.textContent = '⏸';
+  } else {
+    card.classList.remove('playing');
+    btn.classList.remove('playing');
+    btn.textContent = '▶';
+  }
+}
+
+function seekMemo(e, id) {
+  if (!currentAudio || currentMemoId !== id) return;
+  const bar = e.currentTarget;
+  const pct = e.offsetX / bar.offsetWidth;
+  currentAudio.currentTime = pct * currentAudio.duration;
+}
+
+// ── Delete ──
+async function deleteMemo(id) {
+  // Stop if playing
+  if (currentMemoId === id && currentAudio) { currentAudio.pause(); currentAudio = null; currentMemoId = null; }
+  try {
+    const res = await fetch('/api/memos/' + id, { method: 'DELETE' });
+    if (!res.ok) throw new Error();
+    const card = document.getElementById('memocard-' + id);
+    if (card) card.style.animation = 'toast-out 0.25s ease both';
+    setTimeout(() => loadMemos(), 280);
+    toast('Memo deleted', '🗑');
+  } catch { toast('Failed to delete memo', '⚠️'); }
+}
+
+// ── Download ──
+function downloadMemo(url, label) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = label.replace(/[^a-z0-9\s\-_]/gi, '') + '.webm';
+  a.click();
+}
+
+// ── Inline rename ──
+function startRename(id) {
+  const labelEl = document.getElementById('label-' + id);
+  const current = labelEl.textContent;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = current;
+  input.className = 'memo-label-input';
+  labelEl.replaceWith(input);
+  input.focus(); input.select();
+
+  const finish = async () => {
+    const newLabel = input.value.trim() || current;
+    try {
+      await fetch('/api/memos/' + id, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ label: newLabel }) });
+    } catch {}
+    const span = document.createElement('div');
+    span.className = 'memo-label'; span.id = 'label-' + id;
+    span.title = 'Click to rename'; span.textContent = newLabel;
+    span.onclick = () => startRename(id);
+    input.replaceWith(span);
+  };
+
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); if (e.key === 'Escape') { input.value = current; input.blur(); } });
+}
 </script>
 </body>
 </html>
