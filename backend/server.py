@@ -23,7 +23,6 @@ async def receive_data(data: dict):
     latest_data = data
     return {"status": "ok"}
 
-
 @app.get("/api/state")
 async def get_state():
     # print(latest_data)
