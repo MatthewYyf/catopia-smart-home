@@ -1120,12 +1120,6 @@ body {
       <span class="ni-icon">🎯</span>
       <span class="ni-text">Play</span>
     </div>
-
-    <div class="nav-item" data-page="activity" onclick="showPage('activity', this)">
-      <span class="ni-icon">📋</span>
-      <span class="ni-text">Activity</span>
-      <span class="ni-badge">3</span>
-    </div>
   </div>
 
   <div class="nav-section">
@@ -1601,27 +1595,6 @@ body {
     </div>
   </div>
 
-  <!-- ═══ ACTIVITY PAGE ═══ -->
-  <div class="page" id="page-activity">
-    <div class="page-header">
-      <div>
-        <h2>Activity Log</h2>
-        <p>All events and notifications</p>
-      </div>
-      <div class="ph-right">
-        <button class="outline-btn">Clear all</button>
-      </div>
-    </div>
-    <div class="notif-list">
-      <div class="notif"><div class="notif-icon">🍽</div><div class="notif-body"><h4>Feed dispensed</h4><p>Auto-schedule at 8:01 AM · 40g portion delivered</p></div><div class="notif-time">2h ago</div></div>
-      <div class="notif green-b"><div class="notif-icon">🚪</div><div class="notif-body"><h4>Mochi returned home</h4><p>Cat door triggered · Indoor mode re-activated</p></div><div class="notif-time">2h 14m ago</div></div>
-      <div class="notif"><div class="notif-icon">💡</div><div class="notif-body"><h4>Lights turned off automatically</h4><p>Sunrise sensor activated · Overhead lights off</p></div><div class="notif-time">4h ago</div></div>
-      <div class="notif red-b"><div class="notif-icon">⚠️</div><div class="notif-body"><h4>Food level alert</h4><p>Level dropped below 65% — consider refilling hopper</p></div><div class="notif-time">Yesterday</div></div>
-      <div class="notif green-b"><div class="notif-icon">💧</div><div class="notif-body"><h4>Water fountain refilled</h4><p>Manual refill detected · Level now at 84%</p></div><div class="notif-time">Yesterday</div></div>
-      <div class="notif"><div class="notif-icon">🎯</div><div class="notif-body"><h4>Laser play session ended</h4><p>15-minute session completed · Mochi active</p></div><div class="notif-time">2 days ago</div></div>
-    </div>
-  </div>
-
   <!-- ═══ SCHEDULE PAGE ═══ -->
   <div class="page" id="page-schedule">
     <div class="page-header">
@@ -1782,7 +1755,6 @@ function showPage(name, navEl) {
     dashboard: 'Dashboard',
     cameras: 'Cameras',
     play: 'Play',
-    activity: 'Activity',
     schedule: 'Schedule',
     reports: 'Reports',
     settings: 'Settings'
