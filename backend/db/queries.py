@@ -1,7 +1,7 @@
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 
 DB_PATH = Path(__file__).with_name("catopia.db")
@@ -15,7 +15,7 @@ class report:
     food_intake: float
     weight: float
     short_message: str
-    voice_tags: Dict[str, str]
+    voice_tags: List[Dict[str, str]]
 
 
 def _get_connection() -> sqlite3.Connection:
@@ -31,8 +31,7 @@ def init_db() -> None:
             conn.executescript(schema_file.read())
 
 
-def getVoice_log(report_date: str) -> Dict[str, str]:
-    output: Dict[str, str] = {}
+def getVoice_log(report_date: str) -> List[Dict[str, str]]:
     with _get_connection() as conn:
         rows = conn.execute(
             """
@@ -41,15 +40,18 @@ def getVoice_log(report_date: str) -> Dict[str, str]:
                 voice_type
             FROM voice_logs
             WHERE report_date = ?
-            ORDER BY timestamp DESC
+            ORDER BY timestamp ASC
             """,
             (report_date,),
         ).fetchall()
 
-    for row in rows:
-        output[row["timestamp"]] = row["voice_type"]
-
-    return output
+    return [
+        {
+            "timestamp": row["timestamp"],
+            "voice_type": row["voice_type"],
+        }
+        for row in rows
+    ]
 
 
 def getReportbyDate(report_date: str) -> Optional[report]:

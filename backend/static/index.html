@@ -861,79 +861,119 @@ body {
   margin-bottom: 10px;
 }
 
-.emotion-chart {
+.emotion-timeline {
+  margin-top: 10px;
+}
+
+.emotion-canvas {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 6px;
+}
+
+.emotion-plot {
   position: relative;
+  min-width: 720px;
+}
+
+.timeline-axis-line {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 68px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(200,134,58,0.25), rgba(200,134,58,0.7), rgba(200,134,58,0.25));
+}
+
+.timeline-boundary {
+  position: absolute;
+  bottom: 16px;
+  font-size: 9px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.timeline-boundary.start { left: 20px; }
+.timeline-boundary.end { right: 20px; }
+
+.emotion-event {
+  position: absolute;
+  bottom: 68px;
+  width: 84px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-left: 92px;
+  align-items: center;
+  gap: 8px;
+  transform: translateX(-50%);
 }
 
-.emotion-chart::before {
-  content: '';
-  position: absolute;
-  left: 66px;
-  top: 8px;
-  bottom: 8px;
-  width: 1px;
-  background: linear-gradient(180deg, transparent, var(--border2), transparent);
-}
-
-.emotion-row {
-  position: relative;
-  min-height: 42px;
-}
-
-.emotion-time {
-  position: absolute;
-  left: -92px;
-  top: 8px;
-  width: 54px;
-  text-align: right;
-  font-size: 10px;
-  color: var(--amber-l);
-}
-
-.emotion-date {
-  display: block;
-  margin-top: 2px;
-  font-size: 8px;
-  color: var(--text-dim);
-}
-
-.emotion-marker {
-  position: absolute;
-  left: -31px;
-  top: 12px;
-  width: 11px;
-  height: 11px;
-  background: var(--green);
-  border: 2px solid var(--surface);
-  border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(90,158,111,0.16);
-}
-
-.emotion-card {
+.emotion-event-badge {
+  width: 78px;
+  min-height: 88px;
+  padding: 10px 8px;
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--green);
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-top-width: 3px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
 }
 
-.emotion-card strong {
+.emotion-event-badge.tag-food { border-top-color: var(--amber); }
+.emotion-event-badge.tag-brushing { border-top-color: var(--blue); }
+.emotion-event-badge.tag-isolation { border-top-color: var(--red); }
+.emotion-event-badge.tag-other { border-top-color: var(--text-dim); }
+
+.emotion-event-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
   display: block;
-  font-size: 12px;
+}
+
+.emotion-event-label {
+  margin-top: 8px;
+  font-size: 10px;
   color: var(--text);
-  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
   overflow-wrap: anywhere;
 }
 
-.emotion-card span {
+.emotion-event-stem {
+  width: 1px;
+  height: var(--stem-height, 32px);
+  background: linear-gradient(180deg, rgba(255,255,255,0.22), var(--border2));
+}
+
+.timeline-event-tick {
+  position: absolute;
+  bottom: 16px;
+  min-width: 58px;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.timeline-event-tick::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  width: 1px;
+  height: 12px;
+  background: var(--border2);
+  transform: translateX(-50%);
+}
+
+.timeline-event-tick span {
   display: block;
-  margin-top: 4px;
   font-size: 9px;
-  color: var(--text-dim);
+  color: var(--amber-l);
+  white-space: nowrap;
 }
 
 /* ═══════════ PAGE HEADER ═══════════ */
@@ -1057,10 +1097,11 @@ body {
   .widget.wide, .widget.full { grid-column: span 1; }
   .form-grid, .report-metrics { grid-template-columns: 1fr; }
   .lookup-row, .report-actions { flex-direction: column; align-items: stretch; }
-  .emotion-chart { padding-left: 74px; }
-  .emotion-chart::before { left: 52px; }
-  .emotion-time { left: -74px; width: 44px; }
-  .emotion-marker { left: -27px; }
+  .emotion-plot { min-width: 620px; }
+  .emotion-event { width: 72px; }
+  .emotion-event-badge { width: 66px; min-height: 80px; }
+  .emotion-event-icon { width: 34px; height: 34px; }
+  .timeline-event-tick { min-width: 52px; }
 }
 
 .ni-text { font-size: 12px; }
@@ -1926,30 +1967,147 @@ function formatTagDate(value) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
+const VOICE_TAG_META = {
+  food: {
+    key: 'food',
+    label: 'Food',
+    icon: '/static/images/food-tag.svg'
+  },
+  brushing: {
+    key: 'brushing',
+    label: 'Brushing',
+    icon: '/static/images/brushing-tag.svg'
+  },
+  isolation: {
+    key: 'isolation',
+    label: 'Isolation',
+    icon: '/static/images/isolation-tag.svg'
+  },
+  other: {
+    key: 'other',
+    label: 'Other',
+    icon: '/static/images/unknown-tag.svg'
+  }
+};
+
+function normalizeVoiceTag(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+
+  if (normalized.includes('food')) return 'food';
+  if (normalized.includes('brush')) return 'brushing';
+  if (normalized.includes('isolation')) return 'isolation';
+
+  return 'other';
+}
+
+function getVoiceTagMeta(voiceType) {
+  const key = normalizeVoiceTag(voiceType);
+  const meta = VOICE_TAG_META[key] || VOICE_TAG_META.other;
+
+  return {
+    key: meta.key,
+    label: meta.key === 'other' ? String(voiceType || 'Other').trim() || 'Other' : meta.label,
+    icon: meta.icon
+  };
+}
+
+function normalizeVoiceLogs(voiceTags) {
+  if (Array.isArray(voiceTags)) return voiceTags;
+
+  return Object.entries(voiceTags || {}).map(([timestamp, voiceType]) => ({
+    timestamp,
+    voice_type: voiceType
+  }));
+}
+
+function getTimelinePosition(timestamp) {
+  const date = parseTagDate(timestamp);
+  if (!date) return 50;
+
+  const minutes = (date.getHours() * 60) + date.getMinutes();
+  const dayProgress = minutes / (24 * 60 - 1);
+  return Math.max(5, Math.min(95, dayProgress * 100));
+}
+
+function assignEmotionLanes(events) {
+  const laneMinGap = 12;
+  const laneEnds = [];
+
+  return events.map((event) => {
+    let lane = 0;
+    while (laneEnds[lane] !== undefined && (event.position - laneEnds[lane]) < laneMinGap) {
+      lane += 1;
+    }
+    laneEnds[lane] = event.position;
+    return { ...event, lane };
+  });
+}
+
 function voiceTagsHtml(voiceTags) {
-  const entries = Object.entries(voiceTags || {})
-    .sort(([a], [b]) => String(a).localeCompare(String(b)));
+  const voiceLogs = normalizeVoiceLogs(voiceTags)
+    .filter((entry) => entry && entry.timestamp)
+    .sort((a, b) => String(a.timestamp).localeCompare(String(b.timestamp)));
 
-  if (!entries.length) return '';
+  if (!voiceLogs.length) return '';
 
-  const rows = entries.map(([timestamp, tag], index) => `
-    <div class="emotion-row">
-      <div class="emotion-time">
-        ${escapeHtml(formatTagTime(timestamp))}
-        <span class="emotion-date">${escapeHtml(formatTagDate(timestamp))}</span>
+  const laneHeight = 78;
+  const stemBase = 32;
+  const axisBottom = 68;
+
+  const events = assignEmotionLanes(
+    voiceLogs.map((entry) => {
+      const meta = getVoiceTagMeta(entry.voice_type);
+      return {
+        ...meta,
+        timestamp: entry.timestamp,
+        position: getTimelinePosition(entry.timestamp)
+      };
+    })
+  );
+
+  const maxLane = Math.max(...events.map((event) => event.lane), 0);
+  const plotHeight = axisBottom + 116 + (maxLane * laneHeight);
+
+  const eventMarkup = events.map((event) => `
+    <div
+      class="emotion-event"
+      style="left:${event.position}%; --stem-height:${stemBase + (event.lane * laneHeight)}px"
+      title="${escapeHtml(`${event.label} · ${formatTagDate(event.timestamp)} ${formatTagTime(event.timestamp)}`)}"
+    >
+      <div class="emotion-event-badge tag-${event.key}">
+        <img class="emotion-event-icon" src="${event.icon}" alt="${escapeHtml(event.label)}">
+        <span class="emotion-event-label">${escapeHtml(event.label)}</span>
       </div>
-      <div class="emotion-marker"></div>
-      <div class="emotion-card">
-        <strong>${escapeHtml(tag)}</strong>
-        <span>Entry ${index + 1} · ${escapeHtml(String(timestamp).replace('T', ' '))}</span>
-      </div>
+      <div class="emotion-event-stem"></div>
+    </div>
+  `).join('');
+
+  const uniqueTicks = Array.from(
+    new Map(
+      events.map((event) => [event.timestamp, { position: event.position, label: formatTagTime(event.timestamp) }])
+    ).values()
+  );
+
+  const tickMarkup = uniqueTicks.map((tick) => `
+    <div class="timeline-event-tick" style="left:${tick.position}%">
+      <span>${escapeHtml(tick.label)}</span>
     </div>
   `).join('');
 
   return `
     <div class="report-tags">
       <h5>Emotion Timeline</h5>
-      <div class="emotion-chart">${rows}</div>
+      <div class="emotion-timeline">
+        <div class="emotion-canvas">
+          <div class="emotion-plot" style="height:${plotHeight}px">
+            <div class="timeline-axis-line"></div>
+            ${eventMarkup}
+            ${tickMarkup}
+            <div class="timeline-boundary start">12 AM</div>
+            <div class="timeline-boundary end">11:59 PM</div>
+          </div>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -1964,7 +2122,7 @@ function displayReport(report) {
 
   result.className = 'report-result';
   const message = report.short_message?.trim() || 'No notes recorded.';
-  const tags = voiceTagsHtml(report.voice_tags);
+  const tags = voiceTagsHtml(report.voice_tags) || '<p class="report-message">No emotion tags recorded.</p>';
   result.innerHTML = `
     <div class="report-result-header">
       <div>
@@ -1989,7 +2147,7 @@ function displayVoiceTagsOnly(reportDate, voiceTags) {
   result.innerHTML = `
     <div class="report-result-header">
       <div>
-        <h4>Emotion Tags</h4>
+        <h4>Emotion Timeline</h4>
         <span>${escapeHtml(reportDate)}</span>
       </div>
       <span>No daily report</span>
