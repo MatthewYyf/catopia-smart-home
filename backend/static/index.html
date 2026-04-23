@@ -658,6 +658,284 @@ body {
   cursor: pointer;
 }
 
+/* ═══════════ REPORTS PAGE ═══════════ */
+.report-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 440px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.report-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.report-panel h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--cream);
+  margin-bottom: 14px;
+}
+
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field.full { grid-column: 1 / -1; }
+
+.form-field label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-field textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-color: var(--border2);
+  box-shadow: 0 0 0 3px var(--amber-glow);
+}
+
+.report-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--amber), var(--amber-d));
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #fff;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 9px 15px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(200,134,58,0.2);
+}
+
+.primary-btn:disabled,
+.outline-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.lookup-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.lookup-row .form-field { flex: 1; }
+
+.report-result {
+  min-height: 220px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  background: rgba(0,0,0,0.08);
+}
+
+.report-result.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.report-result-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.report-result-header h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--cream);
+}
+
+.report-result-header span {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.report-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.report-metric {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.report-metric span {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.report-metric strong {
+  font-size: 18px;
+  color: var(--amber-l);
+  font-weight: 400;
+}
+
+.report-message {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--text-mid);
+  white-space: pre-wrap;
+}
+
+.report-tags {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.report-tags h5 {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.emotion-chart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 92px;
+}
+
+.emotion-chart::before {
+  content: '';
+  position: absolute;
+  left: 66px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border2), transparent);
+}
+
+.emotion-row {
+  position: relative;
+  min-height: 42px;
+}
+
+.emotion-time {
+  position: absolute;
+  left: -92px;
+  top: 8px;
+  width: 54px;
+  text-align: right;
+  font-size: 10px;
+  color: var(--amber-l);
+}
+
+.emotion-date {
+  display: block;
+  margin-top: 2px;
+  font-size: 8px;
+  color: var(--text-dim);
+}
+
+.emotion-marker {
+  position: absolute;
+  left: -31px;
+  top: 12px;
+  width: 11px;
+  height: 11px;
+  background: var(--green);
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(90,158,111,0.16);
+}
+
+.emotion-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.emotion-card strong {
+  display: block;
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.emotion-card span {
+  display: block;
+  margin-top: 4px;
+  font-size: 9px;
+  color: var(--text-dim);
+}
+
 /* ═══════════ PAGE HEADER ═══════════ */
 .page-header {
   margin-bottom: 24px;
@@ -769,6 +1047,7 @@ body {
   .widget.full { grid-column: span 2; }
   .widget.wide { grid-column: span 2; }
   .cam-grid { grid-template-columns: 1fr; }
+  .report-layout { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
@@ -776,6 +1055,12 @@ body {
   .nav { display: none; }
   .dash-grid { grid-template-columns: 1fr; }
   .widget.wide, .widget.full { grid-column: span 1; }
+  .form-grid, .report-metrics { grid-template-columns: 1fr; }
+  .lookup-row, .report-actions { flex-direction: column; align-items: stretch; }
+  .emotion-chart { padding-left: 74px; }
+  .emotion-chart::before { left: 52px; }
+  .emotion-time { left: -74px; width: 44px; }
+  .emotion-marker { left: -27px; }
 }
 
 .ni-text { font-size: 12px; }
@@ -819,24 +1104,24 @@ body {
 
   <div class="nav-section">
     <span class="nav-section-label">Overview</span>
-    <div class="nav-item active" onclick="showPage('test', this)">
+    <div class="nav-item active" data-page="test" onclick="showPage('test', this)">
         <span class="ni-icon">🧪</span>
         <span class="ni-text">Test</span>
       </div>
-    <div class="nav-item" onclick="showPage('dashboard', this)">
+    <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard', this)">
       <span class="ni-icon">⊞</span>
       <span class="ni-text">Dashboard</span>
     </div>
-    <div class="nav-item" onclick="showPage('cameras', this)">
+    <div class="nav-item" data-page="cameras" onclick="showPage('cameras', this)">
       <span class="ni-icon">📷</span>
       <span class="ni-text">Cameras</span>
     </div>
-    <div class="nav-item" onclick="showPage('play', this)">
+    <div class="nav-item" data-page="play" onclick="showPage('play', this)">
       <span class="ni-icon">🎯</span>
       <span class="ni-text">Play</span>
     </div>
 
-    <div class="nav-item" onclick="showPage('activity', this)">
+    <div class="nav-item" data-page="activity" onclick="showPage('activity', this)">
       <span class="ni-icon">📋</span>
       <span class="ni-text">Activity</span>
       <span class="ni-badge">3</span>
@@ -845,11 +1130,15 @@ body {
 
   <div class="nav-section">
     <span class="nav-section-label">Manage</span>
-    <div class="nav-item" onclick="showPage('schedule', this)">
+    <div class="nav-item" data-page="schedule" onclick="showPage('schedule', this)">
       <span class="ni-icon">🕐</span>
       <span class="ni-text">Schedule</span>
     </div>
-    <div class="nav-item" onclick="showPage('settings', this)">
+    <div class="nav-item" data-page="reports" onclick="showPage('reports', this)">
+      <span class="ni-icon">📝</span>
+      <span class="ni-text">Reports</span>
+    </div>
+    <div class="nav-item" data-page="settings" onclick="showPage('settings', this)">
       <span class="ni-icon">⚙</span>
       <span class="ni-text">Settings</span>
     </div>
@@ -880,8 +1169,8 @@ body {
         <div class="pulse"></div>
         Connected
       </div>
-      <div class="icon-btn" title="Notifications" onclick="showPage('activity', document.querySelector('.nav-item:nth-child(3)'))">🔔</div>
-      <div class="icon-btn" title="Settings" onclick="showPage('settings', document.querySelectorAll('.nav-item')[4])">⚙</div>
+      <div class="icon-btn" title="Notifications" onclick="showPage('activity')">🔔</div>
+      <div class="icon-btn" title="Settings" onclick="showPage('settings')">⚙</div>
     </div>
   </div>
 
@@ -1354,6 +1643,89 @@ body {
     </div>
   </div>
 
+  <!-- ═══ REPORTS PAGE ═══ -->
+  <div class="page" id="page-reports">
+    <div class="page-header">
+      <div>
+        <h2>Reports</h2>
+        <p>Daily care records for Mochi</p>
+      </div>
+      <div class="ph-right">
+        <button class="outline-btn" onclick="loadReport()">Find Report</button>
+      </div>
+    </div>
+
+    <div class="report-layout">
+      <div class="report-panel">
+        <h3>New Daily Report</h3>
+        <form class="report-form" id="report-form" onsubmit="submitReport(event)">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="report-date">Date</label>
+              <input id="report-date" name="report_date" type="date" required>
+            </div>
+            <div class="form-field">
+              <label for="report-weight">Weight (kg)</label>
+              <input id="report-weight" name="weight" type="number" min="0.1" step="0.1" required>
+            </div>
+            <div class="form-field">
+              <label for="water-intake">Water Intake (ml)</label>
+              <input id="water-intake" name="water_intake" type="number" min="0" step="0.1" required>
+            </div>
+            <div class="form-field">
+              <label for="food-intake">Food Intake (g)</label>
+              <input id="food-intake" name="food_intake" type="number" min="0" step="0.1" required>
+            </div>
+            <div class="form-field full">
+              <label for="short-message">Notes</label>
+              <textarea id="short-message" name="short_message" maxlength="255" placeholder="Energy, mood, appetite, medication, or anything unusual"></textarea>
+            </div>
+          </div>
+          <div class="report-actions">
+            <button class="outline-btn" type="button" onclick="resetReportForm()">Reset</button>
+            <button class="primary-btn" id="save-report-btn" type="submit">Save Report</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="report-panel">
+        <h3>Report Lookup</h3>
+        <div class="lookup-row">
+          <div class="form-field">
+            <label for="lookup-report-date">Date</label>
+            <input id="lookup-report-date" type="date">
+          </div>
+          <button class="outline-btn" type="button" onclick="loadReport()">Load</button>
+        </div>
+        <div class="report-result empty" id="report-result">No report selected</div>
+      </div>
+
+      <div class="report-panel">
+        <h3>Emotion Tag Test</h3>
+        <form class="report-form" id="emotion-form" onsubmit="submitEmotionTag(event)">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="emotion-report-date">Report Date</label>
+              <input id="emotion-report-date" type="date" required>
+            </div>
+            <div class="form-field">
+              <label for="emotion-timestamp">Timestamp</label>
+              <input id="emotion-timestamp" type="datetime-local" required>
+            </div>
+            <div class="form-field full">
+              <label for="emotion-tag">Emotion Tag</label>
+              <input id="emotion-tag" type="text" maxlength="80" placeholder="curious, hungry, anxious, playful" required>
+            </div>
+          </div>
+          <div class="report-actions">
+            <button class="outline-btn" type="button" onclick="resetEmotionForm()">Reset</button>
+            <button class="primary-btn" id="save-emotion-btn" type="submit">Add Tag</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══ SETTINGS PAGE ═══ -->
   <div class="page" id="page-settings">
     <div class="page-header">
@@ -1403,8 +1775,18 @@ function showPage(name, navEl) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  if (navEl) navEl.classList.add('active');
-  const titles = { dashboard: 'Dashboard', cameras: 'Cameras', activity: 'Activity', schedule: 'Schedule', settings: 'Settings' };
+  const activeNav = navEl || document.querySelector(`.nav-item[data-page="${name}"]`);
+  if (activeNav) activeNav.classList.add('active');
+  const titles = {
+    test: 'Test',
+    dashboard: 'Dashboard',
+    cameras: 'Cameras',
+    play: 'Play',
+    activity: 'Activity',
+    schedule: 'Schedule',
+    reports: 'Reports',
+    settings: 'Settings'
+  };
   document.getElementById('page-title').textContent = titles[name] || name;
 }
 
@@ -1486,6 +1868,268 @@ async function refreshState() {
 // Poll every second
 refreshState();
 setInterval(refreshState, 1000);
+
+// ── Reports ──
+function todayISO() {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  return now.toISOString().slice(0, 10);
+}
+
+function nowLocalDateTime() {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  return now.toISOString().slice(0, 16);
+}
+
+function initReportDates() {
+  const today = todayISO();
+  const reportDate = document.getElementById('report-date');
+  const lookupDate = document.getElementById('lookup-report-date');
+  const emotionDate = document.getElementById('emotion-report-date');
+  const emotionTimestamp = document.getElementById('emotion-timestamp');
+  if (reportDate && !reportDate.value) reportDate.value = today;
+  if (lookupDate && !lookupDate.value) lookupDate.value = today;
+  if (emotionDate && !emotionDate.value) emotionDate.value = today;
+  if (emotionTimestamp && !emotionTimestamp.value) emotionTimestamp.value = nowLocalDateTime();
+}
+
+function resetReportForm() {
+  document.getElementById('report-form').reset();
+  initReportDates();
+}
+
+function resetEmotionForm() {
+  document.getElementById('emotion-form').reset();
+  const emotionDate = document.getElementById('emotion-report-date');
+  const reportDate = document.getElementById('report-date');
+  emotionDate.value = reportDate.value || todayISO();
+  document.getElementById('emotion-timestamp').value = nowLocalDateTime();
+}
+
+function reportPayloadFromForm() {
+  return {
+    report_date: document.getElementById('report-date').value,
+    water_intake: Number(document.getElementById('water-intake').value),
+    food_intake: Number(document.getElementById('food-intake').value),
+    weight: Number(document.getElementById('report-weight').value),
+    short_message: document.getElementById('short-message').value.trim()
+  };
+}
+
+function apiErrorMessage(detail) {
+  if (Array.isArray(detail)) return detail.map(item => item.msg).join(', ');
+  return detail || 'Request failed';
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  }[char]));
+}
+
+function formatMetric(value) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num.toFixed(1) : '--';
+}
+
+function parseTagDate(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatTagTime(value) {
+  const date = parseTagDate(value);
+  if (!date) return String(value ?? '').replace('T', ' ');
+  return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function formatTagDate(value) {
+  const date = parseTagDate(value);
+  if (!date) return '';
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function voiceTagsHtml(voiceTags) {
+  const entries = Object.entries(voiceTags || {})
+    .sort(([a], [b]) => String(a).localeCompare(String(b)));
+
+  if (!entries.length) return '';
+
+  const rows = entries.map(([timestamp, tag], index) => `
+    <div class="emotion-row">
+      <div class="emotion-time">
+        ${escapeHtml(formatTagTime(timestamp))}
+        <span class="emotion-date">${escapeHtml(formatTagDate(timestamp))}</span>
+      </div>
+      <div class="emotion-marker"></div>
+      <div class="emotion-card">
+        <strong>${escapeHtml(tag)}</strong>
+        <span>Entry ${index + 1} · ${escapeHtml(String(timestamp).replace('T', ' '))}</span>
+      </div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="report-tags">
+      <h5>Emotion Timeline</h5>
+      <div class="emotion-chart">${rows}</div>
+    </div>
+  `;
+}
+
+function displayReport(report) {
+  const result = document.getElementById('report-result');
+  if (!report) {
+    result.className = 'report-result empty';
+    result.textContent = 'No report selected';
+    return;
+  }
+
+  result.className = 'report-result';
+  const message = report.short_message?.trim() || 'No notes recorded.';
+  const tags = voiceTagsHtml(report.voice_tags);
+  result.innerHTML = `
+    <div class="report-result-header">
+      <div>
+        <h4>Mochi Daily Report</h4>
+        <span>${escapeHtml(report.report_date)}</span>
+      </div>
+      <span>Saved</span>
+    </div>
+    <div class="report-metrics">
+      <div class="report-metric"><span>Water</span><strong>${formatMetric(report.water_intake)} ml</strong></div>
+      <div class="report-metric"><span>Food</span><strong>${formatMetric(report.food_intake)} g</strong></div>
+      <div class="report-metric"><span>Weight</span><strong>${formatMetric(report.weight)} kg</strong></div>
+    </div>
+    <p class="report-message">${escapeHtml(message)}</p>
+    ${tags}
+  `;
+}
+
+function displayVoiceTagsOnly(reportDate, voiceTags) {
+  const result = document.getElementById('report-result');
+  result.className = 'report-result';
+  result.innerHTML = `
+    <div class="report-result-header">
+      <div>
+        <h4>Emotion Tags</h4>
+        <span>${escapeHtml(reportDate)}</span>
+      </div>
+      <span>No daily report</span>
+    </div>
+    ${voiceTagsHtml(voiceTags) || '<p class="report-message">No emotion tags recorded.</p>'}
+  `;
+}
+
+async function submitReport(event) {
+  event.preventDefault();
+
+  const payload = reportPayloadFromForm();
+  if (!payload.report_date || [payload.water_intake, payload.food_intake, payload.weight].some(Number.isNaN)) {
+    toast('Complete all report fields', '⚠️');
+    return;
+  }
+
+  const btn = document.getElementById('save-report-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const res = await fetch('/api/reports', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+
+    document.getElementById('lookup-report-date').value = payload.report_date;
+    document.getElementById('emotion-report-date').value = payload.report_date;
+    displayReport(data.report);
+    toast('Report saved', '✓');
+  } catch (err) {
+    toast(err.message || 'Failed to save report', '⚠️');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save Report';
+  }
+}
+
+async function submitEmotionTag(event) {
+  event.preventDefault();
+
+  const reportDate = document.getElementById('emotion-report-date').value || document.getElementById('report-date').value;
+  const timestamp = document.getElementById('emotion-timestamp').value;
+  const voiceType = document.getElementById('emotion-tag').value.trim();
+
+  if (!reportDate || !timestamp || !voiceType) {
+    toast('Complete the emotion tag fields', '⚠️');
+    return;
+  }
+
+  const btn = document.getElementById('save-emotion-btn');
+  btn.disabled = true;
+  btn.textContent = 'Adding...';
+
+  try {
+    const res = await fetch(`/api/reports/${encodeURIComponent(reportDate)}/voice-tags`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ timestamp, voice_type: voiceType })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+
+    document.getElementById('lookup-report-date').value = reportDate;
+    if (data.report) displayReport(data.report);
+    else displayVoiceTagsOnly(reportDate, data.voice_tags);
+
+    document.getElementById('emotion-tag').value = '';
+    document.getElementById('emotion-timestamp').value = nowLocalDateTime();
+    toast('Emotion tag saved', '✓');
+  } catch (err) {
+    toast(err.message || 'Failed to save emotion tag', '⚠️');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Add Tag';
+  }
+}
+
+async function loadReport() {
+  const date = document.getElementById('lookup-report-date').value || document.getElementById('report-date').value;
+  if (!date) {
+    toast('Choose a report date', '⚠️');
+    return;
+  }
+
+  document.getElementById('emotion-report-date').value = date;
+
+  try {
+    const res = await fetch(`/api/reports/${encodeURIComponent(date)}`);
+    const data = await res.json().catch(() => ({}));
+
+    if (res.status === 404) {
+      const result = document.getElementById('report-result');
+      result.className = 'report-result empty';
+      result.textContent = 'No report found for this date';
+      return;
+    }
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+
+    displayReport(data.report);
+    toast('Report loaded', '✓');
+  } catch (err) {
+    toast(err.message || 'Failed to load report', '⚠️');
+  }
+}
+
+initReportDates();
+
 // ── Feed ──
 function triggerFeed(btn) {
   const h = btn.querySelector('h3');
