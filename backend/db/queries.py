@@ -1,7 +1,7 @@
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 
 DB_PATH = Path(__file__).with_name("catopia.db")
@@ -15,7 +15,7 @@ class report:
     food_intake: float
     weight: float
     short_message: str
-    voice_tags: dict[str, str]
+    voice_tags: Dict[str, str]
 
 
 def _get_connection() -> sqlite3.Connection:
@@ -30,23 +30,25 @@ def init_db() -> None:
         with open(SCHEMA_PATH, "r", encoding="utf-8") as schema_file:
             conn.executescript(schema_file.read())
 
-def getVoice_log(report_date: str) -> dict[str,str]:
-    output = {}
+
+def getVoice_log(report_date: str) -> Dict[str, str]:
+    output: Dict[str, str] = {}
     with _get_connection() as conn:
         rows = conn.execute(
             """
             SELECT
-                report_date,
                 timestamp,
-                voice_type,
+                voice_type
             FROM voice_logs
             WHERE report_date = ?
             ORDER BY timestamp DESC
             """,
             (report_date,),
         ).fetchall()
+
     for row in rows:
-        output[row["report_date"], row["timestamp"]] = row["voice_type"]
+        output[row["timestamp"]] = row["voice_type"]
+
     return output
 
 
@@ -79,7 +81,7 @@ def getReportbyDate(report_date: str) -> Optional[report]:
     )
 
 
-def addReport (
+def addReport(
     report_date: str,
     water_intake: float,
     food_intake: float,
@@ -89,7 +91,7 @@ def addReport (
     with _get_connection() as conn:
         conn.execute(
             """
-            INSERT INTO daily_reports (
+            INSERT OR REPLACE INTO daily_reports (
                 report_date,
                 water_intake,
                 food_intake,
@@ -107,11 +109,12 @@ def addReport (
             ),
         )
 
+
 def addVoice_log(report_date: str, timestamp: str, voice_type: str) -> None:
     with _get_connection() as conn:
         conn.execute(
             """
-            INSERT INTO voice_logs (
+            INSERT OR REPLACE INTO voice_logs (
                 report_date,
                 timestamp,
                 voice_type
