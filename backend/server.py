@@ -56,6 +56,7 @@ class StableConsumptionTracker:
         self.latest_is_stable = False
         self.latest_stable_value = None
         self.last_event = None
+        self.session_total = 0
 
     def add_reading(self, value, timestamp):
         self.latest_raw = value
@@ -99,6 +100,7 @@ class StableConsumptionTracker:
             self.last_stable_value = current_stable
             self.last_stable_time = timestamp
             self.last_event = event
+            self.session_total += drop
             return event
 
         # A stable increase is a refill/reset, not consumption.
@@ -107,6 +109,10 @@ class StableConsumptionTracker:
             self.last_stable_time = timestamp
 
         return None
+
+    def reset_session(self):
+        self.session_total = 0
+        self.last_event = None
 
     def state_dict(self):
         return {
@@ -117,6 +123,7 @@ class StableConsumptionTracker:
             "baseline_value": self.last_stable_value,
             "recent_sample_count": len(self.raw_readings),
             "last_event": self.last_event,
+            "session_total": self.session_total,
             "unit": self.unit,
         }
 
@@ -284,6 +291,22 @@ async def read_daily_consumption(report_date: str):
         "report_date": report_date,
         "totals": getDailyConsumptionTotals(report_date),
         "events": [asdict(event) for event in events],
+    }
+
+
+@app.post("/api/consumption/reset")
+async def reset_consumption(sensor_type: str = "food"):
+    tracker = consumption_trackers.get(sensor_type)
+    if tracker is None:
+        raise HTTPException(status_code=404, detail="Unknown sensor type")
+
+    with tracker_lock:
+        tracker.reset_session()
+
+    return {
+        "status": "reset",
+        "sensor_type": sensor_type,
+        "consumption": _consumption_state(),
     }
 
 
