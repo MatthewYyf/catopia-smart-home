@@ -18,6 +18,18 @@ class report:
     voice_tags: List[Dict[str, str]]
 
 
+@dataclass
+class ConsumptionEvent:
+    id: int
+    sensor_type: str
+    start_time: str
+    end_time: str
+    before_value: float
+    after_value: float
+    consumed_amount: float
+    unit: str
+
+
 def _get_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -129,3 +141,94 @@ def addVoice_log(report_date: str, timestamp: str, voice_type: str) -> None:
                 voice_type,
             ),
         )
+
+
+def addConsumptionEvent(
+    sensor_type: str,
+    start_time: str,
+    end_time: str,
+    before_value: float,
+    after_value: float,
+    consumed_amount: float,
+    unit: str,
+) -> None:
+    with _get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO consumption_events (
+                sensor_type,
+                start_time,
+                end_time,
+                before_value,
+                after_value,
+                consumed_amount,
+                unit
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                sensor_type,
+                start_time,
+                end_time,
+                before_value,
+                after_value,
+                consumed_amount,
+                unit,
+            ),
+        )
+
+
+def getConsumptionEvents(report_date: Optional[str] = None) -> List[ConsumptionEvent]:
+    query = """
+        SELECT
+            id,
+            sensor_type,
+            start_time,
+            end_time,
+            before_value,
+            after_value,
+            consumed_amount,
+            unit
+        FROM consumption_events
+    """
+    params = ()
+
+    if report_date:
+        query += " WHERE date(end_time) = date(?)"
+        params = (report_date,)
+
+    query += " ORDER BY end_time ASC"
+
+    with _get_connection() as conn:
+        rows = conn.execute(query, params).fetchall()
+
+    return [
+        ConsumptionEvent(
+            id=row["id"],
+            sensor_type=row["sensor_type"],
+            start_time=row["start_time"],
+            end_time=row["end_time"],
+            before_value=row["before_value"],
+            after_value=row["after_value"],
+            consumed_amount=row["consumed_amount"],
+            unit=row["unit"],
+        )
+        for row in rows
+    ]
+
+
+def getDailyConsumptionTotals(report_date: str) -> Dict[str, float]:
+    with _get_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT
+                sensor_type,
+                SUM(consumed_amount) AS total
+            FROM consumption_events
+            WHERE date(end_time) = date(?)
+            GROUP BY sensor_type
+            """,
+            (report_date,),
+        ).fetchall()
+
+    return {row["sensor_type"]: row["total"] or 0 for row in rows}
