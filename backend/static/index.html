@@ -1318,7 +1318,7 @@ body {
                 <div class="widget-label"><div class="wi">⚖️</div> Weight</div>
                 <div class="widget-value amber">
                   <span id="weight-value">--</span>
-                  <small style="font-size:14px;color:var(--text-dim)">kg</small>
+                  <small style="font-size:14px;color:var(--text-dim)">raw</small>
                 </div>
                 <div class="progress-bar"><div class="progress-fill amber" style="width:55%"></div></div>
               </div>
@@ -1868,9 +1868,13 @@ async function refreshState() {
     // Sync Water Pump button
     // syncCtrlBtn('Water Pump', data.pump === 1);
 
-    // Update weight widget
-    if (data.weight !== null && data.weight !== undefined) {
-      document.getElementById('weight-value').textContent = data.weight;
+    const loadCellValue =
+      data.weight ?? data.load ?? data.sensor?.weight ?? data.sensor?.load;
+
+    // Update Test page load-cell widget
+    const weightValue = document.getElementById('weight-value');
+    if (weightValue && loadCellValue !== null && loadCellValue !== undefined) {
+      weightValue.textContent = loadCellValue;
     }
 
   } catch (err) {
