@@ -1,4 +1,8 @@
 # config.py
+# pico for handling food loadcell and stepper motor
+
+# ----- Device Identifier -----
+device_id = "001"
 
 # ----- Hotspot Login -----
 

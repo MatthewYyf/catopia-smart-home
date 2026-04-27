@@ -24,8 +24,8 @@ POST_URL = "http://127.0.0.1:8000/api/data"
 def post_prediction(payload: dict) -> None:
     try:
         print(dict)
-        response = requests.post(POST_URL, json=payload, timeout=3)
-        response.raise_for_status()
+        # response = requests.post(POST_URL, json=payload, timeout=3)
+        # response.raise_for_status()
     except Exception as exc:
         print(f"POST failed: {exc}")
 
@@ -35,7 +35,7 @@ def main() -> None:
         sample_rate=16000,
         chunk_size=1024,
         channels=1,
-        rms_threshold=0.08,      # tune this for your room
+        rms_threshold=0.015,      # tune this for your room
         pre_roll_chunks=8,
         silence_chunks_to_end=6,
         min_event_chunks=4,
