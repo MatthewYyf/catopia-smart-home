@@ -13,6 +13,7 @@ PI_IP = "10.42.0.1"
 # ----- GPIO assignments -----
 PAN_PIN = 0
 TILT_PIN = 1
+LASER_PIN = 2
 
 # ----- Pulse Range -----
 DEFAULT_FREQUENCY = 50

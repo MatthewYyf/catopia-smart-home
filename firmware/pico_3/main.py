@@ -4,8 +4,12 @@ import urequests
 import config
 from hardware import Hardware
 
-POST_DATA_URL = "http://{}:8000/api/data".format(config.PI_IP)
-GET_COMMAND_URL = "http://{}:8000/api/command".format(config.PI_IP)
+POST_DATA_URL = "http://{}:8000/api/devices/{}/telemetry".format(
+    config.PI_IP, config.device_id
+)
+GET_COMMAND_URL = "http://{}:8000/api/devices/{}/commands/next".format(
+    config.PI_IP, config.device_id
+)
 
 hw = Hardware()
 

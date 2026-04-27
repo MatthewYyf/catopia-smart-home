@@ -1,4 +1,6 @@
+from collections import defaultdict, deque
 from dataclasses import asdict
+from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
@@ -9,8 +11,16 @@ from db.queries import addReport, addVoice_log, getReportbyDate, getVoice_log, i
 
 app = FastAPI()
 init_db()  # Ensure the database is initialized at startup
-latest_data = {"led": None, "pump": None, "weight": 30}
-pending_command = None
+
+DEFAULT_DEVICE_ID = "001"
+
+# Latest telemetry/state per device_id (Pico POSTs here)
+latest_data_by_device: dict[str, dict[str, Any]] = defaultdict(
+    lambda: {"led": None, "pump": None, "weight": 30}
+)
+
+# FIFO command queue per device_id (browser POSTs, Pico GETs next)
+command_queues_by_device: dict[str, deque[dict[str, Any]]] = defaultdict(deque)
 
 
 class ReportPayload(BaseModel):
@@ -90,10 +100,11 @@ async def queue_command(cmd: dict):
 
 @app.get("/api/command")
 async def get_command():
-    global pending_command
-    cmd = pending_command
-    pending_command = None
-    return cmd if cmd else {}
+    # Backwards-compatible: pop from the default device's queue
+    q = command_queues_by_device[DEFAULT_DEVICE_ID]
+    if not q:
+        return {}
+    return q.popleft()
 
 
 @app.post("/api/reports")

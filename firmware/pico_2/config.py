@@ -2,7 +2,7 @@
 # pico for water handling loadcell and water pump
 
 # ----- Device Identifier -----
-device_id = "003"
+device_id = "002"
 
 # ----- Hotspot Login -----
 
@@ -11,7 +11,6 @@ PASSWORD = "12345678"
 PI_IP = "10.42.0.1"
 
 # ----- GPIO assignments -----
-LED_PIN = "LED"          # onboard LED
 WATER_PUMP_PIN = 22
 LOAD_SENSOR_PIN = 28
 
