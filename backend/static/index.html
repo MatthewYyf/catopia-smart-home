@@ -708,6 +708,7 @@ body {
 }
 
 .form-field input,
+.form-field select,
 .form-field textarea {
   width: 100%;
   background: var(--surface2);
@@ -728,6 +729,7 @@ body {
 }
 
 .form-field input:focus,
+.form-field select:focus,
 .form-field textarea:focus {
   border-color: var(--border2);
   box-shadow: 0 0 0 3px var(--amber-glow);
@@ -942,6 +944,13 @@ body {
   line-height: 1.3;
   text-align: center;
   overflow-wrap: anywhere;
+}
+
+.emotion-event-count {
+  margin-top: 3px;
+  font-size: 9px;
+  color: var(--text-dim);
+  line-height: 1.2;
 }
 
 .emotion-event-stem {
@@ -1751,7 +1760,11 @@ body {
             </div>
             <div class="form-field full">
               <label for="emotion-tag">Emotion Tag</label>
-              <input id="emotion-tag" type="text" maxlength="80" placeholder="curious, hungry, anxious, playful" required>
+              <select id="emotion-tag" required>
+                <option value="food">Food</option>
+                <option value="brushing">Brushing</option>
+                <option value="isolation">Isolation</option>
+              </select>
             </div>
           </div>
           <div class="report-actions">
@@ -2060,31 +2073,24 @@ const VOICE_TAG_META = {
     key: 'isolation',
     label: 'Isolation',
     icon: '/static/images/isolation-tag.svg'
-  },
-  other: {
-    key: 'other',
-    label: 'Other',
-    icon: '/static/images/unknown-tag.svg'
   }
 };
 
+const VOICE_TAG_ORDER = ['food', 'brushing', 'isolation'];
+
 function normalizeVoiceTag(value) {
   const normalized = String(value || '').trim().toLowerCase();
-
-  if (normalized.includes('food')) return 'food';
-  if (normalized.includes('brush')) return 'brushing';
-  if (normalized.includes('isolation')) return 'isolation';
-
-  return 'other';
+  return VOICE_TAG_ORDER.includes(normalized) ? normalized : null;
 }
 
 function getVoiceTagMeta(voiceType) {
   const key = normalizeVoiceTag(voiceType);
-  const meta = VOICE_TAG_META[key] || VOICE_TAG_META.other;
+  if (!key) return null;
+  const meta = VOICE_TAG_META[key];
 
   return {
     key: meta.key,
-    label: meta.key === 'other' ? String(voiceType || 'Other').trim() || 'Other' : meta.label,
+    label: meta.label,
     icon: meta.icon
   };
 }
@@ -2096,6 +2102,86 @@ function normalizeVoiceLogs(voiceTags) {
     timestamp,
     voice_type: voiceType
   }));
+}
+
+function getHourBucket(timestamp) {
+  const date = parseTagDate(timestamp);
+  if (!date) return null;
+
+  const hourStart = new Date(date);
+  hourStart.setMinutes(0, 0, 0);
+
+  return {
+    key: [
+      hourStart.getFullYear(),
+      String(hourStart.getMonth() + 1).padStart(2, '0'),
+      String(hourStart.getDate()).padStart(2, '0'),
+      String(hourStart.getHours()).padStart(2, '0')
+    ].join('-'),
+    hourStart
+  };
+}
+
+function formatHourRange(hourStart) {
+  const hourEnd = new Date(hourStart);
+  hourEnd.setHours(hourEnd.getHours() + 1);
+
+  const opts = { hour: 'numeric', minute: '2-digit' };
+  return `${hourStart.toLocaleTimeString('en-US', opts)}-${hourEnd.toLocaleTimeString('en-US', opts)}`;
+}
+
+function summarizeVoiceLogsByHour(voiceLogs) {
+  const buckets = new Map();
+
+  voiceLogs.forEach((entry) => {
+    const tagKey = normalizeVoiceTag(entry.voice_type);
+    const bucketInfo = getHourBucket(entry.timestamp);
+    if (!tagKey || !bucketInfo) return;
+
+    if (!buckets.has(bucketInfo.key)) {
+      buckets.set(bucketInfo.key, {
+        hourStart: bucketInfo.hourStart,
+        counts: Object.fromEntries(VOICE_TAG_ORDER.map((key) => [key, 0])),
+        latestByTag: {},
+        total: 0
+      });
+    }
+
+    const bucket = buckets.get(bucketInfo.key);
+    const timestamp = parseTagDate(entry.timestamp);
+    bucket.counts[tagKey] += 1;
+    bucket.total += 1;
+
+    if (!bucket.latestByTag[tagKey] || timestamp > bucket.latestByTag[tagKey]) {
+      bucket.latestByTag[tagKey] = timestamp;
+    }
+  });
+
+  return Array.from(buckets.values())
+    .sort((a, b) => a.hourStart - b.hourStart)
+    .map((bucket) => {
+      const winner = VOICE_TAG_ORDER
+        .map((key, order) => ({
+          key,
+          order,
+          count: bucket.counts[key],
+          latest: bucket.latestByTag[key] || new Date(0)
+        }))
+        .filter((item) => item.count > 0)
+        .sort((a, b) => (b.count - a.count) || (b.latest - a.latest) || (a.order - b.order))[0];
+
+      const timestamp = new Date(bucket.hourStart);
+      timestamp.setMinutes(30, 0, 0);
+
+      return {
+        timestamp,
+        hourStart: bucket.hourStart,
+        hourLabel: formatHourRange(bucket.hourStart),
+        voice_type: winner.key,
+        count: winner.count,
+        total: bucket.total
+      };
+    });
 }
 
 function getTimelinePosition(timestamp) {
@@ -2123,7 +2209,7 @@ function assignEmotionLanes(events) {
 
 function voiceTagsHtml(voiceTags) {
   const voiceLogs = normalizeVoiceLogs(voiceTags)
-    .filter((entry) => entry && entry.timestamp)
+    .filter((entry) => entry && entry.timestamp && normalizeVoiceTag(entry.voice_type))
     .sort((a, b) => String(a.timestamp).localeCompare(String(b.timestamp)));
 
   if (!voiceLogs.length) return '';
@@ -2133,11 +2219,14 @@ function voiceTagsHtml(voiceTags) {
   const axisBottom = 68;
 
   const events = assignEmotionLanes(
-    voiceLogs.map((entry) => {
+    summarizeVoiceLogsByHour(voiceLogs).map((entry) => {
       const meta = getVoiceTagMeta(entry.voice_type);
       return {
         ...meta,
         timestamp: entry.timestamp,
+        hourLabel: entry.hourLabel,
+        count: entry.count,
+        total: entry.total,
         position: getTimelinePosition(entry.timestamp)
       };
     })
@@ -2150,11 +2239,12 @@ function voiceTagsHtml(voiceTags) {
     <div
       class="emotion-event"
       style="left:${event.position}%; --stem-height:${stemBase + (event.lane * laneHeight)}px"
-      title="${escapeHtml(`${event.label} · ${formatTagDate(event.timestamp)} ${formatTagTime(event.timestamp)}`)}"
+      title="${escapeHtml(`${event.label} · ${event.hourLabel} · ${event.count}/${event.total}`)}"
     >
       <div class="emotion-event-badge tag-${event.key}">
         <img class="emotion-event-icon" src="${event.icon}" alt="${escapeHtml(event.label)}">
         <span class="emotion-event-label">${escapeHtml(event.label)}</span>
+        <span class="emotion-event-count">${escapeHtml(`${event.count}/${event.total}`)}</span>
       </div>
       <div class="emotion-event-stem"></div>
       </div>
@@ -2162,7 +2252,7 @@ function voiceTagsHtml(voiceTags) {
 
   const uniqueTicks = Array.from(
     new Map(
-      events.map((event) => [event.timestamp, { position: event.position, label: formatTagTime(event.timestamp) }])
+      events.map((event) => [event.hourLabel, { position: event.position, label: event.hourLabel }])
     ).values()
   );
 
@@ -2297,7 +2387,7 @@ async function submitEmotionTag(event) {
     if (data.report) displayReport(data.report);
     else displayVoiceTagsOnly(reportDate, data.voice_tags);
 
-    document.getElementById('emotion-tag').value = '';
+    document.getElementById('emotion-tag').value = 'food';
     document.getElementById('emotion-timestamp').value = nowLocalDateTime();
     toast('Emotion tag saved', '✓');
   } catch (err) {
