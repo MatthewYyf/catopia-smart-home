@@ -719,6 +719,96 @@ body {
   margin-bottom: 14px;
 }
 
+.water-history-panel {
+  grid-column: 1 / -1;
+}
+
+.water-chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.water-chart-header h3 {
+  margin-bottom: 4px;
+}
+
+.water-chart-header span,
+.water-chart-stat span {
+  font-size: 9px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+}
+
+.water-chart-stat {
+  text-align: right;
+}
+
+.water-chart-stat strong {
+  display: block;
+  margin-top: 4px;
+  color: #8fc8f4;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.water-chart-wrap {
+  min-height: 260px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(74,128,176,0.08), rgba(0,0,0,0.08));
+  padding: 12px;
+  overflow: hidden;
+}
+
+.water-chart-svg {
+  width: 100%;
+  height: 260px;
+  display: block;
+}
+
+.water-chart-axis,
+.water-chart-label {
+  fill: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+}
+
+.water-chart-grid {
+  stroke: rgba(245,234,214,0.08);
+  stroke-width: 1;
+}
+
+.water-chart-area {
+  fill: rgba(74,128,176,0.18);
+}
+
+.water-chart-line {
+  fill: none;
+  stroke: #55a7e8;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.water-chart-dot {
+  fill: var(--surface);
+  stroke: #55a7e8;
+  stroke-width: 4;
+}
+
+.water-chart-empty {
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
 .report-form {
   display: flex;
   flex-direction: column;
@@ -1563,6 +1653,22 @@ body {
     </div>
 
     <div class="report-layout">
+      <div class="report-panel water-history-panel">
+        <div class="water-chart-header">
+          <div>
+            <h3>Water Intake</h3>
+            <span>Last 7 days</span>
+          </div>
+          <div class="water-chart-stat">
+            <span>Average</span>
+            <strong id="water-chart-average">-- ml</strong>
+          </div>
+        </div>
+        <div class="water-chart-wrap" id="water-intake-chart">
+          <div class="water-chart-empty">Loading water intake</div>
+        </div>
+      </div>
+
       <div class="report-panel">
         <h3>New Daily Report</h3>
         <form class="report-form" id="report-form" onsubmit="submitReport(event)">
@@ -1621,7 +1727,11 @@ body {
             </div>
             <div class="form-field full">
               <label for="emotion-tag">Emotion Tag</label>
-              <input id="emotion-tag" type="text" maxlength="80" placeholder="curious, hungry, anxious, playful" required>
+              <select id="emotion-tag" required>
+                <option value="food">Food</option>
+                <option value="brushing">Brushing</option>
+                <option value="isolation">Isolation</option>
+              </select>
             </div>
           </div>
           <div class="report-actions">
@@ -1850,6 +1960,103 @@ function formatMetric(value) {
   return Number.isFinite(num) ? num.toFixed(1) : '--';
 }
 
+function smoothPath(points) {
+  if (!points.length) return '';
+  if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+
+  return points.reduce((path, point, index) => {
+    if (index === 0) return `M ${point.x} ${point.y}`;
+    const previous = points[index - 1];
+    const controlX = (previous.x + point.x) / 2;
+    return `${path} C ${controlX} ${previous.y}, ${controlX} ${point.y}, ${point.x} ${point.y}`;
+  }, '');
+}
+
+function renderWaterIntakeChart(points) {
+  const chart = document.getElementById('water-intake-chart');
+  const averageEl = document.getElementById('water-chart-average');
+  if (!chart) return;
+
+  const values = points.map((point) => Number(point.water_intake) || 0);
+  const total = values.reduce((sum, value) => sum + value, 0);
+  const average = values.length ? total / values.length : 0;
+  if (averageEl) averageEl.textContent = `${formatMetric(average)} ml`;
+
+  if (!points.length) {
+    chart.innerHTML = '<div class="water-chart-empty">No water data</div>';
+    return;
+  }
+
+  const width = 760;
+  const height = 260;
+  const pad = { top: 24, right: 28, bottom: 42, left: 38 };
+  const chartWidth = width - pad.left - pad.right;
+  const chartHeight = height - pad.top - pad.bottom;
+  const maxValue = Math.max(...values, 1);
+  const yMax = Math.ceil(maxValue / 50) * 50 || 50;
+  const baseY = height - pad.bottom;
+
+  const coords = points.map((point, index) => {
+    const x = pad.left + (chartWidth * index / Math.max(points.length - 1, 1));
+    const value = Number(point.water_intake) || 0;
+    const y = pad.top + chartHeight - ((value / yMax) * chartHeight);
+    return { ...point, x, y, value };
+  });
+
+  const linePath = smoothPath(coords);
+  const areaPath = `${linePath} L ${coords[coords.length - 1].x} ${baseY} L ${coords[0].x} ${baseY} Z`;
+  const gridLines = [0, 0.5, 1].map((ratio) => {
+    const y = pad.top + chartHeight - (ratio * chartHeight);
+    return `<line class="water-chart-grid" x1="${pad.left}" y1="${y}" x2="${width - pad.right}" y2="${y}"></line>`;
+  }).join('');
+
+  const dots = coords.map((point) => `
+    <circle class="water-chart-dot" cx="${point.x}" cy="${point.y}" r="5">
+      <title>${escapeHtml(`${point.date}: ${formatMetric(point.value)} ml`)}</title>
+    </circle>
+  `).join('');
+
+  const labels = coords.map((point) => `
+    <text class="water-chart-label" x="${point.x}" y="${height - 14}" text-anchor="middle">${escapeHtml(point.label)}</text>
+  `).join('');
+
+  const valueLabels = coords.map((point) => `
+    <text class="water-chart-axis" x="${point.x}" y="${Math.max(point.y - 12, 12)}" text-anchor="middle">${escapeHtml(formatMetric(point.value))}</text>
+  `).join('');
+
+  chart.innerHTML = `
+    <svg class="water-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Water intake over the last seven days">
+      <defs>
+        <linearGradient id="waterAreaGradient" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#55a7e8" stop-opacity="0.35"></stop>
+          <stop offset="100%" stop-color="#55a7e8" stop-opacity="0"></stop>
+        </linearGradient>
+      </defs>
+      ${gridLines}
+      <path class="water-chart-area" d="${areaPath}" fill="url(#waterAreaGradient)"></path>
+      <path class="water-chart-line" d="${linePath}"></path>
+      ${dots}
+      ${valueLabels}
+      ${labels}
+    </svg>
+  `;
+}
+
+async function loadWaterIntakeChart() {
+  const chart = document.getElementById('water-intake-chart');
+  if (!chart) return;
+
+  try {
+    const res = await fetch('/api/reports/water-intake/last-7-days');
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+    renderWaterIntakeChart(data.points || []);
+  } catch (err) {
+    chart.innerHTML = '<div class="water-chart-empty">Could not load water data</div>';
+    console.error(err);
+  }
+}
+
 function parseTagDate(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
@@ -1882,31 +2089,27 @@ const VOICE_TAG_META = {
     key: 'isolation',
     label: 'Isolation',
     icon: '/static/images/isolation-tag.svg'
-  },
-  other: {
-    key: 'other',
-    label: 'Other',
-    icon: '/static/images/unknown-tag.svg'
   }
 };
 
 function normalizeVoiceTag(value) {
   const normalized = String(value || '').trim().toLowerCase();
 
-  if (normalized.includes('food')) return 'food';
-  if (normalized.includes('brush')) return 'brushing';
-  if (normalized.includes('isolation')) return 'isolation';
+  if (normalized === 'food') return 'food';
+  if (normalized === 'brushing') return 'brushing';
+  if (normalized === 'isolation') return 'isolation';
 
-  return 'other';
+  return '';
 }
 
 function getVoiceTagMeta(voiceType) {
   const key = normalizeVoiceTag(voiceType);
-  const meta = VOICE_TAG_META[key] || VOICE_TAG_META.other;
+  const meta = VOICE_TAG_META[key];
+  if (!meta) return null;
 
   return {
     key: meta.key,
-    label: meta.key === 'other' ? String(voiceType || 'Other').trim() || 'Other' : meta.label,
+    label: meta.label,
     icon: meta.icon
   };
 }
@@ -1920,58 +2123,115 @@ function normalizeVoiceLogs(voiceTags) {
   }));
 }
 
+const EMOTION_TIMELINE_START_HOUR = 8;
+const EMOTION_TIMELINE_END_HOUR = 20;
+
+function getVoiceHourKey(timestamp) {
+  const rawValue = String(timestamp || '');
+  const date = parseTagDate(rawValue);
+  if (date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hour = String(date.getHours()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hour}`;
+  }
+  return rawValue.slice(0, 13);
+}
+
+function isVoiceLogInTimelineRange(timestamp) {
+  const date = parseTagDate(timestamp);
+  if (!date) return true;
+  const hour = date.getHours();
+  return hour >= EMOTION_TIMELINE_START_HOUR && hour <= EMOTION_TIMELINE_END_HOUR;
+}
+
+function hourlyMajorityVoiceLogs(voiceLogs) {
+  const buckets = new Map();
+
+  voiceLogs.forEach((entry) => {
+    if (!entry || !entry.timestamp) return;
+    if (!isVoiceLogInTimelineRange(entry.timestamp)) return;
+    const voiceType = normalizeVoiceTag(entry.voice_type);
+    if (!voiceType) return;
+
+    const hourKey = getVoiceHourKey(entry.timestamp);
+    if (!hourKey) return;
+
+    const bucket = buckets.get(hourKey) || {
+      hourKey,
+      counts: new Map(),
+      latestByType: new Map()
+    };
+    bucket.counts.set(voiceType, (bucket.counts.get(voiceType) || 0) + 1);
+
+    const previousLatest = bucket.latestByType.get(voiceType) || '';
+    if (String(entry.timestamp).localeCompare(previousLatest) > 0) {
+      bucket.latestByType.set(voiceType, String(entry.timestamp));
+    }
+
+    buckets.set(hourKey, bucket);
+  });
+
+  return Array.from(buckets.values())
+    .map((bucket) => {
+      const winningType = Array.from(bucket.counts.entries()).sort((left, right) => {
+        const [leftType, leftCount] = left;
+        const [rightType, rightCount] = right;
+        if (rightCount !== leftCount) return rightCount - leftCount;
+
+        const leftLatest = bucket.latestByType.get(leftType) || '';
+        const rightLatest = bucket.latestByType.get(rightType) || '';
+        return rightLatest.localeCompare(leftLatest) || leftType.localeCompare(rightType);
+      })[0][0];
+
+      return {
+        timestamp: `${bucket.hourKey}:00`,
+        voice_type: winningType
+      };
+    })
+    .sort((a, b) => String(a.timestamp).localeCompare(String(b.timestamp)));
+}
+
 function getTimelinePosition(timestamp) {
   const date = parseTagDate(timestamp);
   if (!date) return 50;
 
   const minutes = (date.getHours() * 60) + date.getMinutes();
-  const dayProgress = minutes / (24 * 60 - 1);
-  return Math.max(5, Math.min(95, dayProgress * 100));
-}
-
-function assignEmotionLanes(events) {
-  const laneMinGap = 12;
-  const laneEnds = [];
-
-  return events.map((event) => {
-    let lane = 0;
-    while (laneEnds[lane] !== undefined && (event.position - laneEnds[lane]) < laneMinGap) {
-      lane += 1;
-    }
-    laneEnds[lane] = event.position;
-    return { ...event, lane };
-  });
+  const startMinutes = EMOTION_TIMELINE_START_HOUR * 60;
+  const endMinutes = EMOTION_TIMELINE_END_HOUR * 60;
+  const timelineProgress = (minutes - startMinutes) / (endMinutes - startMinutes);
+  return Math.max(5, Math.min(95, timelineProgress * 100));
 }
 
 function voiceTagsHtml(voiceTags) {
-  const voiceLogs = normalizeVoiceLogs(voiceTags)
+  const voiceLogs = hourlyMajorityVoiceLogs(normalizeVoiceLogs(voiceTags)
     .filter((entry) => entry && entry.timestamp)
-    .sort((a, b) => String(a.timestamp).localeCompare(String(b.timestamp)));
+    .sort((a, b) => String(a.timestamp).localeCompare(String(b.timestamp))));
 
   if (!voiceLogs.length) return '';
 
-  const laneHeight = 78;
   const stemBase = 32;
   const axisBottom = 68;
 
-  const events = assignEmotionLanes(
-    voiceLogs.map((entry) => {
+  const events = voiceLogs.map((entry) => {
       const meta = getVoiceTagMeta(entry.voice_type);
+      if (!meta) return null;
       return {
         ...meta,
         timestamp: entry.timestamp,
         position: getTimelinePosition(entry.timestamp)
       };
     })
-  );
+    .filter(Boolean);
 
-  const maxLane = Math.max(...events.map((event) => event.lane), 0);
-  const plotHeight = axisBottom + 116 + (maxLane * laneHeight);
+  const plotHeight = axisBottom + 116;
+  const plotMinWidth = Math.max(1100, events.length * 96);
 
   const eventMarkup = events.map((event) => `
     <div
       class="emotion-event"
-      style="left:${event.position}%; --stem-height:${stemBase + (event.lane * laneHeight)}px"
+      style="left:${event.position}%; --stem-height:${stemBase}px"
       title="${escapeHtml(`${event.label} · ${formatTagDate(event.timestamp)} ${formatTagTime(event.timestamp)}`)}"
     >
       <div class="emotion-event-badge tag-${event.key}">
@@ -1999,12 +2259,12 @@ function voiceTagsHtml(voiceTags) {
       <h5>Emotion Timeline</h5>
       <div class="emotion-timeline">
         <div class="emotion-canvas">
-          <div class="emotion-plot" style="height:${plotHeight}px">
+          <div class="emotion-plot" style="height:${plotHeight}px; min-width:${plotMinWidth}px">
             <div class="timeline-axis-line"></div>
             ${eventMarkup}
             ${tickMarkup}
-            <div class="timeline-boundary start">12 AM</div>
-            <div class="timeline-boundary end">11:59 PM</div>
+            <div class="timeline-boundary start">8 AM</div>
+            <div class="timeline-boundary end">8 PM</div>
           </div>
         </div>
       </div>
@@ -2081,6 +2341,7 @@ async function submitReport(event) {
     document.getElementById('lookup-report-date').value = payload.report_date;
     document.getElementById('emotion-report-date').value = payload.report_date;
     displayReport(data.report);
+    loadWaterIntakeChart();
     toast('Report saved', '✓');
   } catch (err) {
     toast(err.message || 'Failed to save report', '⚠️');
@@ -2119,7 +2380,7 @@ async function submitEmotionTag(event) {
     if (data.report) displayReport(data.report);
     else displayVoiceTagsOnly(reportDate, data.voice_tags);
 
-    document.getElementById('emotion-tag').value = '';
+    document.getElementById('emotion-tag').value = 'food';
     document.getElementById('emotion-timestamp').value = nowLocalDateTime();
     toast('Emotion tag saved', '✓');
   } catch (err) {
@@ -2159,6 +2420,7 @@ async function loadReport() {
 }
 
 initReportDates();
+loadWaterIntakeChart();
 
 // ── Feed ──
 function triggerFeed(btn) {

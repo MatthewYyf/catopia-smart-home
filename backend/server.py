@@ -1,18 +1,30 @@
 from collections import defaultdict, deque
 from dataclasses import asdict
-from typing import Any
+from datetime import date, timedelta
+from typing import Any, Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import uvicorn
-from db.queries import addReport, addVoice_log, getReportbyDate, getVoice_log, init_db
+from db.queries import (
+    addReport,
+    addVoice_log,
+    getConsumptionEvents,
+    getDailyConsumptionTotals,
+    getReportbyDate,
+    getVoice_log,
+    getWaterIntakeByDateRange,
+    init_db,
+)
+from services.consumption_tracker import ConsumptionTrackerService
 
 app = FastAPI()
 init_db()  # Ensure the database is initialized at startup
 
 DEFAULT_DEVICE_ID = "001"
+ALLOWED_VOICE_TYPES = {"food", "brushing", "isolation"}
 
 # Latest telemetry/state per device_id (Pico POSTs here)
 latest_data_by_device: dict[str, dict[str, Any]] = defaultdict(
@@ -21,7 +33,7 @@ latest_data_by_device: dict[str, dict[str, Any]] = defaultdict(
 
 # FIFO command queue per device_id (browser POSTs, Pico GETs next)
 command_queues_by_device: dict[str, deque[dict[str, Any]]] = defaultdict(deque)
-
+consumption_service = ConsumptionTrackerService()
 
 class ReportPayload(BaseModel):
     report_date: str
@@ -46,13 +58,19 @@ async def root():
 
 @app.post("/api/devices/{device_id}/telemetry")
 async def receive_device_telemetry(device_id: str, data: dict):
-    # Expected from Pico: {"knob": 12345, "led": 0, ...}
-    latest_data_by_device[device_id] = data
-    return {"status": "ok", "device_id": device_id}
+    # Expected from Pico: {"load": 12345, "led": 0, ...}
+    events = consumption_service.process_readings(data)
+    latest_data_by_device[device_id] = consumption_service.normalize_state_payload(data)
+    return {
+        "status": "ok",
+        "device_id": device_id,
+        "events_recorded": len(events),
+    }
 
 
 @app.get("/api/devices/{device_id}/state")
 async def get_device_state(device_id: str):
+    latest_data_by_device[device_id]["consumption"] = consumption_service.state()
     return latest_data_by_device[device_id]
 
 
@@ -81,13 +99,47 @@ async def receive_data(data: dict):
     shared default device_id so older firmware keeps working.
     """
     device_id = str(data.get("device_id") or DEFAULT_DEVICE_ID)
-    latest_data_by_device[device_id] = data
-    return {"status": "ok", "device_id": device_id}
+    events = consumption_service.process_readings(data)
+    latest_data_by_device[device_id] = consumption_service.normalize_state_payload(data)
+    return {
+        "status": "ok",
+        "device_id": device_id,
+        "events_recorded": len(events),
+    }
 
 @app.get("/api/state")
 async def get_state():
     # Backwards-compatible: return the default device's latest state
+    latest_data_by_device[DEFAULT_DEVICE_ID]["consumption"] = consumption_service.state()
     return latest_data_by_device[DEFAULT_DEVICE_ID]
+
+
+@app.get("/api/consumption/events")
+async def read_consumption_events(report_date: Optional[str] = None):
+    events = getConsumptionEvents(report_date)
+    return {"events": [asdict(event) for event in events]}
+
+
+@app.get("/api/consumption/daily/{report_date}")
+async def read_daily_consumption(report_date: str):
+    events = getConsumptionEvents(report_date)
+    return {
+        "report_date": report_date,
+        "totals": getDailyConsumptionTotals(report_date),
+        "events": [asdict(event) for event in events],
+    }
+
+
+@app.post("/api/consumption/reset")
+async def reset_consumption(sensor_type: str = "food"):
+    if not consumption_service.reset_session(sensor_type):
+        raise HTTPException(status_code=404, detail="Unknown sensor type")
+
+    return {
+        "status": "reset",
+        "sensor_type": sensor_type,
+        "consumption": consumption_service.state(),
+    }
 
 
 @app.post("/api/command")
@@ -127,6 +179,31 @@ async def create_report(report: ReportPayload):
     }
 
 
+@app.get("/api/reports/water-intake/last-7-days")
+async def read_water_intake_last_7_days():
+    today = date.today()
+    start_date = today - timedelta(days=6)
+    rows = getWaterIntakeByDateRange(start_date.isoformat(), today.isoformat())
+    intake_by_date = {
+        row["report_date"]: row["water_intake"]
+        for row in rows
+    }
+
+    points = []
+    for offset in range(7):
+        current_date = start_date + timedelta(days=offset)
+        date_key = current_date.isoformat()
+        points.append(
+            {
+                "date": date_key,
+                "label": current_date.strftime("%a").upper(),
+                "water_intake": intake_by_date.get(date_key, 0),
+            }
+        )
+
+    return {"points": points}
+
+
 @app.get("/api/reports/{report_date}")
 async def read_report(report_date: str):
     report = getReportbyDate(report_date)
@@ -137,9 +214,9 @@ async def read_report(report_date: str):
 
 @app.post("/api/reports/{report_date}/voice-tags")
 async def create_voice_tag(report_date: str, tag: VoiceTagPayload):
-    voice_type = tag.voice_type.strip()
-    if not voice_type:
-        raise HTTPException(status_code=400, detail="Voice tag cannot be empty")
+    voice_type = tag.voice_type.strip().lower()
+    if voice_type not in ALLOWED_VOICE_TYPES:
+        raise HTTPException(status_code=400, detail="Voice tag must be food, brushing, or isolation")
 
     try:
         addVoice_log(report_date, tag.timestamp, voice_type)
