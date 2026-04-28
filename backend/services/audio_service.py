@@ -84,16 +84,20 @@ class VocalizationDetector:
         filtered = lfilter(self.b, self.a, audio_float)
 
         rms = compute_rms(filtered)
+
+   
+        # print(rms)
         active = rms >= self.config.rms_threshold
 
         if not self.in_event:
             self.pre_roll.append(chunk)
-
+            
             if active:
                 self.in_event = True
                 self.event_frames = list(self.pre_roll)
                 self.event_frames.append(chunk)
                 self.silence_count = 0
+                print(rms)
             return None
 
         self.event_frames.append(chunk)
@@ -117,6 +121,8 @@ class VocalizationDetector:
                     channels=self.config.channels,
                     sample_width=self.config.sample_width,
                 )
+            else:
+                print("Sound event did not meet minimum length requirements and was discarded.")
 
             self.reset()
             return wav_bytes

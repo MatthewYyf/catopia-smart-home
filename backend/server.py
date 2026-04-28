@@ -1,5 +1,10 @@
+from collections import defaultdict, deque
 from dataclasses import asdict
+
+from typing import Any
+=======
 from typing import Optional
+
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
@@ -19,9 +24,22 @@ from services.consumption_tracker import ConsumptionTrackerService
 
 app = FastAPI()
 init_db()  # Ensure the database is initialized at startup
+
+
+DEFAULT_DEVICE_ID = "001"
+
+# Latest telemetry/state per device_id (Pico POSTs here)
+latest_data_by_device: dict[str, dict[str, Any]] = defaultdict(
+    lambda: {"led": None, "pump": None, "weight": 30}
+)
+
+# FIFO command queue per device_id (browser POSTs, Pico GETs next)
+command_queues_by_device: dict[str, deque[dict[str, Any]]] = defaultdict(deque)
+=======
 latest_data = {"led": None, "pump": None, "weight": 30}
 pending_command = None
 consumption_service = ConsumptionTrackerService()
+
 
 
 class ReportPayload(BaseModel):
@@ -48,8 +66,52 @@ async def root():
     return FileResponse("static/index.html")
 
 
+@app.post("/api/devices/{device_id}/telemetry")
+async def receive_device_telemetry(device_id: str, data: dict):
+    # Expected from Pico: {"knob": 12345, "led": 0, ...}
+    latest_data_by_device[device_id] = data
+    return {"status": "ok", "device_id": device_id}
+
+
+@app.get("/api/devices/{device_id}/state")
+async def get_device_state(device_id: str):
+    return latest_data_by_device[device_id]
+
+
+@app.post("/api/devices/{device_id}/commands")
+async def queue_device_command(device_id: str, cmd: dict):
+    # Example: {"type": "LED_TOGGLE", "params": {...}}
+    command_queues_by_device[device_id].append(cmd)
+    print({"device_id": device_id, "queued_command": cmd})
+    return {"status": "queued", "device_id": device_id, "queue_depth": len(command_queues_by_device[device_id])}
+
+
+@app.get("/api/devices/{device_id}/commands/next")
+async def get_next_device_command(device_id: str):
+    q = command_queues_by_device[device_id]
+    if not q:
+        return {}
+    return q.popleft()
+
+
 @app.post("/api/data")
 async def receive_data(data: dict):
+
+    """
+    Backwards-compatible endpoint.
+
+    If the payload includes "device_id", it will be used; otherwise we use a
+    shared default device_id so older firmware keeps working.
+    """
+    device_id = str(data.get("device_id") or DEFAULT_DEVICE_ID)
+    latest_data_by_device[device_id] = data
+    return {"status": "ok", "device_id": device_id}
+
+@app.get("/api/state")
+async def get_state():
+    # Backwards-compatible: return the default device's latest state
+    return latest_data_by_device[DEFAULT_DEVICE_ID]
+=======
     global latest_data
     # Expected from Pico: {"load": 12345, "led": 0}. Also supports food/water-specific keys.
     events = consumption_service.process_readings(data)
@@ -63,6 +125,7 @@ async def receive_data(data: dict):
 async def get_state():
     latest_data["consumption"] = consumption_service.state()
     return latest_data
+
 
 
 @app.get("/api/consumption/events")
@@ -95,19 +158,19 @@ async def reset_consumption(sensor_type: str = "food"):
 
 @app.post("/api/command")
 async def queue_command(cmd: dict):
-    global pending_command
-    # Example: {"type": "LED_TOGGLE"}
-    pending_command = cmd
-    print(cmd)
-    return {"status": "queued"}
+    # Backwards-compatible: queue for the default device
+    command_queues_by_device[DEFAULT_DEVICE_ID].append(cmd)
+    print({"device_id": DEFAULT_DEVICE_ID, "queued_command": cmd})
+    return {"status": "queued", "device_id": DEFAULT_DEVICE_ID, "queue_depth": len(command_queues_by_device[DEFAULT_DEVICE_ID])}
 
 
 @app.get("/api/command")
 async def get_command():
-    global pending_command
-    cmd = pending_command
-    pending_command = None
-    return cmd if cmd else {}
+    # Backwards-compatible: pop from the default device's queue
+    q = command_queues_by_device[DEFAULT_DEVICE_ID]
+    if not q:
+        return {}
+    return q.popleft()
 
 
 @app.post("/api/reports")

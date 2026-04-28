@@ -5,7 +5,7 @@
   - **Garret Rieden** (grieden11@brandeis.edu) – Hardware Engineer
   - **Adam Rieden** (arieden@brandeis.edu) – Frontend Developer
   - **Yuxuan Liu** (yuxuanliu050613@brandeis.edu) – Backend Developer
-- **Github Repository:** https://github.com/MatthewYyf/catopia-smart-home.git
+- **Github Repository:** https://githu b.com/MatthewYyf/catopia-smart-home.git
 
 
 ## 2. Abstract
