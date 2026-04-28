@@ -1,16 +1,30 @@
 from collections import defaultdict, deque
 from dataclasses import asdict
+
 from typing import Any
+=======
+from typing import Optional
+
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import uvicorn
-from db.queries import addReport, addVoice_log, getReportbyDate, getVoice_log, init_db
+from db.queries import (
+    addReport,
+    addVoice_log,
+    getConsumptionEvents,
+    getDailyConsumptionTotals,
+    getReportbyDate,
+    getVoice_log,
+    init_db,
+)
+from services.consumption_tracker import ConsumptionTrackerService
 
 app = FastAPI()
 init_db()  # Ensure the database is initialized at startup
+
 
 DEFAULT_DEVICE_ID = "001"
 
@@ -21,6 +35,11 @@ latest_data_by_device: dict[str, dict[str, Any]] = defaultdict(
 
 # FIFO command queue per device_id (browser POSTs, Pico GETs next)
 command_queues_by_device: dict[str, deque[dict[str, Any]]] = defaultdict(deque)
+=======
+latest_data = {"led": None, "pump": None, "weight": 30}
+pending_command = None
+consumption_service = ConsumptionTrackerService()
+
 
 
 class ReportPayload(BaseModel):
@@ -34,6 +53,9 @@ class ReportPayload(BaseModel):
 class VoiceTagPayload(BaseModel):
     timestamp: str = Field(min_length=1, max_length=64)
     voice_type: str = Field(min_length=1, max_length=80)
+
+
+ALLOWED_VOICE_TAGS = {"brushing", "food", "isolation"}
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -74,6 +96,7 @@ async def get_next_device_command(device_id: str):
 
 @app.post("/api/data")
 async def receive_data(data: dict):
+
     """
     Backwards-compatible endpoint.
 
@@ -88,6 +111,49 @@ async def receive_data(data: dict):
 async def get_state():
     # Backwards-compatible: return the default device's latest state
     return latest_data_by_device[DEFAULT_DEVICE_ID]
+=======
+    global latest_data
+    # Expected from Pico: {"load": 12345, "led": 0}. Also supports food/water-specific keys.
+    events = consumption_service.process_readings(data)
+    latest_data = consumption_service.normalize_state_payload(data)
+    return {
+        "status": "ok",
+        "events_recorded": len(events),
+    }
+
+@app.get("/api/state")
+async def get_state():
+    latest_data["consumption"] = consumption_service.state()
+    return latest_data
+
+
+
+@app.get("/api/consumption/events")
+async def read_consumption_events(report_date: Optional[str] = None):
+    events = getConsumptionEvents(report_date)
+    return {"events": [asdict(event) for event in events]}
+
+
+@app.get("/api/consumption/daily/{report_date}")
+async def read_daily_consumption(report_date: str):
+    events = getConsumptionEvents(report_date)
+    return {
+        "report_date": report_date,
+        "totals": getDailyConsumptionTotals(report_date),
+        "events": [asdict(event) for event in events],
+    }
+
+
+@app.post("/api/consumption/reset")
+async def reset_consumption(sensor_type: str = "food"):
+    if not consumption_service.reset_session(sensor_type):
+        raise HTTPException(status_code=404, detail="Unknown sensor type")
+
+    return {
+        "status": "reset",
+        "sensor_type": sensor_type,
+        "consumption": consumption_service.state(),
+    }
 
 
 @app.post("/api/command")
@@ -137,9 +203,12 @@ async def read_report(report_date: str):
 
 @app.post("/api/reports/{report_date}/voice-tags")
 async def create_voice_tag(report_date: str, tag: VoiceTagPayload):
-    voice_type = tag.voice_type.strip()
-    if not voice_type:
-        raise HTTPException(status_code=400, detail="Voice tag cannot be empty")
+    voice_type = tag.voice_type.strip().lower()
+    if voice_type not in ALLOWED_VOICE_TAGS:
+        raise HTTPException(
+            status_code=400,
+            detail="Voice tag must be one of: brushing, food, isolation",
+        )
 
     try:
         addVoice_log(report_date, tag.timestamp, voice_type)
@@ -153,6 +222,13 @@ async def create_voice_tag(report_date: str, tag: VoiceTagPayload):
         "report": asdict(report) if report else None,
         "voice_tags": voice_tags,
     }
+
+@app.get("/api/reports/{report_date}/voice-tags")
+async def get_emotion_chart(report_date:str):
+    voice_tags = getVoice_log(report_date)
+    if voice_tags is None:
+        raise HTTPException(status_code=404, detail="Report not found")
+    return {"voice_tags": voice_tags}
 
 
 if __name__ == "__main__":

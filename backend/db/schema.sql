@@ -14,3 +14,19 @@ CREATE TABLE IF NOT EXISTS voice_logs (
     PRIMARY KEY (report_date, timestamp)
 );
 
+CREATE TABLE IF NOT EXISTS consumption_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sensor_type TEXT NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    before_value REAL NOT NULL,
+    after_value REAL NOT NULL,
+    consumed_amount REAL NOT NULL,
+    unit TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_consumption_events_end_time
+ON consumption_events(end_time);
+
+CREATE INDEX IF NOT EXISTS idx_consumption_events_sensor_type
+ON consumption_events(sensor_type);
