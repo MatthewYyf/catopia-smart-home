@@ -1105,6 +1105,155 @@ body {
   white-space: nowrap;
 }
 
+/* ═══════════ EMOTION VOICE PAGE ═══════════ */
+.emotion-voice-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(280px, 420px);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.emotion-live-card,
+.emotion-reference-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-width: 0;
+}
+
+.emotion-live-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.emotion-live-header span,
+.emotion-live-meta span,
+.emotion-reference-card > span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.emotion-live-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--cream);
+  line-height: 1.1;
+  margin-top: 5px;
+}
+
+.emotion-live-tag {
+  min-height: 260px;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--text-dim);
+  border-radius: 16px;
+  background: rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 28px;
+  text-align: center;
+}
+
+.emotion-live-tag.tag-food { border-top-color: var(--amber); }
+.emotion-live-tag.tag-brushing { border-top-color: var(--blue); }
+.emotion-live-tag.tag-isolation { border-top-color: var(--red); }
+.emotion-live-tag.tag-other { border-top-color: var(--text-dim); }
+
+.emotion-live-tag img {
+  width: 104px;
+  height: 104px;
+  object-fit: contain;
+}
+
+.emotion-live-tag strong {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--amber-l);
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.emotion-live-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.emotion-live-meta div {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.emotion-live-meta strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.emotion-tag-options {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.emotion-tag-tile {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-dim);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.emotion-tag-tile.active {
+  background: rgba(200,134,58,0.12);
+  border-color: var(--border2);
+}
+
+.emotion-tag-tile[data-live-tag="food"] { border-left-color: var(--amber); }
+.emotion-tag-tile[data-live-tag="brushing"] { border-left-color: var(--blue); }
+.emotion-tag-tile[data-live-tag="isolation"] { border-left-color: var(--red); }
+
+.emotion-tag-tile img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.emotion-tag-tile strong {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.emotion-tag-tile span {
+  display: block;
+  color: var(--text-dim);
+  font-size: 10px;
+  margin-top: 3px;
+}
+
 /* ═══════════ PAGE HEADER ═══════════ */
 .page-header {
   margin-bottom: 24px;
@@ -1585,6 +1734,7 @@ body {
   .widget.wide { grid-column: span 2; }
   .cam-grid { grid-template-columns: 1fr; }
   .report-layout { grid-template-columns: 1fr; }
+  .emotion-voice-grid { grid-template-columns: 1fr; }
   .test-page-grid { grid-template-columns: 1fr; }
 }
 
@@ -1599,6 +1749,11 @@ body {
   .emotion-event { width: 72px; }
   .emotion-event-badge { width: 66px; min-height: 80px; }
   .emotion-event-icon { width: 34px; height: 34px; }
+  .emotion-live-header { flex-direction: column; }
+  .emotion-live-meta { grid-template-columns: 1fr; }
+  .emotion-live-tag { min-height: 220px; padding: 22px; }
+  .emotion-live-tag img { width: 84px; height: 84px; }
+  .emotion-live-tag strong { font-size: 36px; }
   .timeline-event-tick { min-width: 52px; }
   .test-card-header, .test-card-actions { flex-direction: column; align-items: stretch; }
   .test-metric-grid, .sim-summary, .consumption-record { grid-template-columns: 1fr; }
@@ -1655,6 +1810,10 @@ body {
     <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard', this)">
       <span class="ni-icon">⊞</span>
       <span class="ni-text">Dashboard</span>
+    </div>
+    <div class="nav-item" data-page="emotion-voice" onclick="showPage('emotion-voice', this)">
+      <span class="ni-icon">🎙</span>
+      <span class="ni-text">Emotion_Voice</span>
     </div>
     <div class="nav-item" data-page="cameras" onclick="showPage('cameras', this)">
       <span class="ni-icon">📷</span>
@@ -1936,6 +2095,77 @@ body {
     </div>
   </div>
 
+  <!-- ═══ EMOTION VOICE PAGE ═══ -->
+  <div class="page" id="page-emotion-voice">
+    <div class="page-header">
+      <div>
+        <h2>Emotion_Voice</h2>
+        <p>Latest cat vocalization tag from the ML service.</p>
+      </div>
+      <div class="ph-right">
+        <button class="outline-btn" type="button" onclick="refreshLatestEmotion(true)">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="emotion-voice-grid">
+      <section class="emotion-live-card">
+        <div class="emotion-live-header">
+          <div>
+            <span>Live Detection</span>
+            <h3 id="emotion-live-heading">Waiting for audio</h3>
+          </div>
+          <span class="device-pill warn" id="emotion-voice-status">
+            <span class="device-dot"></span>
+            <span id="emotion-voice-status-text">Polling</span>
+          </span>
+        </div>
+
+        <div class="emotion-live-tag tag-other" id="emotion-live-tag-card">
+          <img id="emotion-live-icon" src="/static/images/unknown-tag.svg" alt="">
+          <strong id="emotion-live-tag">Waiting</strong>
+        </div>
+
+        <div class="emotion-live-meta">
+          <div>
+            <span>Received At</span>
+            <strong id="emotion-live-time">No audio detected yet</strong>
+          </div>
+          <div>
+            <span>Source</span>
+            <strong>ml_service.py</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="emotion-reference-card">
+        <span>Possible Tags</span>
+        <div class="emotion-tag-options">
+          <div class="emotion-tag-tile" data-live-tag="food">
+            <img src="/static/images/food-tag.svg" alt="">
+            <div>
+              <strong>Food</strong>
+              <span>Food-seeking vocalization</span>
+            </div>
+          </div>
+          <div class="emotion-tag-tile" data-live-tag="brushing">
+            <img src="/static/images/brushing-tag.svg" alt="">
+            <div>
+              <strong>Great</strong>
+              <span>Brushing tag, happy emotion</span>
+            </div>
+          </div>
+          <div class="emotion-tag-tile" data-live-tag="isolation">
+            <img src="/static/images/isolation-tag.svg" alt="">
+            <div>
+              <strong>Isolation</strong>
+              <span>Attention or separation vocalization</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
   <!-- ═══ CAMERAS PAGE ═══ -->
   <div class="page" id="page-cameras">
     <div class="page-header">
@@ -2119,7 +2349,7 @@ body {
               <label for="emotion-tag">Emotion Tag</label>
               <select id="emotion-tag" required>
                 <option value="food">Food</option>
-                <option value="brushing">Brushing</option>
+                <option value="brushing">Great</option>
                 <option value="isolation">Isolation</option>
               </select>
             </div>
@@ -2188,6 +2418,7 @@ function showPage(name, navEl) {
   const titles = {
     test: 'Test',
     dashboard: 'Dashboard',
+    'emotion-voice': 'Emotion_Voice',
     cameras: 'Cameras',
     play: 'Play',
     schedule: 'Schedule',
@@ -2719,7 +2950,7 @@ const VOICE_TAG_META = {
   },
   brushing: {
     key: 'brushing',
-    label: 'Brushing',
+    label: 'Great',
     icon: '/static/images/brushing-tag.svg'
   },
   isolation: {
@@ -2749,6 +2980,64 @@ function getVoiceTagMeta(voiceType) {
     label: meta.label,
     icon: meta.icon
   };
+}
+
+function setEmotionVoiceStatus(status, text) {
+  const statusEl = document.getElementById('emotion-voice-status');
+  const textEl = document.getElementById('emotion-voice-status-text');
+  if (!statusEl || !textEl) return;
+
+  statusEl.className = `device-pill ${status}`;
+  textEl.textContent = text;
+}
+
+function updateLatestEmotionDisplay(latest) {
+  const tagCard = document.getElementById('emotion-live-tag-card');
+  const tagIcon = document.getElementById('emotion-live-icon');
+  const tagText = document.getElementById('emotion-live-tag');
+  const heading = document.getElementById('emotion-live-heading');
+  const timeText = document.getElementById('emotion-live-time');
+  if (!tagCard || !tagIcon || !tagText || !heading || !timeText) return;
+
+  const meta = getVoiceTagMeta(latest?.voice_type);
+  document.querySelectorAll('.emotion-tag-tile').forEach((tile) => {
+    tile.classList.toggle('active', Boolean(meta) && tile.dataset.liveTag === meta.key);
+  });
+
+  if (!meta) {
+    tagCard.className = 'emotion-live-tag tag-other';
+    tagIcon.src = '/static/images/unknown-tag.svg';
+    tagText.textContent = 'Waiting';
+    heading.textContent = 'Waiting for audio';
+    timeText.textContent = 'No audio detected yet';
+    return;
+  }
+
+  tagCard.className = `emotion-live-tag tag-${meta.key}`;
+  tagIcon.src = meta.icon;
+  tagText.textContent = meta.label;
+  heading.textContent = `${meta.label} detected`;
+  timeText.textContent = latest.timestamp
+    ? `${formatTagDate(latest.timestamp)} ${formatTagTime(latest.timestamp)}`.trim()
+    : 'No timestamp';
+}
+
+async function refreshLatestEmotion(showToast = false) {
+  setEmotionVoiceStatus('warn', 'Polling');
+
+  try {
+    const res = await fetch('/api/emotion/latest');
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+
+    updateLatestEmotionDisplay(data.latest || {});
+    setEmotionVoiceStatus('ok', 'Live');
+    if (showToast) toast('Latest voice tag loaded', '✓');
+  } catch (err) {
+    setEmotionVoiceStatus('error', 'Offline');
+    if (showToast) toast(err.message || 'Failed to load voice tag', '⚠️');
+    console.error(err);
+  }
 }
 
 function normalizeVoiceLogs(voiceTags) {
@@ -3058,6 +3347,8 @@ async function loadReport() {
 
 initReportDates();
 loadWaterIntakeChart();
+refreshLatestEmotion();
+setInterval(refreshLatestEmotion, 1000);
 
 // ── Feed ──
 function triggerFeed(btn) {

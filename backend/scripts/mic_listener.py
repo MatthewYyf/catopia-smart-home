@@ -18,14 +18,26 @@ from services.audio_service import AudioConfig, VocalizationDetector
 from services.ml_service import CatVocalModel
 
 
-POST_URL = "http://127.0.0.1:8000/api/data"
+POST_URL = "http://0.0.0.0:8000/api/emotion/latest"
+ALLOWED_LABELS = {"food", "brushing", "isolation"}
 
 
 def post_prediction(payload: dict) -> None:
     try:
-        print(dict)
-        # response = requests.post(POST_URL, json=payload, timeout=3)
-        # response.raise_for_status()
+        label = str(payload.get("label", "")).strip().lower()
+        if label not in ALLOWED_LABELS:
+            print(f"Skipping unsupported prediction label: {label or 'unknown'}")
+            return
+
+        response = requests.post(
+            POST_URL,
+            json={
+                "timestamp": payload["timestamp"],
+                "voice_type": label,
+            },
+            timeout=3,
+        )
+        response.raise_for_status()
     except Exception as exc:
         print(f"POST failed: {exc}")
 

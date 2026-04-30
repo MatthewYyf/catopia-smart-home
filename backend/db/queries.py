@@ -95,6 +95,29 @@ def getVoice_log(report_date: str) -> List[Dict[str, str]]:
     ]
 
 
+def getLatestVoice_log() -> Optional[Dict[str, str]]:
+    with _get_connection() as conn:
+        row = conn.execute(
+            """
+            SELECT
+                timestamp,
+                lower(trim(voice_type)) AS voice_type
+            FROM voice_logs
+            WHERE lower(trim(voice_type)) IN ('food', 'brushing', 'isolation')
+            ORDER BY timestamp DESC
+            LIMIT 1
+            """
+        ).fetchone()
+
+    if row is None:
+        return None
+
+    return {
+        "timestamp": row["timestamp"],
+        "voice_type": row["voice_type"],
+    }
+
+
 def getReportbyDate(report_date: str) -> Optional[report]:
     with _get_connection() as conn:
         row = conn.execute(

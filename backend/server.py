@@ -13,6 +13,7 @@ from db.queries import (
     addVoice_log,
     getConsumptionEvents,
     getDailyConsumptionTotals,
+    getLatestVoice_log,
     getReportbyDate,
     getVoice_log,
     getWaterIntakeByDateRange,
@@ -44,6 +45,11 @@ class ReportPayload(BaseModel):
 
 
 class VoiceTagPayload(BaseModel):
+    timestamp: str = Field(min_length=1, max_length=64)
+    voice_type: str = Field(min_length=1, max_length=80)
+
+
+class LatestVoicePayload(BaseModel):
     timestamp: str = Field(min_length=1, max_length=64)
     voice_type: str = Field(min_length=1, max_length=80)
 
@@ -232,6 +238,38 @@ async def create_voice_tag(report_date: str, tag: VoiceTagPayload):
         "status": "saved",
         "report": asdict(report) if report else None,
         "voice_tags": voice_tags,
+    }
+
+
+@app.post("/api/emotion/latest")
+async def update_latest_emotion(tag: LatestVoicePayload):
+    voice_type = tag.voice_type.strip().lower()
+    if voice_type not in ALLOWED_VOICE_TYPES:
+        raise HTTPException(status_code=400, detail="Voice tag must be food, brushing, or isolation")
+
+    try:
+        report_date = tag.timestamp[:10]
+        addVoice_log(report_date, tag.timestamp, voice_type)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "status": "saved",
+        "latest": {
+            "timestamp": tag.timestamp,
+            "voice_type": voice_type,
+        },
+    }
+
+
+@app.get("/api/emotion/latest")
+async def read_latest_emotion():
+    latest = getLatestVoice_log()
+    return {
+        "latest": latest or {
+            "timestamp": None,
+            "voice_type": None,
+        },
     }
 
 
