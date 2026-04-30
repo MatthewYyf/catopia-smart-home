@@ -43,7 +43,6 @@ class PumpDevice:
 class LoadSensor:
     def __init__(self, pin_out, pin_sck):
         self.load_sensor = HX711(pin_out, pin_sck)
-        self.load_sensor.set_scale(2280)  # Example scale factor, needs calibration
         self.load_sensor.tare()  # Zero the scale
 
     def read(self):

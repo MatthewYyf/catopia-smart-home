@@ -1143,6 +1143,161 @@ body {
 
 .outline-btn:hover { background: var(--amber-glow); border-color: var(--border2); color: var(--amber-l); }
 
+/* ═══════════ TEST PAGE ═══════════ */
+.test-status-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.device-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: var(--text-mid);
+  font-size: 10px;
+}
+
+.device-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+
+.device-pill.ok .device-dot { background: var(--green); }
+.device-pill.warn .device-dot { background: var(--amber); }
+.device-pill.error .device-dot { background: var(--red); }
+
+.test-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.test-metric {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 13px;
+  min-width: 0;
+}
+
+.test-metric > span {
+  display: block;
+  color: var(--text-dim);
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.test-metric strong {
+  display: block;
+  color: var(--cream);
+  font-size: 20px;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+.test-metric strong.good { color: var(--green); }
+.test-metric strong.warn { color: var(--amber-l); }
+.test-metric strong.bad { color: var(--red); }
+
+.test-split {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.test-panel {
+  background: rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  min-width: 0;
+}
+
+.test-panel h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--cream);
+  margin-bottom: 10px;
+}
+
+.test-controls {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.test-controls .form-field input {
+  padding: 9px 11px;
+}
+
+.payload-box {
+  min-height: 142px;
+  max-height: 240px;
+  overflow: auto;
+  background: var(--bg);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  color: var(--text-mid);
+  font-size: 10px;
+  line-height: 1.6;
+  padding: 12px;
+  white-space: pre-wrap;
+}
+
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.event-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.event-row strong {
+  color: var(--amber-l);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.event-row span {
+  color: var(--text-dim);
+  font-size: 9px;
+}
+
+.event-empty {
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 11px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
 /* ═══════════ NOTIFICATIONS ═══════════ */
 .notif-list { display: flex; flex-direction: column; gap: 10px; }
 
@@ -1217,6 +1372,8 @@ body {
   .widget.wide { grid-column: span 2; }
   .cam-grid { grid-template-columns: 1fr; }
   .report-layout { grid-template-columns: 1fr; }
+  .test-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .test-split { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
@@ -1231,6 +1388,7 @@ body {
   .emotion-event-badge { width: 66px; min-height: 80px; }
   .emotion-event-icon { width: 34px; height: 34px; }
   .timeline-event-tick { min-width: 52px; }
+  .test-metric-grid, .test-controls { grid-template-columns: 1fr; }
 }
 
 .ni-text { font-size: 12px; }
@@ -1325,7 +1483,7 @@ body {
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
-      <h2 id="page-title">Dashboard</h2>
+      <h2 id="page-title">Test</h2>
       <span id="page-time"></span>
     </div>
     <div class="topbar-right">
@@ -1344,7 +1502,12 @@ body {
     <div class="page-header">
       <div>
         <h2>Test Hardware Interactions</h2>
-        <p>Component playground</p>
+        <p>Pico 3 load sensor monitor</p>
+        <div class="test-status-line">
+          <span class="device-pill warn" id="weight-device-status"><span class="device-dot"></span><span id="weight-device-status-text">Waiting for Pico 3</span></span>
+          <span class="device-pill">Device 003</span>
+          <span class="device-pill" id="weight-last-update">No readings yet</span>
+        </div>
       </div>
     </div>
   
@@ -1443,14 +1606,77 @@ body {
           </div>
           
   <!---- Weight ---->
-          <div class="widget" style="grid-column: span 3">
-                <div class="widget-label"><div class="wi">⚖️</div> Weight</div>
-                <div class="widget-value amber">
-                  <span id="weight-value">--</span>
-                  <small style="font-size:14px;color:var(--text-dim)">kg</small>
-                </div>
-                <div class="progress-bar"><div class="progress-fill amber" style="width:55%"></div></div>
+          <div class="widget full">
+            <div class="widget-label" style="justify-content:space-between">
+              <span style="display:flex;align-items:center;gap:6px"><div class="wi">⚖️</div> Weight Tracking</span>
+              <span style="display:flex;gap:8px">
+                <button type="button" class="outline-btn" onclick="refreshWeightState(true)">↻ Poll</button>
+                <button type="button" class="outline-btn" onclick="resetWeightSession()">Reset Session</button>
+              </span>
+            </div>
+
+            <div class="test-metric-grid">
+              <div class="test-metric">
+                <span>Current Load</span>
+                <strong><span id="weight-value">--</span> g</strong>
               </div>
+              <div class="test-metric">
+                <span>Filtered</span>
+                <strong><span id="weight-filtered">--</span> g</strong>
+              </div>
+              <div class="test-metric">
+                <span>Stable</span>
+                <strong id="weight-stable-state" class="warn">--</strong>
+              </div>
+              <div class="test-metric">
+                <span>Session Food</span>
+                <strong><span id="weight-session-total">--</span> g</strong>
+              </div>
+              <div class="test-metric">
+                <span>Baseline</span>
+                <strong><span id="weight-baseline">--</span> g</strong>
+              </div>
+              <div class="test-metric">
+                <span>Stable Value</span>
+                <strong><span id="weight-stable-value">--</span> g</strong>
+              </div>
+              <div class="test-metric">
+                <span>Samples</span>
+                <strong id="weight-sample-count">--</strong>
+              </div>
+              <div class="test-metric">
+                <span>Today Total</span>
+                <strong><span id="weight-today-total">--</span> g</strong>
+              </div>
+            </div>
+
+            <div class="test-split">
+              <div class="test-panel">
+                <h3>Manual Telemetry</h3>
+                <div class="test-controls">
+                  <div class="form-field">
+                    <label for="test-load-input">Load (g)</label>
+                    <input id="test-load-input" type="number" step="0.1" value="120">
+                  </div>
+                  <button type="button" class="outline-btn" onclick="sendTestLoad()">Send Load</button>
+                  <button type="button" class="outline-btn" onclick="runWeightDropTest()">Drop Test</button>
+                </div>
+                <div class="widget-sub" id="weight-test-message">POST target: /api/devices/003/telemetry</div>
+              </div>
+
+              <div class="test-panel">
+                <h3>Latest Payload</h3>
+                <pre class="payload-box" id="weight-payload">{}</pre>
+              </div>
+            </div>
+
+            <div class="test-panel" style="margin-top:14px">
+              <h3>Recent Food Events</h3>
+              <div class="event-list" id="weight-event-list">
+                <div class="event-empty">No food consumption events yet</div>
+              </div>
+            </div>
+          </div>
     </div>
     
   </div>
@@ -1868,29 +2094,233 @@ async function toggleCtrl(btn) {
   }
 }
 
-async function refreshState() {
-  try {
-    const res = await fetch('/api/state');
-    const data = await res.json();
-    // Sync LED button
-    // syncCtrlBtn('LED', data.led === 1);
+const WEIGHT_DEVICE_ID = '003';
+const WEIGHT_STATE_URL = `/api/devices/${WEIGHT_DEVICE_ID}/state`;
+const WEIGHT_TELEMETRY_URL = `/api/devices/${WEIGHT_DEVICE_ID}/telemetry`;
 
-    // Sync Water Pump button
-    // syncCtrlBtn('Water Pump', data.pump === 1);
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
 
-    // Update weight widget
-    if (data.weight !== null && data.weight !== undefined) {
-      document.getElementById('weight-value').textContent = data.weight;
-    }
+function numberOrNull(value) {
+  if (typeof value === 'boolean') return null;
+  const num = Number(value);
+  return Number.isFinite(num) ? num : null;
+}
 
-  } catch (err) {
-    console.error('Error loading state:', err);
+function firstNumber(...values) {
+  for (const value of values) {
+    const num = numberOrNull(value);
+    if (num !== null) return num;
+  }
+  return null;
+}
+
+function formatSensorValue(value, digits = 1) {
+  const num = numberOrNull(value);
+  if (num === null) return '--';
+  return Number.isInteger(num) ? String(num) : num.toFixed(digits);
+}
+
+function setWeightStatus(kind, text) {
+  const status = document.getElementById('weight-device-status');
+  const label = document.getElementById('weight-device-status-text');
+  if (status) status.className = `device-pill ${kind}`;
+  if (label) label.textContent = text;
+}
+
+function getFoodTracker(data) {
+  return data?.consumption?.sensors?.food || {};
+}
+
+function getCurrentLoad(data, tracker) {
+  return firstNumber(
+    data?.load,
+    data?.food_weight,
+    data?.food_load,
+    data?.food_level,
+    data?.sensor?.load,
+    data?.sensor?.food_weight,
+    data?.sensor?.food_load,
+    tracker?.latest_raw
+  );
+}
+
+function renderWeightState(data) {
+  const tracker = getFoodTracker(data);
+  const currentLoad = getCurrentLoad(data, tracker);
+  const sampleCount = numberOrNull(tracker.recent_sample_count) || 0;
+  const hasReading = currentLoad !== null || tracker.latest_raw !== null;
+  const stable = tracker.is_stable === true;
+  const stableEl = document.getElementById('weight-stable-state');
+
+  setText('weight-value', formatSensorValue(currentLoad));
+  setText('weight-filtered', formatSensorValue(tracker.filtered_value));
+  setText('weight-session-total', formatSensorValue(tracker.session_total));
+  setText('weight-baseline', formatSensorValue(tracker.baseline_value));
+  setText('weight-stable-value', formatSensorValue(tracker.stable_value));
+  setText('weight-sample-count', sampleCount ? String(sampleCount) : '--');
+  setText('weight-today-total', formatSensorValue(tracker.today_total));
+
+  if (stableEl) {
+    stableEl.textContent = stable ? 'Stable' : (sampleCount ? 'Collecting' : '--');
+    stableEl.className = stable ? 'good' : 'warn';
+  }
+
+  const payloadBox = document.getElementById('weight-payload');
+  if (payloadBox) payloadBox.textContent = JSON.stringify(data, null, 2);
+
+  if (hasReading) {
+    setWeightStatus(stable ? 'ok' : 'warn', stable ? 'Stable readings' : 'Receiving readings');
+    setText('weight-last-update', `Last poll ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' })}`);
+  } else {
+    setWeightStatus('warn', 'Waiting for Pico 3');
+    setText('weight-last-update', 'No load readings yet');
   }
 }
 
-// Poll every second
-// refreshState();
-// setInterval(refreshState, 1000);
+function renderWeightEvents(events) {
+  const list = document.getElementById('weight-event-list');
+  if (!list) return;
+
+  const foodEvents = (events || [])
+    .filter((event) => event.sensor_type === 'food')
+    .slice()
+    .reverse()
+    .slice(0, 6);
+
+  if (!foodEvents.length) {
+    list.innerHTML = '<div class="event-empty">No food consumption events yet</div>';
+    return;
+  }
+
+  list.innerHTML = foodEvents.map((event) => `
+    <div class="event-row">
+      <div>
+        <strong>${escapeHtml(formatSensorValue(event.consumed_amount))} ${escapeHtml(event.unit || 'g')}</strong>
+        <span>${escapeHtml(formatSensorValue(event.before_value))} → ${escapeHtml(formatSensorValue(event.after_value))}</span>
+      </div>
+      <span>${escapeHtml(String(event.end_time || '').slice(11, 19) || event.end_time || '')}</span>
+    </div>
+  `).join('');
+}
+
+async function loadWeightEvents() {
+  const date = todayISO();
+  const res = await fetch(`/api/consumption/events?report_date=${encodeURIComponent(date)}`);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+  renderWeightEvents(data.events || []);
+}
+
+async function refreshWeightState(showToast = false) {
+  try {
+    const res = await fetch(WEIGHT_STATE_URL);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+    renderWeightState(data);
+    try {
+      await loadWeightEvents();
+    } catch (eventErr) {
+      console.error('Error loading weight events:', eventErr);
+    }
+    if (showToast) toast('Weight state refreshed', '↻');
+  } catch (err) {
+    setWeightStatus('error', 'Backend unreachable');
+    setText('weight-last-update', 'Poll failed');
+    console.error('Error loading Pico 3 weight state:', err);
+    if (showToast) toast('Could not load weight state', '⚠️');
+  }
+}
+
+async function postWeightTelemetry(loadValue) {
+  const payload = {
+    device_id: WEIGHT_DEVICE_ID,
+    load: loadValue,
+    source: 'web_weight_test'
+  };
+  const res = await fetch(WEIGHT_TELEMETRY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+  return data;
+}
+
+async function sendTestLoad() {
+  const input = document.getElementById('test-load-input');
+  const loadValue = numberOrNull(input?.value);
+  if (loadValue === null) {
+    toast('Enter a load value', '⚠️');
+    return;
+  }
+
+  try {
+    await postWeightTelemetry(loadValue);
+    setText('weight-test-message', `Sent ${formatSensorValue(loadValue)}g to ${WEIGHT_TELEMETRY_URL}`);
+    await refreshWeightState(false);
+    toast('Test load sent', '✓');
+  } catch (err) {
+    console.error(err);
+    toast('Failed to send test load', '⚠️');
+  }
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function runWeightDropTest() {
+  const input = document.getElementById('test-load-input');
+  const baseValue = numberOrNull(input?.value);
+  if (baseValue === null || baseValue < 12) {
+    toast('Use a starting load of at least 12g', '⚠️');
+    return;
+  }
+
+  const afterValue = Math.max(0, baseValue - 10);
+  setText('weight-test-message', `Running drop test: ${formatSensorValue(baseValue)}g → ${formatSensorValue(afterValue)}g`);
+
+  try {
+    for (let i = 0; i < 6; i += 1) {
+      await postWeightTelemetry(baseValue);
+      await sleep(80);
+    }
+    for (let i = 0; i < 10; i += 1) {
+      await postWeightTelemetry(afterValue);
+      await sleep(80);
+    }
+    await refreshWeightState(false);
+    toast('Drop test complete', '✓');
+  } catch (err) {
+    console.error(err);
+    toast('Drop test failed', '⚠️');
+  }
+}
+
+async function resetWeightSession() {
+  try {
+    const res = await fetch('/api/consumption/reset?sensor_type=food', { method: 'POST' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+    await refreshWeightState(false);
+    toast('Weight session reset', '✓');
+  } catch (err) {
+    console.error(err);
+    toast('Failed to reset weight session', '⚠️');
+  }
+}
+
+function refreshState() {
+  return refreshWeightState();
+}
+
+// Poll Pico 3 load-sensor state once per second.
+refreshWeightState();
+setInterval(refreshWeightState, 1000);
 
 // ── Reports ──
 function todayISO() {
@@ -2452,9 +2882,14 @@ function setDispense(g) {
   updateDispenseLabel(g);
 }
 
-// function updateDispenseLabel(g) {
-//   document.getElementById('dispense-btn-label').textContent = g + 'g';
-// }
+function updateDispenseLabel(g) {
+  const btn = document.getElementById('dispense-food-btn');
+  const amount = parseInt(g, 10);
+  if (btn && !btn.disabled && Number.isFinite(amount)) {
+    btn.textContent = `🍽 Dispense ${amount}g`;
+  }
+}
+updateDispenseLabel(document.getElementById('dispense-input')?.value || 40);
 
 async function dispenseFood() {
   const grams = parseInt(document.getElementById('dispense-input').value);
@@ -2484,7 +2919,7 @@ async function dispenseFood() {
   } finally {
     setTimeout(() => {
       btn.disabled = false;
-      btn.innerHTML = '🍽 Dispense Now';
+      updateDispenseLabel(grams);
     }, 3000);
   }
 }
