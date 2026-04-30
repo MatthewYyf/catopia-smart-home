@@ -126,6 +126,10 @@ def handle_command(cmd):
         print(params)
         # add dispense mechanism
 
+    elif cmd_type == "TARE_LOAD_SENSOR":
+        hw.load.tare()
+        print("Load sensor tared")
+
     elif cmd_type == "PING":
         print("Received ping")
 

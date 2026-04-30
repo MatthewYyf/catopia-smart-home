@@ -65,6 +65,7 @@ async def receive_device_telemetry(device_id: str, data: dict):
         "status": "ok",
         "device_id": device_id,
         "events_recorded": len(events),
+        "events": events,
     }
 
 
@@ -105,6 +106,7 @@ async def receive_data(data: dict):
         "status": "ok",
         "device_id": device_id,
         "events_recorded": len(events),
+        "events": events,
     }
 
 @app.get("/api/state")

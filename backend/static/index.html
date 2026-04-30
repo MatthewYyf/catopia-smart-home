@@ -1398,6 +1398,91 @@ body {
   margin-bottom: 14px;
 }
 
+.consumption-record {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(0, 1.3fr);
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 14px;
+}
+
+.record-total {
+  background: linear-gradient(135deg, rgba(90,158,111,0.16), rgba(90,158,111,0.06));
+  border: 1px solid rgba(90,158,111,0.28);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.record-total span {
+  display: block;
+  color: var(--text-dim);
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.record-total strong {
+  color: var(--green);
+  font-size: 34px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.record-total small {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.record-detail {
+  background: rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  min-width: 0;
+}
+
+.record-detail strong {
+  display: block;
+  color: var(--cream);
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
+.record-detail p {
+  color: var(--text-dim);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.record-history {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: 150px;
+  overflow: auto;
+}
+
+.record-history-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 10px;
+  color: var(--text-mid);
+  font-size: 10px;
+}
+
+.record-history-row strong {
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 400;
+}
+
 .event-list {
   display: flex;
   flex-direction: column;
@@ -1529,7 +1614,7 @@ body {
   .emotion-event-icon { width: 34px; height: 34px; }
   .timeline-event-tick { min-width: 52px; }
   .test-card-header, .test-card-actions, .sim-actions { flex-direction: column; align-items: stretch; }
-  .test-metric-grid, .sim-form-grid, .sim-summary { grid-template-columns: 1fr; }
+  .test-metric-grid, .sim-form-grid, .sim-summary, .consumption-record { grid-template-columns: 1fr; }
   .sim-equation { grid-template-columns: 1fr; }
   .sim-operator { text-align: center; }
   .load-readout strong { font-size: 48px; }
@@ -1663,6 +1748,7 @@ body {
             <p>Immediate reading from Pico 3 load cell telemetry.</p>
           </div>
           <div class="test-card-actions">
+            <button type="button" class="outline-btn" onclick="tareLoadSensor()">Tare Sensor</button>
             <button type="button" class="outline-btn" onclick="refreshWeightState(true)">↻ Poll</button>
           </div>
         </div>
@@ -1719,7 +1805,7 @@ body {
           </div>
           <div class="form-field">
             <label for="sim-consumed-input">Food Consumed (g)</label>
-            <input id="sim-consumed-input" type="number" min="0" step="0.1" value="10" oninput="updateConsumptionPreview()">
+            <input id="sim-consumed-input" type="number" min="0" max="80" step="0.1" value="10" oninput="updateConsumptionPreview()">
           </div>
         </div>
 
@@ -1760,7 +1846,26 @@ body {
           </div>
         </div>
 
+        <div class="consumption-record">
+          <div class="record-total">
+            <span>Recorded Consumed</span>
+            <strong id="sim-recorded-consumed">--</strong>
+            <small>g</small>
+          </div>
+          <div class="record-detail">
+            <strong id="sim-record-status">No simulation recorded</strong>
+            <p id="sim-record-detail">Run a consumption simulation to record the detected food drop.</p>
+          </div>
+        </div>
+
         <div class="widget-sub" id="sim-message">Simulation posts to /api/devices/003/telemetry.</div>
+
+        <div class="test-panel" style="margin-top:14px">
+          <h3>Simulation History</h3>
+          <div class="record-history" id="sim-record-history">
+            <div class="event-empty">No simulation runs yet</div>
+          </div>
+        </div>
 
         <div class="test-panel" style="margin-top:14px">
           <h3>Recent Food Events</h3>
@@ -2189,7 +2294,9 @@ async function toggleCtrl(btn) {
 const WEIGHT_DEVICE_ID = '003';
 const WEIGHT_STATE_URL = `/api/devices/${WEIGHT_DEVICE_ID}/state`;
 const WEIGHT_TELEMETRY_URL = `/api/devices/${WEIGHT_DEVICE_ID}/telemetry`;
+const WEIGHT_COMMAND_URL = `/api/devices/${WEIGHT_DEVICE_ID}/commands`;
 const weightHistory = [];
+const simulationRecords = [];
 
 function setText(id, value) {
   const el = document.getElementById(id);
@@ -2309,7 +2416,7 @@ function getSimulationValues() {
     start,
     consumed: safeConsumed,
     remaining: start - safeConsumed,
-    valid: start >= 0 && consumed >= 0 && consumed <= start,
+    valid: start >= 0 && consumed >= 0 && consumed <= start && consumed <= 80,
   };
 }
 
@@ -2321,10 +2428,38 @@ function updateConsumptionPreview() {
   setText('sim-expected-consumed', formatSensorValue(values.consumed));
 
   if (!values.valid) {
-    setText('sim-message', 'Enter a non-negative consumed amount that is not larger than the starting load.');
+    setText('sim-message', 'Enter 0-80g, and keep consumed amount no larger than the starting load.');
   } else {
     setText('sim-message', `Ready to simulate ${formatSensorValue(values.consumed)}g consumed from ${formatSensorValue(values.start)}g.`);
   }
+}
+
+function sumConsumedEvents(events) {
+  return (events || []).reduce((total, event) => {
+    if (event?.sensor_type !== 'food') return total;
+    const amount = numberOrNull(event.consumed_amount);
+    return amount === null ? total : total + amount;
+  }, 0);
+}
+
+function renderSimulationRecord(record) {
+  setText('sim-recorded-consumed', formatSensorValue(record.recorded));
+  setText('sim-record-status', record.status);
+  setText('sim-record-detail', record.detail);
+
+  simulationRecords.unshift(record);
+  if (simulationRecords.length > 5) simulationRecords.pop();
+
+  const history = document.getElementById('sim-record-history');
+  if (!history) return;
+
+  history.innerHTML = simulationRecords.map((item) => `
+    <div class="record-history-row">
+      <strong>${escapeHtml(formatSensorValue(item.recorded))}g</strong>
+      <span>${escapeHtml(formatSensorValue(item.before))}g -> ${escapeHtml(formatSensorValue(item.after))}g</span>
+      <span>${escapeHtml(item.time)}</span>
+    </div>
+  `).join('');
 }
 
 function renderWeightEvents(events) {
@@ -2373,11 +2508,13 @@ async function refreshWeightState(showToast = false) {
       console.error('Error loading weight events:', eventErr);
     }
     if (showToast) toast('Weight state refreshed', '↻');
+    return data;
   } catch (err) {
     setWeightStatus('error', 'Backend unreachable');
     setText('weight-last-update', 'Poll failed');
     console.error('Error loading Pico 3 weight state:', err);
     if (showToast) toast('Could not load weight state', '⚠️');
+    return null;
   }
 }
 
@@ -2398,10 +2535,13 @@ async function postWeightTelemetry(loadValue) {
 }
 
 async function sendStableLoad(loadValue, samples = 6, delayMs = 90) {
+  const collectedEvents = [];
   for (let i = 0; i < samples; i += 1) {
-    await postWeightTelemetry(loadValue);
+    const result = await postWeightTelemetry(loadValue);
+    collectedEvents.push(...(result.events || []));
     await sleep(delayMs);
   }
+  return collectedEvents;
 }
 
 async function sendTestLoad(loadValueOverride) {
@@ -2462,13 +2602,44 @@ async function runConsumptionSimulation() {
   try {
     await resetWeightSession(true, false);
     await sendStableLoad(values.start, 6);
-    await sendStableLoad(values.remaining, 10);
-    await refreshWeightState(false);
-    setText('sim-message', `Simulation complete. Expected consumed amount: ${formatSensorValue(values.consumed)}g.`);
+    const events = await sendStableLoad(values.remaining, 10);
+    const finalState = await refreshWeightState(false);
+    const tracker = getFoodTracker(finalState || {});
+    const recorded = sumConsumedEvents(events) || numberOrNull(tracker.last_event?.consumed_amount) || numberOrNull(tracker.session_total) || 0;
+    const difference = Math.abs(recorded - values.consumed);
+    const matched = difference <= 0.5;
+    renderSimulationRecord({
+      recorded,
+      before: values.start,
+      after: values.remaining,
+      expected: values.consumed,
+      status: matched ? 'Recorded by tracker' : 'Recorded amount differs from expected',
+      detail: `Expected ${formatSensorValue(values.consumed)}g; tracker recorded ${formatSensorValue(recorded)}g from ${formatSensorValue(values.start)}g to ${formatSensorValue(values.remaining)}g.`,
+      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' })
+    });
+    setText('sim-message', `Simulation complete. Recorded consumed amount: ${formatSensorValue(recorded)}g.`);
     toast('Consumption simulation complete', '✓');
   } catch (err) {
     console.error(err);
     toast('Consumption simulation failed', '⚠️');
+  }
+}
+
+async function tareLoadSensor() {
+  try {
+    const payload = { type: 'TARE_LOAD_SENSOR' };
+    const res = await fetch(WEIGHT_COMMAND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+    setText('sim-message', 'Tare command queued for Pico 3. Keep the bowl empty while it runs.');
+    toast('Tare command queued', '✓');
+  } catch (err) {
+    console.error(err);
+    toast('Failed to queue tare command', '⚠️');
   }
 }
 
