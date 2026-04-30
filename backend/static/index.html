@@ -1787,17 +1787,17 @@ body {
 
         <div class="sim-equation">
           <div class="sim-number">
-            <span>Previous Stable</span>
+            <span>Previous Baseline</span>
             <strong><span id="stable-before-value">--</span> g</strong>
           </div>
           <div class="sim-operator">-</div>
           <div class="sim-number">
-            <span>Current Stable</span>
+            <span>New Baseline</span>
             <strong><span id="stable-current-value">--</span> g</strong>
           </div>
           <div class="sim-operator">=</div>
           <div class="sim-number">
-            <span>Computed Drop</span>
+            <span>Last Drop</span>
             <strong><span id="stable-drop-value">--</span> g</strong>
           </div>
         </div>
@@ -1815,7 +1815,7 @@ body {
 
         <div class="consumption-record">
           <div class="record-total">
-            <span>Recorded Consumed</span>
+            <span>Accumulated Consumed</span>
             <strong id="sim-recorded-consumed">--</strong>
             <small>g</small>
           </div>
@@ -2262,8 +2262,6 @@ const WEIGHT_DEVICE_ID = '003';
 const WEIGHT_STATE_URL = `/api/devices/${WEIGHT_DEVICE_ID}/state`;
 const WEIGHT_COMMAND_URL = `/api/devices/${WEIGHT_DEVICE_ID}/commands`;
 const weightHistory = [];
-const simulationRecords = [];
-let lastRenderedConsumptionKey = '';
 
 function setText(id, value) {
   const el = document.getElementById(id);
@@ -2332,69 +2330,59 @@ function renderWeightHistory(value) {
   }).join('');
 }
 
-function consumptionEventKey(event) {
-  if (!event) return '';
-  return [
-    event.start_time,
-    event.end_time,
-    event.before_value,
-    event.after_value,
-    event.consumed_amount
-  ].join('|');
+function sumFoodDrops(events) {
+  return (events || []).reduce((total, event) => {
+    const amount = numberOrNull(event?.consumed_amount);
+    return amount === null ? total : total + amount;
+  }, 0);
 }
 
-function renderSimulationRecord(record) {
-  setText('sim-recorded-consumed', formatSensorValue(record.recorded));
-  setText('sim-record-status', record.status);
-  setText('sim-record-detail', record.detail);
-
-  if (record.key && record.key === lastRenderedConsumptionKey) return;
-  if (record.key) lastRenderedConsumptionKey = record.key;
-
-  simulationRecords.unshift(record);
-  if (simulationRecords.length > 5) simulationRecords.pop();
-
+function renderDropHistory(events) {
   const history = document.getElementById('sim-record-history');
   if (!history) return;
 
-  history.innerHTML = simulationRecords.map((item) => `
+  if (!events.length) {
+    history.innerHTML = '<div class="event-empty">No stable drops recorded yet</div>';
+    return;
+  }
+
+  history.innerHTML = events.slice().reverse().map((item) => `
     <div class="record-history-row">
-      <strong>${escapeHtml(formatSensorValue(item.recorded))}g</strong>
-      <span>${escapeHtml(formatSensorValue(item.before))}g -> ${escapeHtml(formatSensorValue(item.after))}g</span>
-      <span>${escapeHtml(item.time)}</span>
+      <strong>${escapeHtml(formatSensorValue(item.consumed_amount))}g</strong>
+      <span>${escapeHtml(formatSensorValue(item.before_value))}g -> ${escapeHtml(formatSensorValue(item.after_value))}g</span>
+      <span>${escapeHtml(String(item.end_time || '').slice(11, 19) || '')}</span>
     </div>
   `).join('');
 }
 
 function renderStableConsumption(tracker) {
-  const lastEvent = tracker.last_event || null;
+  const sessionEvents = Array.isArray(tracker.session_events) ? tracker.session_events : [];
+  const lastEvent = sessionEvents.length ? sessionEvents[sessionEvents.length - 1] : tracker.last_event || null;
   const baseline = numberOrNull(tracker.baseline_value);
   const stableValue = numberOrNull(tracker.stable_value);
   const before = numberOrNull(lastEvent?.before_value);
   const after = numberOrNull(lastEvent?.after_value);
   const consumed = numberOrNull(lastEvent?.consumed_amount);
+  const accumulated = numberOrNull(tracker.session_total) ?? sumFoodDrops(sessionEvents);
   const currentStable = after ?? stableValue ?? baseline;
   const previousStable = before ?? baseline;
 
   setText('stable-before-value', formatSensorValue(previousStable));
   setText('stable-current-value', formatSensorValue(currentStable));
   setText('stable-drop-value', formatSensorValue(consumed));
+  setText('sim-recorded-consumed', formatSensorValue(accumulated));
+  renderDropHistory(sessionEvents);
 
-  if (consumed !== null) {
-    renderSimulationRecord({
-      key: consumptionEventKey(lastEvent),
-      recorded: consumed,
-      before,
-      after,
-      status: 'Recorded from stable data',
-      detail: `Stable load changed from ${formatSensorValue(before)}g to ${formatSensorValue(after)}g, so consumed amount is ${formatSensorValue(consumed)}g.`,
-      time: String(lastEvent.end_time || '').slice(11, 19) || new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' })
-    });
-    setText('sim-message', `Last stable drop recorded ${formatSensorValue(consumed)}g consumed.`);
+  if (sessionEvents.length) {
+    setText('sim-record-status', `${sessionEvents.length} baseline drop${sessionEvents.length === 1 ? '' : 's'} recorded`);
+    setText(
+      'sim-record-detail',
+      `Accumulated consumed food is ${formatSensorValue(accumulated)}g. Last drop: ${formatSensorValue(before)}g -> ${formatSensorValue(after)}g = ${formatSensorValue(consumed)}g.`
+    );
+    setText('sim-message', `Accumulated consumed amount: ${formatSensorValue(accumulated)}g.`);
     return;
   }
 
-  setText('sim-recorded-consumed', '--');
   setText('sim-record-status', stableValue !== null ? 'Stable baseline ready' : 'Waiting for stable load');
   setText(
     'sim-record-detail',

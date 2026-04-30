@@ -34,6 +34,7 @@ class StableConsumptionTracker:
         self.latest_is_stable = False
         self.latest_stable_value = None
         self.last_event = None
+        self.session_events = deque(maxlen=100)
         self.session_total = 0
 
     def add_reading(self, value, timestamp):
@@ -78,6 +79,7 @@ class StableConsumptionTracker:
             self.last_stable_value = current_stable
             self.last_stable_time = timestamp
             self.last_event = event
+            self.session_events.append(event)
             self.session_total += drop
             return event
 
@@ -91,6 +93,7 @@ class StableConsumptionTracker:
     def reset_session(self, clear_state=False):
         self.session_total = 0
         self.last_event = None
+        self.session_events.clear()
         if clear_state:
             self.raw_readings.clear()
             self.filtered_readings.clear()
@@ -110,6 +113,7 @@ class StableConsumptionTracker:
             "baseline_value": self.last_stable_value,
             "recent_sample_count": len(self.raw_readings),
             "last_event": self.last_event,
+            "session_events": list(self.session_events),
             "session_total": self.session_total,
             "unit": self.unit,
         }
