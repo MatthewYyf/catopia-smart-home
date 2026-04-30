@@ -1340,12 +1340,6 @@ body {
   white-space: pre-wrap;
 }
 
-.sim-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
 .sim-equation {
   display: grid;
   grid-template-columns: 1fr auto 1fr auto 1fr;
@@ -1384,16 +1378,9 @@ body {
   font-size: 18px;
 }
 
-.sim-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
 .sim-summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 14px;
 }
@@ -1613,8 +1600,8 @@ body {
   .emotion-event-badge { width: 66px; min-height: 80px; }
   .emotion-event-icon { width: 34px; height: 34px; }
   .timeline-event-tick { min-width: 52px; }
-  .test-card-header, .test-card-actions, .sim-actions { flex-direction: column; align-items: stretch; }
-  .test-metric-grid, .sim-form-grid, .sim-summary, .consumption-record { grid-template-columns: 1fr; }
+  .test-card-header, .test-card-actions { flex-direction: column; align-items: stretch; }
+  .test-metric-grid, .sim-summary, .consumption-record { grid-template-columns: 1fr; }
   .sim-equation { grid-template-columns: 1fr; }
   .sim-operator { text-align: center; }
   .load-readout strong { font-size: 48px; }
@@ -1790,52 +1777,32 @@ body {
       <section class="test-card">
         <div class="test-card-header">
           <div>
-            <h3>Food Consumption Simulation</h3>
-            <p>Send before/after load values and check the tracked food drop.</p>
+            <h3>Food Consumption Record</h3>
+            <p>Computed automatically from stable load changes.</p>
           </div>
           <div class="test-card-actions">
-            <button type="button" class="outline-btn" onclick="resetWeightSession()">Reset Tracker</button>
-          </div>
-        </div>
-
-        <div class="sim-form-grid">
-          <div class="form-field">
-            <label for="sim-start-input">Starting Bowl Load (g)</label>
-            <input id="sim-start-input" type="number" min="0" step="0.1" value="120" oninput="updateConsumptionPreview()">
-          </div>
-          <div class="form-field">
-            <label for="sim-consumed-input">Food Consumed (g)</label>
-            <input id="sim-consumed-input" type="number" min="0" max="80" step="0.1" value="10" oninput="updateConsumptionPreview()">
+            <button type="button" class="outline-btn" onclick="resetWeightSession()">Reset Auto Record</button>
           </div>
         </div>
 
         <div class="sim-equation">
           <div class="sim-number">
-            <span>Before</span>
-            <strong><span id="sim-start-value">120</span> g</strong>
+            <span>Previous Stable</span>
+            <strong><span id="stable-before-value">--</span> g</strong>
           </div>
           <div class="sim-operator">-</div>
           <div class="sim-number">
-            <span>Consumed</span>
-            <strong><span id="sim-consumed-value">10</span> g</strong>
+            <span>Current Stable</span>
+            <strong><span id="stable-current-value">--</span> g</strong>
           </div>
           <div class="sim-operator">=</div>
           <div class="sim-number">
-            <span>After</span>
-            <strong><span id="sim-remaining-value">110</span> g</strong>
+            <span>Computed Drop</span>
+            <strong><span id="stable-drop-value">--</span> g</strong>
           </div>
-        </div>
-
-        <div class="sim-actions">
-          <button type="button" class="outline-btn" onclick="primeSimulationBaseline()">Prime Baseline</button>
-          <button type="button" class="primary-btn" onclick="runConsumptionSimulation()">Simulate Consumption</button>
         </div>
 
         <div class="sim-summary">
-          <div class="test-metric">
-            <span>Expected</span>
-            <strong><span id="sim-expected-consumed">10</span> g</strong>
-          </div>
           <div class="test-metric">
             <span>Tracked Session</span>
             <strong><span id="weight-session-total">--</span> g</strong>
@@ -1853,17 +1820,17 @@ body {
             <small>g</small>
           </div>
           <div class="record-detail">
-            <strong id="sim-record-status">No simulation recorded</strong>
-            <p id="sim-record-detail">Run a consumption simulation to record the detected food drop.</p>
+            <strong id="sim-record-status">Waiting for stable drop</strong>
+            <p id="sim-record-detail">Keep the bowl still until it is stable, remove food, then wait for the new stable reading.</p>
           </div>
         </div>
 
-        <div class="widget-sub" id="sim-message">Simulation posts to /api/devices/003/telemetry.</div>
+        <div class="widget-sub" id="sim-message">Consumption is recorded when the stable load decreases by 2-80g.</div>
 
         <div class="test-panel" style="margin-top:14px">
-          <h3>Simulation History</h3>
+          <h3>Stable Drop History</h3>
           <div class="record-history" id="sim-record-history">
-            <div class="event-empty">No simulation runs yet</div>
+            <div class="event-empty">No stable drops recorded yet</div>
           </div>
         </div>
 
@@ -2293,10 +2260,10 @@ async function toggleCtrl(btn) {
 
 const WEIGHT_DEVICE_ID = '003';
 const WEIGHT_STATE_URL = `/api/devices/${WEIGHT_DEVICE_ID}/state`;
-const WEIGHT_TELEMETRY_URL = `/api/devices/${WEIGHT_DEVICE_ID}/telemetry`;
 const WEIGHT_COMMAND_URL = `/api/devices/${WEIGHT_DEVICE_ID}/commands`;
 const weightHistory = [];
 const simulationRecords = [];
+let lastRenderedConsumptionKey = '';
 
 function setText(id, value) {
   const el = document.getElementById(id);
@@ -2315,10 +2282,6 @@ function firstNumber(...values) {
     if (num !== null) return num;
   }
   return null;
-}
-
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
 }
 
 function formatSensorValue(value, digits = 1) {
@@ -2369,6 +2332,79 @@ function renderWeightHistory(value) {
   }).join('');
 }
 
+function consumptionEventKey(event) {
+  if (!event) return '';
+  return [
+    event.start_time,
+    event.end_time,
+    event.before_value,
+    event.after_value,
+    event.consumed_amount
+  ].join('|');
+}
+
+function renderSimulationRecord(record) {
+  setText('sim-recorded-consumed', formatSensorValue(record.recorded));
+  setText('sim-record-status', record.status);
+  setText('sim-record-detail', record.detail);
+
+  if (record.key && record.key === lastRenderedConsumptionKey) return;
+  if (record.key) lastRenderedConsumptionKey = record.key;
+
+  simulationRecords.unshift(record);
+  if (simulationRecords.length > 5) simulationRecords.pop();
+
+  const history = document.getElementById('sim-record-history');
+  if (!history) return;
+
+  history.innerHTML = simulationRecords.map((item) => `
+    <div class="record-history-row">
+      <strong>${escapeHtml(formatSensorValue(item.recorded))}g</strong>
+      <span>${escapeHtml(formatSensorValue(item.before))}g -> ${escapeHtml(formatSensorValue(item.after))}g</span>
+      <span>${escapeHtml(item.time)}</span>
+    </div>
+  `).join('');
+}
+
+function renderStableConsumption(tracker) {
+  const lastEvent = tracker.last_event || null;
+  const baseline = numberOrNull(tracker.baseline_value);
+  const stableValue = numberOrNull(tracker.stable_value);
+  const before = numberOrNull(lastEvent?.before_value);
+  const after = numberOrNull(lastEvent?.after_value);
+  const consumed = numberOrNull(lastEvent?.consumed_amount);
+  const currentStable = after ?? stableValue ?? baseline;
+  const previousStable = before ?? baseline;
+
+  setText('stable-before-value', formatSensorValue(previousStable));
+  setText('stable-current-value', formatSensorValue(currentStable));
+  setText('stable-drop-value', formatSensorValue(consumed));
+
+  if (consumed !== null) {
+    renderSimulationRecord({
+      key: consumptionEventKey(lastEvent),
+      recorded: consumed,
+      before,
+      after,
+      status: 'Recorded from stable data',
+      detail: `Stable load changed from ${formatSensorValue(before)}g to ${formatSensorValue(after)}g, so consumed amount is ${formatSensorValue(consumed)}g.`,
+      time: String(lastEvent.end_time || '').slice(11, 19) || new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' })
+    });
+    setText('sim-message', `Last stable drop recorded ${formatSensorValue(consumed)}g consumed.`);
+    return;
+  }
+
+  setText('sim-recorded-consumed', '--');
+  setText('sim-record-status', stableValue !== null ? 'Stable baseline ready' : 'Waiting for stable load');
+  setText(
+    'sim-record-detail',
+    stableValue !== null
+      ? `Current stable baseline is ${formatSensorValue(stableValue)}g. Remove food and wait for the next stable reading.`
+      : 'Keep the bowl still until the load sensor reaches a stable reading.'
+  );
+  setText('sim-message', 'Consumption is recorded when the stable load decreases by 2-80g.');
+}
+
 function renderWeightState(data) {
   const tracker = getFoodTracker(data);
   const currentLoad = getCurrentLoad(data, tracker);
@@ -2385,6 +2421,7 @@ function renderWeightState(data) {
   setText('weight-stable-value', formatSensorValue(tracker.stable_value));
   setText('weight-sample-count', sampleCount ? String(sampleCount) : '--');
   setText('weight-today-total', formatSensorValue(tracker.today_total));
+  renderStableConsumption(tracker);
 
   if (stableEl) {
     stableEl.textContent = stable ? 'Stable' : (sampleCount ? 'Collecting' : '--');
@@ -2401,65 +2438,6 @@ function renderWeightState(data) {
     setWeightStatus('warn', 'Waiting for Pico 3');
     setText('weight-last-update', 'No load readings yet');
   }
-}
-
-function getSimulationValues() {
-  const start = numberOrNull(document.getElementById('sim-start-input')?.value);
-  const consumed = numberOrNull(document.getElementById('sim-consumed-input')?.value);
-
-  if (start === null || consumed === null) {
-    return { start, consumed, remaining: null, valid: false };
-  }
-
-  const safeConsumed = clamp(consumed, 0, start);
-  return {
-    start,
-    consumed: safeConsumed,
-    remaining: start - safeConsumed,
-    valid: start >= 0 && consumed >= 0 && consumed <= start && consumed <= 80,
-  };
-}
-
-function updateConsumptionPreview() {
-  const values = getSimulationValues();
-  setText('sim-start-value', formatSensorValue(values.start));
-  setText('sim-consumed-value', formatSensorValue(values.consumed));
-  setText('sim-remaining-value', formatSensorValue(values.remaining));
-  setText('sim-expected-consumed', formatSensorValue(values.consumed));
-
-  if (!values.valid) {
-    setText('sim-message', 'Enter 0-80g, and keep consumed amount no larger than the starting load.');
-  } else {
-    setText('sim-message', `Ready to simulate ${formatSensorValue(values.consumed)}g consumed from ${formatSensorValue(values.start)}g.`);
-  }
-}
-
-function sumConsumedEvents(events) {
-  return (events || []).reduce((total, event) => {
-    if (event?.sensor_type !== 'food') return total;
-    const amount = numberOrNull(event.consumed_amount);
-    return amount === null ? total : total + amount;
-  }, 0);
-}
-
-function renderSimulationRecord(record) {
-  setText('sim-recorded-consumed', formatSensorValue(record.recorded));
-  setText('sim-record-status', record.status);
-  setText('sim-record-detail', record.detail);
-
-  simulationRecords.unshift(record);
-  if (simulationRecords.length > 5) simulationRecords.pop();
-
-  const history = document.getElementById('sim-record-history');
-  if (!history) return;
-
-  history.innerHTML = simulationRecords.map((item) => `
-    <div class="record-history-row">
-      <strong>${escapeHtml(formatSensorValue(item.recorded))}g</strong>
-      <span>${escapeHtml(formatSensorValue(item.before))}g -> ${escapeHtml(formatSensorValue(item.after))}g</span>
-      <span>${escapeHtml(item.time)}</span>
-    </div>
-  `).join('');
 }
 
 function renderWeightEvents(events) {
@@ -2518,113 +2496,6 @@ async function refreshWeightState(showToast = false) {
   }
 }
 
-async function postWeightTelemetry(loadValue) {
-  const payload = {
-    device_id: WEIGHT_DEVICE_ID,
-    load: loadValue,
-    source: 'web_weight_test'
-  };
-  const res = await fetch(WEIGHT_TELEMETRY_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(apiErrorMessage(data.detail));
-  return data;
-}
-
-async function sendStableLoad(loadValue, samples = 6, delayMs = 90) {
-  const collectedEvents = [];
-  for (let i = 0; i < samples; i += 1) {
-    const result = await postWeightTelemetry(loadValue);
-    collectedEvents.push(...(result.events || []));
-    await sleep(delayMs);
-  }
-  return collectedEvents;
-}
-
-async function sendTestLoad(loadValueOverride) {
-  const values = getSimulationValues();
-  const loadValue = numberOrNull(loadValueOverride ?? values.start);
-  if (loadValue === null) {
-    toast('Enter a load value', '⚠️');
-    return;
-  }
-
-  try {
-    await postWeightTelemetry(loadValue);
-    setText('sim-message', `Sent ${formatSensorValue(loadValue)}g to ${WEIGHT_TELEMETRY_URL}.`);
-    await refreshWeightState(false);
-    toast('Test load sent', '✓');
-  } catch (err) {
-    console.error(err);
-    toast('Failed to send test load', '⚠️');
-  }
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function primeSimulationBaseline() {
-  const values = getSimulationValues();
-  if (!values.valid) {
-    updateConsumptionPreview();
-    toast('Fix the simulation values first', '⚠️');
-    return;
-  }
-
-  setText('sim-message', `Priming baseline at ${formatSensorValue(values.start)}g...`);
-
-  try {
-    await resetWeightSession(true, false);
-    await sendStableLoad(values.start, 6);
-    await refreshWeightState(false);
-    setText('sim-message', `Baseline primed at ${formatSensorValue(values.start)}g.`);
-    toast('Baseline primed', '✓');
-  } catch (err) {
-    console.error(err);
-    toast('Baseline prime failed', '⚠️');
-  }
-}
-
-async function runConsumptionSimulation() {
-  const values = getSimulationValues();
-  if (!values.valid) {
-    updateConsumptionPreview();
-    toast('Fix the simulation values first', '⚠️');
-    return;
-  }
-
-  setText('sim-message', `Simulating ${formatSensorValue(values.start)}g -> ${formatSensorValue(values.remaining)}g...`);
-
-  try {
-    await resetWeightSession(true, false);
-    await sendStableLoad(values.start, 6);
-    const events = await sendStableLoad(values.remaining, 10);
-    const finalState = await refreshWeightState(false);
-    const tracker = getFoodTracker(finalState || {});
-    const recorded = sumConsumedEvents(events) || numberOrNull(tracker.last_event?.consumed_amount) || numberOrNull(tracker.session_total) || 0;
-    const difference = Math.abs(recorded - values.consumed);
-    const matched = difference <= 0.5;
-    renderSimulationRecord({
-      recorded,
-      before: values.start,
-      after: values.remaining,
-      expected: values.consumed,
-      status: matched ? 'Recorded by tracker' : 'Recorded amount differs from expected',
-      detail: `Expected ${formatSensorValue(values.consumed)}g; tracker recorded ${formatSensorValue(recorded)}g from ${formatSensorValue(values.start)}g to ${formatSensorValue(values.remaining)}g.`,
-      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' })
-    });
-    setText('sim-message', `Simulation complete. Recorded consumed amount: ${formatSensorValue(recorded)}g.`);
-    toast('Consumption simulation complete', '✓');
-  } catch (err) {
-    console.error(err);
-    toast('Consumption simulation failed', '⚠️');
-  }
-}
-
 async function tareLoadSensor() {
   try {
     const payload = { type: 'TARE_LOAD_SENSOR' };
@@ -2641,10 +2512,6 @@ async function tareLoadSensor() {
     console.error(err);
     toast('Failed to queue tare command', '⚠️');
   }
-}
-
-function runWeightDropTest() {
-  return runConsumptionSimulation();
 }
 
 async function resetWeightSession(clearBaseline = true, showToast = true) {
@@ -2671,7 +2538,6 @@ function refreshState() {
 }
 
 // Poll Pico 3 load-sensor state once per second.
-updateConsumptionPreview();
 refreshWeightState();
 setInterval(refreshWeightState, 1000);
 
