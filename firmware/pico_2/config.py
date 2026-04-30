@@ -24,4 +24,3 @@ MAX_DISPENSE_GRAMS = 80
 
 # Example calibration
 STEPS_PER_GRAM = 25
-token = "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"
