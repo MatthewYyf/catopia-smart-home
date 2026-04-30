@@ -1464,6 +1464,31 @@ body {
   margin-bottom: 10px;
 }
 
+.test-pump-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.test-pump-panel p {
+  color: var(--text-dim);
+  font-size: 10px;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.test-pump-state {
+  color: var(--text-mid);
+  font-size: 10px;
+  margin-top: 8px;
+}
+
+.test-pump-state strong {
+  color: var(--amber-l);
+  font-weight: 500;
+}
+
 .test-controls {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -1924,6 +1949,17 @@ body {
           <div class="test-metric">
             <span>Samples</span>
             <strong id="weight-sample-count">--</strong>
+          </div>
+        </div>
+
+        <div class="test-panel" style="margin-top:14px">
+          <div class="test-pump-panel">
+            <div>
+              <h3>Water Pump Control</h3>
+              <p>Queues water pump on/off commands for Pico 3.</p>
+              <div class="test-pump-state">Pump command state: <strong id="test-pump-state">Off</strong></div>
+            </div>
+            <button type="button" class="primary-btn" id="test-pump-btn" onclick="toggleTestPump()">Turn Pump On</button>
           </div>
         </div>
 
@@ -2493,10 +2529,51 @@ const WEIGHT_DEVICE_ID = '003';
 const WEIGHT_STATE_URL = `/api/devices/${WEIGHT_DEVICE_ID}/state`;
 const WEIGHT_COMMAND_URL = `/api/devices/${WEIGHT_DEVICE_ID}/commands`;
 const weightHistory = [];
+let testPumpOn = false;
 
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
+}
+
+function setTestPumpUi(isOn) {
+  testPumpOn = Boolean(isOn);
+  const btn = document.getElementById('test-pump-btn');
+  const state = document.getElementById('test-pump-state');
+
+  if (btn) btn.textContent = testPumpOn ? 'Turn Pump Off' : 'Turn Pump On';
+  if (state) state.textContent = testPumpOn ? 'On' : 'Off';
+}
+
+async function toggleTestPump() {
+  const btn = document.getElementById('test-pump-btn');
+  const previousState = testPumpOn;
+  const nextState = !previousState;
+  const payload = { type: nextState ? 'WATER_ON' : 'WATER_OFF' };
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = nextState ? 'Turning On...' : 'Turning Off...';
+  }
+
+  try {
+    const res = await fetch(WEIGHT_COMMAND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+
+    setTestPumpUi(nextState);
+    toast(`Water pump ${nextState ? 'on' : 'off'} command queued`, '💧');
+  } catch (err) {
+    setTestPumpUi(previousState);
+    toast(err.message || 'Failed to control water pump', '⚠️');
+    console.error(err);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
 }
 
 function numberOrNull(value) {
