@@ -1825,7 +1825,7 @@ body {
           </div>
         </div>
 
-        <div class="widget-sub" id="sim-message">Consumption is recorded when the stable load decreases by 2-80g.</div>
+        <div class="widget-sub" id="sim-message">Consumption is recorded when the stable load decreases by at least 2g.</div>
 
         <div class="test-panel" style="margin-top:14px">
           <h3>Stable Drop History</h3>
@@ -2390,7 +2390,7 @@ function renderStableConsumption(tracker) {
       ? `Current stable baseline is ${formatSensorValue(stableValue)}g. Remove food and wait for the next stable reading.`
       : 'Keep the bowl still until the load sensor reaches a stable reading.'
   );
-  setText('sim-message', 'Consumption is recorded when the stable load decreases by 2-80g.');
+  setText('sim-message', 'Consumption is recorded when the stable load decreases by at least 2g.');
 }
 
 function renderWeightState(data) {

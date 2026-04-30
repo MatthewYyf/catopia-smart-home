@@ -15,7 +15,7 @@ class StableConsumptionTracker:
         median_window=5,
         tolerance=3,
         min_drop=2,
-        max_drop=80,
+        max_drop=None,
         memory_size=300,
     ):
         self.sensor_type = sensor_type
@@ -66,7 +66,11 @@ class StableConsumptionTracker:
 
         drop = self.last_stable_value - current_stable
 
-        if self.min_drop <= drop <= self.max_drop:
+        is_recordable_drop = drop >= self.min_drop and (
+            self.max_drop is None or drop <= self.max_drop
+        )
+
+        if is_recordable_drop:
             event = {
                 "sensor_type": self.sensor_type,
                 "start_time": self.last_stable_time or timestamp,
@@ -82,6 +86,13 @@ class StableConsumptionTracker:
             self.session_events.append(event)
             self.session_total += drop
             return event
+
+        # A stable drop over the configured cap is treated as a baseline change
+        # but is not counted. This avoids freezing future drop detection.
+        if self.max_drop is not None and drop > self.max_drop:
+            self.last_stable_value = current_stable
+            self.last_stable_time = timestamp
+            return None
 
         # A stable increase is a refill/reset, not consumption.
         if current_stable > self.last_stable_value + self.tolerance:
@@ -129,7 +140,7 @@ class ConsumptionTrackerService:
     def __init__(self):
         self.lock = Lock()
         self.trackers = {
-            "food": StableConsumptionTracker("food", "g", tolerance=3, min_drop=2, max_drop=80),
+            "food": StableConsumptionTracker("food", "g", tolerance=3, min_drop=2),
             "water": StableConsumptionTracker(
                 "water",
                 "ml",
