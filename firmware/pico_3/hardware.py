@@ -1,5 +1,5 @@
 import config
-from devices import LedDevice, PumpDevice, KnobSensor
+from devices import LedDevice, PumpDevice, LoadSensor
 
 class Hardware:
     def __init__(self):

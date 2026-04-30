@@ -1,5 +1,6 @@
 from machine import Pin, ADC, Timer
 import utime
+from hx711 import HX711
 
 class LedDevice:
     def __init__(self, pin_id):
@@ -40,12 +41,14 @@ class PumpDevice:
         return self.pin.value()
 
 class LoadSensor:
-    def __init__(self, adc_pin):
-        self.load_sensor = ADC(Pin(adc_pin))
+    def __init__(self, pin_out, pin_sck):
+        self.load_sensor = HX711(pin_out, pin_sck)
+        self.load_sensor.set_scale(2280)  # Example scale factor, needs calibration
+        self.load_sensor.tare()  # Zero the scale
 
     def read(self):
         # map force sensor outputs to actual weight
-        return self.load_sensor.read_u16()
+        return self.load_sensor.get_value()//460 # Example conversion, needs calibration
 
 class KibbleDispenser:
     def __init__(self, dir_pin, step_pin, load_sensor_pin, steps_per_rev=200):
