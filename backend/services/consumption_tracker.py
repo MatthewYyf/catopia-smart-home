@@ -88,9 +88,18 @@ class StableConsumptionTracker:
 
         return None
 
-    def reset_session(self):
+    def reset_session(self, clear_state=False):
         self.session_total = 0
         self.last_event = None
+        if clear_state:
+            self.raw_readings.clear()
+            self.filtered_readings.clear()
+            self.last_stable_value = None
+            self.last_stable_time = None
+            self.latest_raw = None
+            self.latest_filtered = None
+            self.latest_is_stable = False
+            self.latest_stable_value = None
 
     def state_dict(self):
         return {
@@ -170,13 +179,13 @@ class ConsumptionTrackerService:
         state["consumption"] = self.state()
         return state
 
-    def reset_session(self, sensor_type):
+    def reset_session(self, sensor_type, clear_baseline=False):
         tracker = self.trackers.get(sensor_type)
         if tracker is None:
             return False
 
         with self.lock:
-            tracker.reset_session()
+            tracker.reset_session(clear_state=clear_baseline)
 
         return True
 

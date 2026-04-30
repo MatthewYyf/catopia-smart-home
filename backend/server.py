@@ -131,13 +131,14 @@ async def read_daily_consumption(report_date: str):
 
 
 @app.post("/api/consumption/reset")
-async def reset_consumption(sensor_type: str = "food"):
-    if not consumption_service.reset_session(sensor_type):
+async def reset_consumption(sensor_type: str = "food", clear_baseline: bool = False):
+    if not consumption_service.reset_session(sensor_type, clear_baseline=clear_baseline):
         raise HTTPException(status_code=404, detail="Unknown sensor type")
 
     return {
         "status": "reset",
         "sensor_type": sensor_type,
+        "clear_baseline": clear_baseline,
         "consumption": consumption_service.state(),
     }
 
