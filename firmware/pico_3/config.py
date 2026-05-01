@@ -7,7 +7,7 @@ device_id = "003"
 # ----- Hotspot Login -----
 
 SSID = "catopia"
-PASSWORD = "12345678"
+PASSWORD = ""
 PI_IP = "10.42.0.1"
 
 # ----- GPIO assignments -----
@@ -17,8 +17,6 @@ FEEDER_STEP_PIN = 16
 FEEDER_DIR_PIN = 17
 LOAD_SENSOR_PIN_OUT = 15
 LOAD_SENSOR_PIN_SCK = 14
-LOAD_SENSOR_SCALE = 460
-LOAD_SENSOR_ZERO_THRESHOLD_GRAMS = 2
 # STEPPER_DIR_PIN = 
 # STEPPER_STEP_PIN =
 
