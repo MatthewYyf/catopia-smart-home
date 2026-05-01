@@ -17,6 +17,7 @@ from db.queries import (
     getDailyConsumptionTotals,
     getLatestVoice_log,
     getReportbyDate,
+    getReportSummaries,
     getVoice_log,
     getWaterIntakeByDateRange,
     init_db,
@@ -233,6 +234,11 @@ async def read_water_intake_last_7_days():
         )
 
     return {"points": points}
+
+
+@app.get("/api/reports/history")
+async def read_report_history():
+    return {"reports": getReportSummaries()}
 
 
 @app.get("/api/reports/{report_date}")

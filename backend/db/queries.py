@@ -147,6 +147,33 @@ def getReportbyDate(report_date: str) -> Optional[report]:
     )
 
 
+def getReportSummaries() -> List[Dict[str, object]]:
+    with _get_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT
+                report_date,
+                water_intake,
+                food_intake,
+                weight,
+                short_message
+            FROM daily_reports
+            ORDER BY report_date DESC
+            """
+        ).fetchall()
+
+    return [
+        {
+            "report_date": row["report_date"],
+            "water_intake": row["water_intake"],
+            "food_intake": row["food_intake"],
+            "weight": row["weight"],
+            "short_message": row["short_message"],
+        }
+        for row in rows
+    ]
+
+
 def addReport(
     report_date: str,
     water_intake: float,

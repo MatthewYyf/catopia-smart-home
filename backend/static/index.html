@@ -724,6 +724,67 @@ body {
   grid-column: 1 / -1;
 }
 
+.report-current-panel {
+  grid-column: 1 / -1;
+}
+
+.report-history-panel {
+  grid-column: 1 / -1;
+}
+
+.report-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.report-history-header h3 {
+  margin-bottom: 0;
+}
+
+.report-history-header span {
+  font-size: 9px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+}
+
+.report-history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.report-history-btn {
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-mid);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, transform 0.15s;
+}
+
+.report-history-btn:hover,
+.report-history-btn.active {
+  border-color: var(--amber);
+  color: var(--cream);
+  transform: translateY(-1px);
+}
+
+.report-history-empty {
+  width: 100%;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
 .water-chart-header {
   display: flex;
   align-items: flex-start;
@@ -2601,7 +2662,7 @@ body {
         <p>Daily care records for Mochi</p>
       </div>
       <div class="ph-right">
-        <button class="outline-btn" onclick="loadReport()">Find Report</button>
+        <button class="outline-btn" onclick="refreshReportsPage()">Refresh Report</button>
       </div>
     </div>
 
@@ -2622,76 +2683,19 @@ body {
         </div>
       </div>
 
-      <div class="report-panel">
-        <h3>New Daily Report</h3>
-        <form class="report-form" id="report-form" onsubmit="submitReport(event)">
-          <div class="form-grid">
-            <div class="form-field">
-              <label for="report-date">Date</label>
-              <input id="report-date" name="report_date" type="date" required>
-            </div>
-            <div class="form-field">
-              <label for="report-weight">Weight (kg)</label>
-              <input id="report-weight" name="weight" type="number" min="0.1" step="0.1" required>
-            </div>
-            <div class="form-field">
-              <label for="water-intake">Water Intake (ml)</label>
-              <input id="water-intake" name="water_intake" type="number" min="0" step="0.1" required>
-            </div>
-            <div class="form-field">
-              <label for="food-intake">Food Intake (g)</label>
-              <input id="food-intake" name="food_intake" type="number" min="0" step="0.1" required>
-            </div>
-            <div class="form-field full">
-              <label for="short-message">Notes</label>
-              <textarea id="short-message" name="short_message" maxlength="255" placeholder="Energy, mood, appetite, medication, or anything unusual"></textarea>
-            </div>
-          </div>
-          <div class="report-actions">
-            <button class="outline-btn" type="button" onclick="resetReportForm()">Reset</button>
-            <button class="primary-btn" id="save-report-btn" type="submit">Save Report</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="report-panel">
-        <h3>Report Lookup</h3>
-        <div class="lookup-row">
-          <div class="form-field">
-            <label for="lookup-report-date">Date</label>
-            <input id="lookup-report-date" type="date">
-          </div>
-          <button class="outline-btn" type="button" onclick="loadReport()">Load</button>
+      <div class="report-panel report-history-panel">
+        <div class="report-history-header">
+          <h3>History Reports</h3>
+          <span id="report-history-count">Loading</span>
         </div>
-        <div class="report-result empty" id="report-result">No report selected</div>
+        <div class="report-history-list" id="report-history-list">
+          <div class="report-history-empty">Loading reports</div>
+        </div>
       </div>
 
-      <div class="report-panel">
-        <h3>Emotion Tag Test</h3>
-        <form class="report-form" id="emotion-form" onsubmit="submitEmotionTag(event)">
-          <div class="form-grid">
-            <div class="form-field">
-              <label for="emotion-report-date">Report Date</label>
-              <input id="emotion-report-date" type="date" required>
-            </div>
-            <div class="form-field">
-              <label for="emotion-timestamp">Timestamp</label>
-              <input id="emotion-timestamp" type="datetime-local" required>
-            </div>
-            <div class="form-field full">
-              <label for="emotion-tag">Emotion Tag</label>
-              <select id="emotion-tag" required>
-                <option value="food">Food</option>
-                <option value="brushing">Great</option>
-                <option value="isolation">Isolation</option>
-              </select>
-            </div>
-          </div>
-          <div class="report-actions">
-            <button class="outline-btn" type="button" onclick="resetEmotionForm()">Reset</button>
-            <button class="primary-btn" id="save-emotion-btn" type="submit">Add Tag</button>
-          </div>
-        </form>
+      <div class="report-panel report-current-panel">
+        <h3 id="report-current-title">Today&apos;s Report</h3>
+        <div class="report-result empty" id="report-result">No report selected</div>
       </div>
     </div>
   </div>
@@ -3144,47 +3148,6 @@ function todayISO() {
   return now.toISOString().slice(0, 10);
 }
 
-function nowLocalDateTime() {
-  const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  return now.toISOString().slice(0, 16);
-}
-
-function initReportDates() {
-  const today = todayISO();
-  const reportDate = document.getElementById('report-date');
-  const lookupDate = document.getElementById('lookup-report-date');
-  const emotionDate = document.getElementById('emotion-report-date');
-  const emotionTimestamp = document.getElementById('emotion-timestamp');
-  if (reportDate && !reportDate.value) reportDate.value = today;
-  if (lookupDate && !lookupDate.value) lookupDate.value = today;
-  if (emotionDate && !emotionDate.value) emotionDate.value = today;
-  if (emotionTimestamp && !emotionTimestamp.value) emotionTimestamp.value = nowLocalDateTime();
-}
-
-function resetReportForm() {
-  document.getElementById('report-form').reset();
-  initReportDates();
-}
-
-function resetEmotionForm() {
-  document.getElementById('emotion-form').reset();
-  const emotionDate = document.getElementById('emotion-report-date');
-  const reportDate = document.getElementById('report-date');
-  emotionDate.value = reportDate.value || todayISO();
-  document.getElementById('emotion-timestamp').value = nowLocalDateTime();
-}
-
-function reportPayloadFromForm() {
-  return {
-    report_date: document.getElementById('report-date').value,
-    water_intake: Number(document.getElementById('water-intake').value),
-    food_intake: Number(document.getElementById('food-intake').value),
-    weight: Number(document.getElementById('report-weight').value),
-    short_message: document.getElementById('short-message').value.trim()
-  };
-}
-
 function apiErrorMessage(detail) {
   if (Array.isArray(detail)) return detail.map(item => item.msg).join(', ');
   return detail || 'Request failed';
@@ -3584,6 +3547,8 @@ function displayReport(report) {
   }
 
   result.className = 'report-result';
+  const title = document.getElementById('report-current-title');
+  if (title) title.textContent = report.report_date === todayISO() ? "Today's Report" : 'History Report';
   const message = report.short_message?.trim() || 'No notes recorded.';
   const tags = voiceTagsHtml(report.voice_tags) || '<p class="report-message">No emotion tags recorded.</p>';
   result.innerHTML = `
@@ -3604,6 +3569,74 @@ function displayReport(report) {
   `;
 }
 
+let selectedReportDate = todayISO();
+
+function formatHistoryDate(value) {
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return String(value || '');
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function renderReportHistory(reports) {
+  const list = document.getElementById('report-history-list');
+  const count = document.getElementById('report-history-count');
+  if (!list) return;
+
+  const rows = Array.isArray(reports) ? reports : [];
+  if (count) count.textContent = rows.length ? `${rows.length} saved` : 'No reports';
+
+  if (!rows.length) {
+    list.innerHTML = '<div class="report-history-empty">No history reports saved yet</div>';
+    return;
+  }
+
+  list.innerHTML = rows.map((report) => {
+    const date = String(report.report_date || '');
+    const active = date === selectedReportDate ? ' active' : '';
+    const summary = `${formatMetric(report.water_intake)} ml water · ${formatMetric(report.food_intake)} g food`;
+    return `
+      <button
+        class="report-history-btn${active}"
+        type="button"
+        data-report-date="${escapeHtml(date)}"
+        onclick="selectHistoryReport('${escapeHtml(date)}')"
+        title="${escapeHtml(summary)}"
+      >
+        ${escapeHtml(formatHistoryDate(date))}
+      </button>
+    `;
+  }).join('');
+}
+
+async function loadReportHistory() {
+  const list = document.getElementById('report-history-list');
+  const count = document.getElementById('report-history-count');
+
+  try {
+    const res = await fetch('/api/reports/history');
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
+
+    const reports = data.reports || [];
+    if (!reports.some((report) => report.report_date === selectedReportDate) && reports[0]) {
+      selectedReportDate = reports[0].report_date;
+    }
+    renderReportHistory(reports);
+  } catch (err) {
+    if (count) count.textContent = 'Error';
+    if (list) list.innerHTML = '<div class="report-history-empty">Could not load history reports</div>';
+    console.error(err);
+  }
+}
+
+async function selectHistoryReport(reportDate) {
+  selectedReportDate = reportDate;
+  document.querySelectorAll('.report-history-btn').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.reportDate === reportDate);
+  });
+  await loadReport(true, reportDate);
+}
+
 function displayVoiceTagsOnly(reportDate, voiceTags) {
   const result = document.getElementById('report-result');
   result.className = 'report-result';
@@ -3619,89 +3652,12 @@ function displayVoiceTagsOnly(reportDate, voiceTags) {
   `;
 }
 
-async function submitReport(event) {
-  event.preventDefault();
-
-  const payload = reportPayloadFromForm();
-  if (!payload.report_date || [payload.water_intake, payload.food_intake, payload.weight].some(Number.isNaN)) {
-    toast('Complete all report fields', '⚠️');
-    return;
-  }
-
-  const btn = document.getElementById('save-report-btn');
-  btn.disabled = true;
-  btn.textContent = 'Saving...';
-
-  try {
-    const res = await fetch('/api/reports', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
-
-    document.getElementById('lookup-report-date').value = payload.report_date;
-    document.getElementById('emotion-report-date').value = payload.report_date;
-    displayReport(data.report);
-    loadWaterIntakeChart();
-    toast('Report saved', '✓');
-  } catch (err) {
-    toast(err.message || 'Failed to save report', '⚠️');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Save Report';
-  }
-}
-
-async function submitEmotionTag(event) {
-  event.preventDefault();
-
-  const reportDate = document.getElementById('emotion-report-date').value || document.getElementById('report-date').value;
-  const timestamp = document.getElementById('emotion-timestamp').value;
-  const voiceType = document.getElementById('emotion-tag').value.trim();
-
-  if (!reportDate || !timestamp || !voiceType) {
-    toast('Complete the emotion tag fields', '⚠️');
-    return;
-  }
-
-  const btn = document.getElementById('save-emotion-btn');
-  btn.disabled = true;
-  btn.textContent = 'Adding...';
-
-  try {
-    const res = await fetch(`/api/reports/${encodeURIComponent(reportDate)}/voice-tags`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ timestamp, voice_type: voiceType })
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
-
-    document.getElementById('lookup-report-date').value = reportDate;
-    if (data.report) displayReport(data.report);
-    else displayVoiceTagsOnly(reportDate, data.voice_tags);
-
-    document.getElementById('emotion-tag').value = 'food';
-    document.getElementById('emotion-timestamp').value = nowLocalDateTime();
-    toast('Emotion tag saved', '✓');
-  } catch (err) {
-    toast(err.message || 'Failed to save emotion tag', '⚠️');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Add Tag';
-  }
-}
-
-async function loadReport() {
-  const date = document.getElementById('lookup-report-date').value || document.getElementById('report-date').value;
+async function loadReport(showToast = true, reportDate = null) {
+  const date = reportDate || selectedReportDate || todayISO();
   if (!date) {
     toast('Choose a report date', '⚠️');
     return;
   }
-
-  document.getElementById('emotion-report-date').value = date;
 
   try {
     const res = await fetch(`/api/reports/${encodeURIComponent(date)}`);
@@ -3716,14 +3672,19 @@ async function loadReport() {
     if (!res.ok) throw new Error(apiErrorMessage(data.detail));
 
     displayReport(data.report);
-    toast('Report loaded', '✓');
+    if (showToast) toast('Report loaded', '✓');
   } catch (err) {
     toast(err.message || 'Failed to load report', '⚠️');
   }
 }
 
-initReportDates();
-loadWaterIntakeChart();
+async function refreshReportsPage(showToast = true) {
+  await loadWaterIntakeChart();
+  await loadReportHistory();
+  await loadReport(showToast, selectedReportDate);
+}
+
+refreshReportsPage(false);
 refreshLatestEmotion();
 setInterval(refreshLatestEmotion, 1000);
 
