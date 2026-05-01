@@ -3,13 +3,9 @@ from devices import LedDevice, PumpDevice, KnobSensor
 
 class Hardware:
     def __init__(self):
-        self.led = LedDevice(config.LED_PIN)
-        self.pump = PumpDevice(config.WATER_PUMP_PIN)
-        self.load = LoadSensor(config.LOAD_SENSOR_PIN)
+        self.kibble_dispenser = KibbleDispenser(config.STEPPER_DIR_PIN, config.STEPPER_OUT_PIN, config.LOAD_SENSOR_OUT_PIN, config.LOAD_SENSOR_SCK_PIN)
 
     def state_dict(self):
         return {
-            "led": self.led.state(),
-            "pump": self.pump.state(),
             "load": self.load.read()
         }

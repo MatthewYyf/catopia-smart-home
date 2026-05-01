@@ -110,15 +110,9 @@ def handle_command(cmd):
     cmd_type = cmd.get("type")
     params = cmd.get("params", {})
 
-    if cmd_type == "WATER_ON":
-        hw.pump.on()
-
-    elif cmd_type == "WATER_OFF":
-        hw.pump.off()
-
-    elif cmd_type == "PUMP_TOGGLE":
-        hw.pump.toggle()
-
+    if cmd_type == "DISPENSE":
+        grams = params.get("grams")
+        hw.kibble_dispenser.dispense(grams)
     else:
         print("Unknown command:", cmd_type)
 
