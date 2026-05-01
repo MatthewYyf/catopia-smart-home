@@ -64,7 +64,7 @@ def server_check():
     try:
         res = urequests.get(GET_COMMAND_URL)
         res.close()
-        # print("Server reachable")
+        print("Server reachable")
         return True
     except Exception as e:
         print("Server check failed:", e)
@@ -110,7 +110,6 @@ def handle_command(cmd):
     cmd_type = cmd.get("type")
     params = cmd.get("params", {})
 
-    print("Received command:", cmd_type, params)
     if cmd_type == "WATER_ON":
         hw.pump.on()
 
@@ -120,9 +119,9 @@ def handle_command(cmd):
     elif cmd_type == "PUMP_TOGGLE":
         hw.pump.toggle()
 
-    elif cmd_type == "DISPENSE":
-        print(params)
-        # add dispense mechanism
+    elif cmd_type == "TARE_LOAD_SENSOR":
+        hw.load.tare()
+        print("Load sensor tared")
 
     elif cmd_type == "PING":
         print("Received ping")
