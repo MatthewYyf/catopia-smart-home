@@ -1,9 +1,11 @@
 from collections import defaultdict, deque
 from dataclasses import asdict
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from pathlib import Path
 from typing import Any, Optional
 
-from fastapi import FastAPI, HTTPException
+import json
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -26,6 +28,25 @@ init_db()  # Ensure the database is initialized at startup
 
 DEFAULT_DEVICE_ID = "001"
 ALLOWED_VOICE_TYPES = {"food", "brushing", "isolation"}
+
+# ── Voice memo storage ──
+MEMOS_DIR = Path("voice_memos")
+MEMOS_DIR.mkdir(parents=True, exist_ok=True)
+MEMOS_META_PATH = MEMOS_DIR / "memos.json"
+
+def load_meta() -> list[dict[str, Any]]:
+    if not MEMOS_META_PATH.exists():
+        return []
+    try:
+        with MEMOS_META_PATH.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+def save_meta(meta: list[dict[str, Any]]) -> None:
+    with MEMOS_META_PATH.open("w", encoding="utf-8") as f:
+        json.dump(meta, f, indent=2)
 
 # Latest telemetry/state per device_id (Pico POSTs here)
 latest_data_by_device: dict[str, dict[str, Any]] = defaultdict(
@@ -55,6 +76,7 @@ class LatestVoicePayload(BaseModel):
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/voice_memos", StaticFiles(directory=str(MEMOS_DIR)), name="voice_memos")
 
 
 @app.get("/")
@@ -280,7 +302,7 @@ async def list_memos():
 @app.post("/api/memos")
 async def upload_memo(
     file: UploadFile = File(...),
-    label: str = "Voice Memo"
+    label: str = Form("Voice Memo")
 ):
     # Generate unique filename
     ts = datetime.now()

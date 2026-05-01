@@ -671,6 +671,7 @@ body {
 
 .setting-control input[type=range] {
   -webkit-appearance: none;
+  appearance: none;
   width: 120px;
   height: 4px;
   background: var(--surface2);
@@ -1743,6 +1744,207 @@ body {
   to { opacity:0; transform: translateX(20px); }
 }
 
+/* ═══════════ VOICE MEMOS ═══════════ */
+
+/* Record button states */
+.record-btn {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.record-btn.idle {
+  background: linear-gradient(135deg, rgba(192,80,64,0.25), rgba(192,80,64,0.1));
+  border: 2px solid rgba(192,80,64,0.5);
+  color: var(--red);
+}
+
+.record-btn.idle:hover {
+  background: linear-gradient(135deg, rgba(192,80,64,0.4), rgba(192,80,64,0.2));
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(192,80,64,0.3);
+}
+
+.record-btn.recording {
+  background: linear-gradient(135deg, rgba(192,80,64,0.5), rgba(192,80,64,0.3));
+  border: 2px solid var(--red);
+  color: #fff;
+  animation: record-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes record-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(192,80,64,0.5); }
+  50%      { box-shadow: 0 0 0 12px rgba(192,80,64,0); }
+}
+
+/* Waveform bars */
+.waveform {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 32px;
+}
+
+.waveform .bar {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--amber);
+  opacity: 0.4;
+  transition: height 0.1s ease;
+}
+
+.waveform.active .bar {
+  opacity: 1;
+  animation: wave-idle 1s ease-in-out infinite;
+}
+
+.waveform.active .bar:nth-child(1) { animation-delay: 0.0s; }
+.waveform.active .bar:nth-child(2) { animation-delay: 0.1s; }
+.waveform.active .bar:nth-child(3) { animation-delay: 0.2s; }
+.waveform.active .bar:nth-child(4) { animation-delay: 0.3s; }
+.waveform.active .bar:nth-child(5) { animation-delay: 0.15s; }
+.waveform.active .bar:nth-child(6) { animation-delay: 0.05s; }
+.waveform.active .bar:nth-child(7) { animation-delay: 0.25s; }
+.waveform.active .bar:nth-child(8) { animation-delay: 0.35s; }
+
+@keyframes wave-idle {
+  0%,100% { height: 6px; }
+  50%      { height: 28px; }
+}
+
+/* Memo cards */
+.memo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color 0.2s;
+  animation: fadein 0.25s ease both;
+}
+
+.memo-card:hover { border-color: var(--border2); }
+
+.memo-card.playing {
+  border-color: rgba(200,134,58,0.5);
+  background: rgba(200,134,58,0.05);
+}
+
+.memo-play-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  color: var(--amber-l);
+}
+
+.memo-play-btn:hover {
+  background: var(--amber-glow);
+  border-color: var(--amber);
+  transform: scale(1.08);
+}
+
+.memo-play-btn.playing {
+  background: rgba(200,134,58,0.2);
+  border-color: var(--amber);
+  animation: record-pulse 1.5s ease-in-out infinite;
+}
+
+.memo-info { flex: 1; min-width: 0; }
+
+.memo-label {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 1px dashed transparent;
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memo-label:hover { border-bottom-color: var(--border2); color: var(--amber-l); }
+
+.memo-meta { font-size: 9px; color: var(--text-dim); margin-top: 3px; }
+
+/* Playback progress bar inside memo card */
+.memo-progress-wrap {
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  margin-top: 8px;
+  cursor: pointer;
+  display: none;
+}
+
+.memo-card.playing .memo-progress-wrap { display: block; }
+
+.memo-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--amber-d), var(--amber-l));
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.25s linear;
+}
+
+.memo-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.memo-action-btn {
+  width: 28px; height: 28px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s;
+  color: var(--text-dim);
+}
+
+.memo-action-btn:hover { background: var(--amber-glow); border-color: var(--border2); color: var(--amber-l); }
+.memo-action-btn.danger:hover { background: rgba(192,80,64,0.12); border-color: rgba(192,80,64,0.35); color: var(--red); }
+
+/* Inline rename input */
+.memo-label-input {
+  background: var(--surface2);
+  border: 1px solid var(--amber);
+  border-radius: 6px;
+  color: var(--cream);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  padding: 3px 8px;
+  outline: none;
+  width: 200px;
+}
+
+/* Empty state */
+.memo-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+}
+.memo-empty .me-icon { font-size: 40px; opacity: 0.25; margin-bottom: 12px; }
+.memo-empty p { font-size: 12px; }
+
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 900px) {
   :root { --nav-w: 60px; }
@@ -1851,6 +2053,10 @@ body {
     <div class="nav-item" data-page="emotion-voice" onclick="showPage('emotion-voice', this)">
       <span class="ni-icon">🎙</span>
       <span class="ni-text">Vocalization</span>
+    </div>
+    <div class="nav-item" data-page="memos" onclick="showPage('memos', this)">
+      <span class="ni-icon">🎙</span>
+      <span class="ni-text">Voice Memos</span>
     </div>
   </div>
 
@@ -2236,6 +2442,65 @@ body {
     </div>
   </div>
 
+  <!-- ═══ VOICE MEMOS PAGE ═══ -->
+  <div class="page" id="page-memos">
+    <div class="page-header">
+      <div>
+        <h2>Voice Memos 🎙</h2>
+        <p id="memo-count-label">Loading memos…</p>
+      </div>
+    </div>
+
+    <div style="
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    ">
+      <button class="record-btn idle" id="record-btn" onclick="toggleRecording()">🎙</button>
+
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <span id="record-status-text" style="font-size:12px;color:var(--text-mid)">Press to record a message for Mochi</span>
+          <span id="record-timer" style="font-family:'Playfair Display',serif;font-size:18px;color:var(--amber-l);display:none">0:00</span>
+        </div>
+
+        <div class="waveform" id="record-waveform">
+          <div class="bar" style="height:6px"></div>
+          <div class="bar" style="height:10px"></div>
+          <div class="bar" style="height:6px"></div>
+          <div class="bar" style="height:14px"></div>
+          <div class="bar" style="height:8px"></div>
+          <div class="bar" style="height:6px"></div>
+          <div class="bar" style="height:12px"></div>
+          <div class="bar" style="height:6px"></div>
+        </div>
+
+        <div id="save-row" style="display:none;align-items:center;gap:8px;margin-top:8px">
+          <input id="memo-label-input" type="text" placeholder="Name this memo…" value="Voice Memo"
+            style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--cream);font-family:'DM Mono',monospace;font-size:11px;padding:8px 12px;outline:none;width:200px"
+          />
+          <button type="button" onclick="saveMemo()" style="background:linear-gradient(135deg,#c8863a,#a06020);border:none;border-radius:9px;padding:8px 16px;font-family:'DM Mono',monospace;font-size:11px;color:#fff;cursor:pointer">
+            💾 Save
+          </button>
+          <button type="button" onclick="discardMemo()" style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);cursor:pointer">
+            Discard
+          </button>
+        </div>
+      </div>
+
+      <div id="mic-hint" style="display:none;font-size:10px;color:var(--red);max-width:160px;text-align:center">
+        ⚠️ Microphone access denied. Check browser settings.
+      </div>
+    </div>
+
+    <div id="memo-list" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+
   <!-- ═══ CAMERAS PAGE ═══ -->
   <div class="page" id="page-cameras">
     <div class="page-header">
@@ -2488,6 +2753,7 @@ function showPage(name, navEl) {
     dashboard: 'Dashboard',
     'food-water': 'Food & Water',
     'emotion-voice': 'Emotion Voice',
+    memos: 'Voice Memos',
     cameras: 'Cameras',
     play: 'Play',
     schedule: 'Schedule',
@@ -2495,6 +2761,7 @@ function showPage(name, navEl) {
     settings: 'Settings'
   };
   document.getElementById('page-title').textContent = titles[name] || name;
+  if (name === 'memos') loadMemos();
 }
 
 // ── Toast ──
@@ -3724,6 +3991,306 @@ document.addEventListener('keyup', (e) => {
 // ── Refresh stats ──
 function refreshStats() {
   toast('Stats refreshed', '↻');
+}
+
+// ═══════════════════════════════════════════
+// ══  VOICE MEMOS                          ══
+// ═══════════════════════════════════════════
+
+let mediaRecorder = null;
+let audioChunks = [];
+let recordingBlob = null;
+let timerInterval = null;
+let recordSeconds = 0;
+let currentAudio = null;   // the Audio currently playing
+let currentMemoId = null;  // id of the memo card being played
+
+function fmtTime(sec) {
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:true });
+}
+
+function fmtBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1024*1024) return (b/1024).toFixed(0) + ' KB';
+  return (b/(1024*1024)).toFixed(1) + ' MB';
+}
+
+function escHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+async function toggleRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording();
+  } else {
+    await startRecording();
+  }
+}
+
+async function startRecording() {
+  recordingBlob = null;
+  audioChunks = [];
+  document.getElementById('save-row').style.display = 'none';
+
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (err) {
+    document.getElementById('mic-hint').style.display = 'block';
+    toast('Microphone access denied', '⚠️');
+    return;
+  }
+  document.getElementById('mic-hint').style.display = 'none';
+
+  const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+    ? 'audio/webm;codecs=opus'
+    : MediaRecorder.isTypeSupported('audio/webm')
+      ? 'audio/webm'
+      : '';
+
+  mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+  mediaRecorder.onstop = () => {
+    recordingBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+    stream.getTracks().forEach(t => t.stop());
+    showSaveRow();
+  };
+
+  mediaRecorder.start(100);
+
+  const btn = document.getElementById('record-btn');
+  btn.className = 'record-btn recording';
+  btn.textContent = '⏹';
+  document.getElementById('record-status-text').textContent = 'Recording… tap to stop';
+  document.getElementById('record-timer').style.display = 'inline';
+  document.getElementById('record-waveform').classList.add('active');
+  document.getElementById('save-row').style.display = 'none';
+
+  recordSeconds = 0;
+  document.getElementById('record-timer').textContent = '0:00';
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    recordSeconds++;
+    document.getElementById('record-timer').textContent = fmtTime(recordSeconds);
+  }, 1000);
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  clearInterval(timerInterval);
+
+  const btn = document.getElementById('record-btn');
+  btn.className = 'record-btn idle';
+  btn.textContent = '🎙';
+  document.getElementById('record-status-text').textContent = 'Recording stopped — name and save below';
+  document.getElementById('record-timer').style.display = 'none';
+  document.getElementById('record-waveform').classList.remove('active');
+}
+
+function showSaveRow() {
+  const row = document.getElementById('save-row');
+  row.style.display = 'flex';
+  const now = new Date();
+  document.getElementById('memo-label-input').value =
+    `Memo ${now.toLocaleDateString('en-US',{month:'short',day:'numeric'})} ${now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
+}
+
+async function saveMemo() {
+  if (!recordingBlob) { toast('Nothing to save', '⚠️'); return; }
+  const label = document.getElementById('memo-label-input').value.trim() || 'Voice Memo';
+  const ext = recordingBlob.type.includes('ogg') ? 'ogg' : 'webm';
+  const file = new File([recordingBlob], `memo.${ext}`, { type: recordingBlob.type });
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('label', label);
+
+  try {
+    const res = await fetch('/api/memos', { method: 'POST', body: fd });
+    if (!res.ok) throw new Error('Upload failed');
+    toast('🎙 Memo saved!');
+    recordingBlob = null;
+    document.getElementById('save-row').style.display = 'none';
+    document.getElementById('record-status-text').textContent = 'Press to record a message for Mochi';
+    loadMemos();
+  } catch (err) {
+    toast('Failed to save memo', '⚠️');
+    console.error(err);
+  }
+}
+
+function discardMemo() {
+  recordingBlob = null;
+  document.getElementById('save-row').style.display = 'none';
+  document.getElementById('record-status-text').textContent = 'Press to record a message for Mochi';
+  toast('Recording discarded', '🗑');
+}
+
+async function loadMemos() {
+  const list = document.getElementById('memo-list');
+  const countLabel = document.getElementById('memo-count-label');
+  if (!list || !countLabel) return;
+
+  try {
+    const res = await fetch('/api/memos');
+    const memos = await res.json();
+    countLabel.textContent = memos.length === 0 ? 'No memos yet' : `${memos.length} memo${memos.length !== 1 ? 's' : ''} saved`;
+    if (memos.length === 0) {
+      list.innerHTML = `
+        <div class="memo-empty">
+          <div class="me-icon">🎙</div>
+          <p>No voice memos yet. Record your first message for Mochi!</p>
+        </div>`;
+      return;
+    }
+    list.innerHTML = memos.map(m => renderMemoCard(m)).join('');
+  } catch (err) {
+    countLabel.textContent = 'Error loading memos';
+    console.error(err);
+  }
+}
+
+function renderMemoCard(m) {
+  return `
+    <div class="memo-card" id="memocard-${m.id}">
+      <button class="memo-play-btn" id="playbtn-${m.id}" type="button" onclick="togglePlay('${m.id}', '${m.url}')">▶</button>
+      <div class="memo-info">
+        <div class="memo-label" id="label-${m.id}" onclick="startRename('${m.id}')" title="Click to rename">${escHtml(m.label)}</div>
+        <div class="memo-meta">${fmtDate(m.created_at)} · ${fmtBytes(m.size_bytes)}</div>
+        <div class="memo-progress-wrap" id="prog-wrap-${m.id}" onclick="seekMemo(event, '${m.id}')">
+          <div class="memo-progress-fill" id="prog-${m.id}"></div>
+        </div>
+      </div>
+      <div class="memo-actions">
+        <div class="memo-action-btn" title="Download" onclick="downloadMemo('${m.url}', '${escHtml(m.label)}')">⬇</div>
+        <div class="memo-action-btn danger" title="Delete" onclick="deleteMemo('${m.id}')">🗑</div>
+      </div>
+    </div>`;
+}
+
+function togglePlay(id, url) {
+  if (currentAudio && currentMemoId === id) {
+    currentAudio.pause();
+    currentAudio = null;
+    currentMemoId = null;
+    setPlayingState(id, false);
+    return;
+  }
+
+  if (currentAudio) {
+    currentAudio.pause();
+    if (currentMemoId) setPlayingState(currentMemoId, false);
+  }
+
+  const audio = new Audio(url);
+  currentAudio = audio;
+  currentMemoId = id;
+  setPlayingState(id, true);
+
+  audio.ontimeupdate = () => {
+    if (audio.duration) {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      const fill = document.getElementById('prog-' + id);
+      if (fill) fill.style.width = pct + '%';
+    }
+  };
+
+  audio.onended = () => {
+    currentAudio = null; currentMemoId = null;
+    setPlayingState(id, false);
+    const fill = document.getElementById('prog-' + id);
+    if (fill) fill.style.width = '0%';
+  };
+
+  audio.onerror = () => { toast('Could not play memo', '⚠️'); setPlayingState(id, false); };
+  audio.play().catch(err => { toast('Playback failed', '⚠️'); console.error(err); setPlayingState(id, false); });
+}
+
+function setPlayingState(id, playing) {
+  const card = document.getElementById('memocard-' + id);
+  const btn  = document.getElementById('playbtn-' + id);
+  if (!card || !btn) return;
+  if (playing) {
+    card.classList.add('playing');
+    btn.classList.add('playing');
+    btn.textContent = '⏸';
+  } else {
+    card.classList.remove('playing');
+    btn.classList.remove('playing');
+    btn.textContent = '▶';
+  }
+}
+
+function seekMemo(e, id) {
+  if (!currentAudio || currentMemoId !== id) return;
+  const bar = e.currentTarget;
+  const pct = e.offsetX / bar.offsetWidth;
+  currentAudio.currentTime = pct * currentAudio.duration;
+}
+
+async function deleteMemo(id) {
+  if (currentMemoId === id && currentAudio) { currentAudio.pause(); currentAudio = null; currentMemoId = null; }
+  try {
+    const res = await fetch('/api/memos/' + id, { method: 'DELETE' });
+    if (!res.ok) throw new Error();
+    const card = document.getElementById('memocard-' + id);
+    if (card) card.style.animation = 'toast-out 0.25s ease both';
+    setTimeout(() => loadMemos(), 280);
+    toast('Memo deleted', '🗑');
+  } catch { toast('Failed to delete memo', '⚠️'); }
+}
+
+function downloadMemo(url, label) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = label.replace(/[^a-z0-9\s\-_]/gi, '') + '.webm';
+  a.click();
+}
+
+function startRename(id) {
+  const labelEl = document.getElementById('label-' + id);
+  if (!labelEl) return;
+  const current = labelEl.textContent;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = current;
+  input.className = 'memo-label-input';
+  labelEl.replaceWith(input);
+  input.focus(); input.select();
+
+  const finish = async () => {
+    const newLabel = input.value.trim() || current;
+    try {
+      await fetch('/api/memos/' + id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ label: newLabel })
+      });
+    } catch {}
+    const span = document.createElement('div');
+    span.className = 'memo-label'; span.id = 'label-' + id;
+    span.title = 'Click to rename'; span.textContent = newLabel;
+    span.onclick = () => startRename(id);
+    input.replaceWith(span);
+  };
+
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') input.blur();
+    if (e.key === 'Escape') { input.value = current; input.blur(); }
+  });
 }
 
 </script>
