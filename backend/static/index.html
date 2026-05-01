@@ -1836,9 +1836,9 @@ body {
       <span class="ni-icon">⊞</span>
       <span class="ni-text">Dashboard</span>
     </div>
-    <div class="nav-item" data-page="emotion-voice" onclick="showPage('emotion-voice', this)">
-      <span class="ni-icon">🎙</span>
-      <span class="ni-text">Emotion_Voice</span>
+    <div class="nav-item" data-page="food-water" onclick="showPage('food-water', this)">
+      <span class="ni-icon">🍽</span>
+      <span class="ni-text">Food &amp; Water</span>
     </div>
     <div class="nav-item" data-page="cameras" onclick="showPage('cameras', this)">
       <span class="ni-icon">📷</span>
@@ -1847,6 +1847,10 @@ body {
     <div class="nav-item" data-page="play" onclick="showPage('play', this)">
       <span class="ni-icon">🎯</span>
       <span class="ni-text">Play</span>
+    </div>
+    <div class="nav-item" data-page="emotion-voice" onclick="showPage('emotion-voice', this)">
+      <span class="ni-icon">🎙</span>
+      <span class="ni-text">Vocalization</span>
     </div>
   </div>
 
@@ -2121,13 +2125,43 @@ body {
       <div class="widget full">
         <div class="widget-label" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:6px"><div class="wi">📋</div> Recent Activity</span> <span style="cursor:pointer;color:var(--amber);font-size:9px" onclick="showPage('activity', document.querySelectorAll('.nav-item')[2])">View all →</span></div>
         <div class="activity-list">
-          <div class="activity-item"><div class="act-icon">🍽</div><div class="act-text"><p>Auto-feed dispensed</p><span>Today, 8:01 AM</span></div><span class="act-badge ok">Success</span></div>
-          <div class="activity-item"><div class="act-icon">🚪</div><div class="act-text"><p>Cat door — Mochi entered</p><span>Today, 7:47 AM</span></div><span class="act-badge ok">Event</span></div>
-          <div class="activity-item"><div class="act-icon">💡</div><div class="act-text"><p>Lights auto-off (sunrise)</p><span>Today, 6:30 AM</span></div><span class="act-badge ok">Auto</span></div>
-          <div class="activity-item"><div class="act-icon">⚠️</div><div class="act-text"><p>Food level below 65%</p><span>Yesterday, 11:20 PM</span></div><span class="act-badge warn">Alert</span></div>
+          <div class="activity-item"><div class="act-icon">🍽</div><div class="act-text"><p>Auto-feed dispensed</p><span>Today, 7:01 AM</span></div><span class="act-badge ok">Success</span></div>
+          <div class="activity-item"><div class="act-icon">🍽</div><div class="act-text"><p>Auto-feed dispensed</p><span>Today, 12:01 AM</span></div><span class="act-badge ok">Success</span></div>
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ═══ FOOD & WATER PAGE ═══ -->
+  <div class="page" id="page-food-water">
+    <div class="page-header">
+      <div>
+        <h2>Food &amp; Water</h2>
+        <p>Choose a portion size and send a dispense command to the feeder (device <span id="feed-device-label">002</span>).</p>
+      </div>
+    </div>
+    <div class="dash-grid" style="max-width: 560px">
+      <div class="widget wide">
+        <div class="widget-label"><div class="wi">🍽</div> Portion (grams)</div>
+        <p style="font-size:10px;color:var(--text-dim);margin:10px 0 8px">Presets</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+          <button type="button" class="outline-btn" onclick="setFeedGrams(10)">10g</button>
+          <button type="button" class="outline-btn" onclick="setFeedGrams(20)">20g</button>
+          <button type="button" class="outline-btn" onclick="setFeedGrams(30)">30g</button>
+        </div>
+        <label style="display:block;font-size:9px;text-transform:uppercase;letter-spacing:1.4px;color:var(--text-dim);margin-bottom:6px">Custom amount</label>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input id="feed-grams-input" type="number" min="5" max="150" value="20"
+            style="flex:1;max-width:200px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--amber-l);outline:none"
+            oninput="updateFeedDispenseButton()" />
+          <span style="font-size:11px;color:var(--text-dim)">g</span>
+        </div>
+        <button type="button" id="feed-dispense-btn" onclick="feedDispense()"
+          style="width:100%;margin-top:18px;background:linear-gradient(135deg,#c8863a,#a06020);border:none;border-radius:12px;padding:14px;font-family:'Playfair Display',serif;font-style:italic;font-size:15px;font-weight:600;color:#fff;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(200,134,58,0.25)">
+          🍽 Dispense
+        </button>
+      </div>
     </div>
   </div>
 
@@ -2288,11 +2322,9 @@ body {
     </div>
     <div class="schedule-list">
       <div class="sched-item"><div class="sched-time">7:00 <span>AM · Daily</span></div><div class="sched-info"><h4>Morning Feed</h4><p>Dispense 40g dry food · Auto portion</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
-      <div class="sched-item"><div class="sched-time">8:00 <span>AM · Weekdays</span></div><div class="sched-info"><h4>Lights On</h4><p>Overhead + nightlight · Sunrise override</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
       <div class="sched-item"><div class="sched-time">12:00 <span>PM · Daily</span></div><div class="sched-info"><h4>Midday Feed</h4><p>Dispense 20g top-up portion</p></div><div class="sched-toggle" onclick="this.classList.toggle('on')"></div></div>
       <div class="sched-item"><div class="sched-time">3:00 <span>PM · Daily</span></div><div class="sched-info"><h4>Laser Play</h4><p>15-minute laser session · Auto random mode</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
       <div class="sched-item"><div class="sched-time">6:00 <span>PM · Daily</span></div><div class="sched-info"><h4>Evening Feed</h4><p>Dispense 40g dry food + wet food reminder</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
-      <div class="sched-item"><div class="sched-time">10:00 <span>PM · Daily</span></div><div class="sched-info"><h4>Night Mode</h4><p>Dim lights · Lock cat door · Quiet hours</p></div><div class="sched-toggle on" onclick="this.classList.toggle('on')"></div></div>
     </div>
   </div>
 
@@ -2454,7 +2486,8 @@ function showPage(name, navEl) {
   const titles = {
     test: 'Test',
     dashboard: 'Dashboard',
-    'emotion-voice': 'Emotion_Voice',
+    'food-water': 'Food & Water',
+    'emotion-voice': 'Emotion Voice',
     cameras: 'Cameras',
     play: 'Play',
     schedule: 'Schedule',
@@ -3427,7 +3460,15 @@ loadWaterIntakeChart();
 refreshLatestEmotion();
 setInterval(refreshLatestEmotion, 1000);
 
-// ── Feed ──
+// ── Food & Water page (dispense) ──
+/** Pico that runs the feeder firmware (see firmware/pico_2/config.py). */
+const FEED_DEVICE_ID = '002';
+const FEED_COMMAND_URL = `/api/devices/${FEED_DEVICE_ID}/commands`;
+(function syncFeedDeviceLabel() {
+  const el = document.getElementById('feed-device-label');
+  if (el) el.textContent = FEED_DEVICE_ID;
+})();
+
 function triggerFeed(btn) {
   const h = btn.querySelector('h3');
   const p = btn.querySelector('p');
@@ -3452,52 +3493,62 @@ function triggerFeed(btn) {
   }, 1600);
 }
 
-function setDispense(g) {
-  document.getElementById('dispense-input').value = g;
-  updateDispenseLabel(g);
+function setFeedGrams(g) {
+  const input = document.getElementById('feed-grams-input');
+  if (input) input.value = g;
+  updateFeedDispenseButton();
 }
 
-function updateDispenseLabel(g) {
-  const btn = document.getElementById('dispense-food-btn');
-  const amount = parseInt(g, 10);
-  if (btn && !btn.disabled && Number.isFinite(amount)) {
+function updateFeedDispenseButton() {
+  const btn = document.getElementById('feed-dispense-btn');
+  const input = document.getElementById('feed-grams-input');
+  if (!btn || !input) return;
+  const amount = parseInt(input.value, 10);
+  if (!btn.disabled && Number.isFinite(amount) && amount >= 5 && amount <= 150) {
     btn.textContent = `🍽 Dispense ${amount}g`;
+  } else if (!btn.disabled) {
+    btn.textContent = '🍽 Dispense';
   }
 }
-updateDispenseLabel(document.getElementById('dispense-input')?.value || 40);
 
-async function dispenseFood() {
-  const grams = parseInt(document.getElementById('dispense-input').value);
+async function feedDispense() {
+  const input = document.getElementById('feed-grams-input');
+  const btn = document.getElementById('feed-dispense-btn');
+  if (!input || !btn) return;
+
+  const grams = parseInt(input.value, 10);
   if (!grams || grams < 5 || grams > 150) {
     toast('Enter a valid amount (5–150g)', '⚠️');
     return;
   }
 
-  const btn = document.getElementById('dispense-food-btn');
+  const payload = { type: 'DISPENSE', params: { grams } };
   btn.disabled = true;
   btn.textContent = '⏳ Dispensing…';
 
   try {
-    const payload = { type: 'DISPENSE', params: {grams: grams}};
-    console.log('POST /api/devices/003/commands →', JSON.stringify(payload, null, 2));
-
-    await fetch('/api/devices/003/commands', {
+    console.log(`POST ${FEED_COMMAND_URL} →`, JSON.stringify(payload, null, 2));
+    const res = await fetch(FEED_COMMAND_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(apiErrorMessage(data.detail));
 
-    toast(`🍽 Dispensing ${grams}g for Mochi!`);
+    toast(`🍽 Queued ${grams}g for Mochi`, '✓');
   } catch (err) {
     toast('Failed to dispense', '⚠️');
     console.error(err);
   } finally {
     setTimeout(() => {
       btn.disabled = false;
-      updateDispenseLabel(grams);
-    }, 3000);
+      updateFeedDispenseButton();
+    }, 2000);
   }
 }
+
+updateFeedDispenseButton();
 
 let laserAutoPlayOn = false;
 

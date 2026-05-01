@@ -7,7 +7,7 @@ device_id = "001"
 # ----- Hotspot Login -----
 
 SSID = "catopia"
-PASSWORD = "12345678"
+PASSWORD = ""
 PI_IP = "10.42.0.1"
 
 # ----- GPIO assignments -----
