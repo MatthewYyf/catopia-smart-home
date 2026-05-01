@@ -10,6 +10,7 @@ class PumpDevice:
 
     def on(self):
         self.pin = Pin(self.pin_id, Pin.OUT)
+        print("Pump ON")
 
     def off(self):
         self.pin = Pin(self.pin_id, Pin.IN)
@@ -24,22 +25,19 @@ class PumpDevice:
         return self.pin.value()
 
 class LoadSensor:
-    def __init__(self, pin_out, pin_sck, scale=460, zero_threshold_grams=2):
-        self.scale = scale
-        self.zero_threshold_grams = zero_threshold_grams
-        self.data_pin = Pin(pin_out, Pin.IN)
-        self.clock_pin = Pin(pin_sck, Pin.OUT)
-        self.load_sensor = HX711(self.clock_pin, self.data_pin)
-        self.tare()
-
-    def tare(self):
+    def __init__(self, pin_out, pin_sck):
+        pin_OUT = Pin(pin_out, Pin.IN, pull=Pin.PULL_DOWN)
+        pin_SCK = Pin(pin_sck, Pin.OUT)
+        self.load_sensor = HX711(pin_SCK, pin_OUT)
         self.load_sensor.tare()
 
     def read(self):
-        grams = self.load_sensor.get_value() / self.scale
-        if abs(grams) < self.zero_threshold_grams:
-            return 0
-        return round(grams, 1)
+        # map force sensor outputs to actual weight
+        grams = self.load_sensor.get_value()//430 # Example conversion, needs calibration
+        if grams < 2:
+                return 0
+        return grams
+
 
     def state(self):
         return None
