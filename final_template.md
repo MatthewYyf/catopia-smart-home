@@ -27,8 +27,20 @@ Describe the details about your project
 
 
 ### 3.1 Project Description
-High-level description of the system.
-As detailed as possible.
+
+Catopia is a smart cat care system designed to help owners monitor and support their cat’s daily needs when they are not physically present. The system combines food dispensing, water tracking, live monitoring, interactive play, and cat vocalization analysis into one connected platform. The main goal is to create a proof-of-concept embedded system that can collect useful behavioral and health-related data while also allowing the owner to remotely interact with the cat.
+
+At the center of the system is a Raspberry Pi, which acts as the main server and control hub. The Raspberry Pi runs a FastAPI backend that receives sensor data, stores system state, serves the frontend dashboard, and sends commands to the hardware devices. It also controls higher-level components such as the camera, microphone, and audio processing system. The web dashboard allows the user to view live system data, check food and water levels, access the camera stream, review reports, and send commands such as dispensing food, turning on the water fountain, or starting the laser play system.
+
+The hardware is divided across multiple Raspberry Pi Pico microcontrollers. Each Pico is responsible for a specific subsystem so that the workload is separated and easier to manage. One Pico controls the food system, including a stepper motor-driven kibble dispenser and a load cell that measures the amount of food in the bowl. Another Pico controls the water system, including a pump and a load cell that tracks changes in water weight. A separate control module handles the pan-tilt laser system, which uses servos to move a laser pointer in randomized patterns for interactive play. Additional load cells can be used to estimate cat body weight when the cat steps onto a platform or designated area.
+
+The food dispenser uses a motorized auger mechanism to move kibble from a storage container into the bowl. A load cell measures the current food weight, allowing the system to stop dispensing once the target amount is reached. The dispenser can also slow down as the measured food weight approaches the target, reducing overshoot and making the system more accurate. The water system follows a similar idea. The pump can refill or circulate water, while the load cell tracks how much water is present and how much the cat may have consumed over time.
+
+The system also includes a camera stream so the owner can visually check on the cat through the web interface. This is especially useful for confirming whether the cat is eating, drinking, playing, or resting. The microphone component is used to record and analyze cat vocalizations. Audio features such as MFCCs can be extracted from recorded sounds, and machine learning models can classify vocalizations into contexts such as food-related, isolation-related, or brushing-related sounds. This is intended to give the owner a rough sense of the cat’s emotional or behavioral state, especially when the owner is away.
+
+Communication between devices is handled through local HTTP API endpoints. The Pico devices send telemetry data to the backend, such as food weight, water weight, pump state, motor state, and other sensor readings. The backend stores the latest values in memory and may also save longer-term events in a database. The frontend requests state data from the backend to keep the dashboard updated. Commands flow in the opposite direction: the user sends a command from the dashboard to the backend, and the Pico devices periodically check for pending commands. This structure allows the system to support both real-time monitoring and remote control.
+
+The backend organizes the data into several categories. Telemetry refers to raw readings sent from the devices to the server. State refers to the latest system values shown on the dashboard. Consumption data is derived from telemetry and includes food and water intake events, totals, and trends. Reports summarize daily activity and may include feeding behavior, water intake, vocalization events, and system usage. This makes the project more than just a hardware controller; it also acts as a data collection and analytics platform for cat care.
 
 ### 3.2 Hardware Components
 | Component | Description | Quantity |
