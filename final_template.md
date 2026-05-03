@@ -124,6 +124,11 @@ List each member’s contributions:
         Found dataset for cat meows
         Website/microphone code to record and store owners voice memos
         Bluetooth speaker setup
+- Yuxuan: Implemented database layer and consumption_tracker service for backend
+          Help build and test the backend server and frontend dashboard
+          Help developed the Pico firmware
+          Caliboration for Load cell
+          3D printing
     
 ## 7.Conclusion
 Summarize:
