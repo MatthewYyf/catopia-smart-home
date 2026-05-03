@@ -25,12 +25,21 @@ Provide a concise summary (150–250 words) describing:
 The Raspberry Pi acts as the central controller, running the backend server, frontend dashboard, camera stream, and audio processing. Multiple Raspberry Pi Pico devices control specific hardware modules, including the food dispenser, water fountain, load cells, and pan-tilt laser toy. The system tracks food and water intake, detects cat vocalizations, streams video, and allows the owner to remotely trigger actions such as feeding or interactive play.
   - A key goal of the project is to reduce stress, boredom, and uncertainty for both the cat and the owner. By monitoring behavior patterns and providing enrichment when the owner is not present, the smart cat house creates a more responsive care environment. The system also records useful data over time, which can help identify changes in eating, drinking, or vocalization behavior that may reflect the cat’s comfort, health, or emotional state.
 - Key technologies involved
-  - 
+  - The project uses a combination of embedded hardware, web software, and machine learning technologies. A Raspberry Pi serves as the main computing unit, running the FastAPI backend, frontend dashboard, camera stream, database, and audio processing services. Raspberry Pi Pico microcontrollers run MicroPython and control individual hardware modules such as the food dispenser, water fountain, load cells, and pan-tilt laser system.
+
+  - The system uses REST API communication between the Raspberry Pi and Pico devices. Telemetry endpoints collect sensor data, while command endpoints allow the backend to send actions such as dispensing food, turning on the pump, or starting laser play. Load cells with HX711 amplifiers measure food, water, and body weight. Servos, a stepper motor, relay, and pump provide physical actuation.
+
+  - For monitoring, the system uses a Pi Camera for live video streaming and a microphone for cat vocalization detection. Audio features such as MFCCs are extracted and classified using class-specific Hidden Markov Models with Gaussian Mixture Models. The frontend dashboard displays live status, sensor readings, camera output, and control buttons for remote interaction.
 - Final results and impact
-  - 
+  - The final prototype demonstrates the main functions of a smart cat house, including food dispensing, water monitoring, load cell sensing, camera streaming, microphone input, and remote control through a web dashboard. The Raspberry Pi backend communicates with multiple Raspberry Pi Pico controllers, allowing sensor data and device commands to move through one connected system. As a technical prototype, the project shows that these hardware and software components can be integrated into a single embedded system for remote pet care.
+
+  - However, the product was not tested on real cats, so its actual impact on cat mental health and behavior is unclear. While the system is designed to support enrichment, routine, and owner awareness, the project cannot yet prove that it reduces stress, boredom, or loneliness in real-world use. Cat behavior can vary widely, and future testing would be needed to evaluate whether the laser play, feeding automation, audio recognition, and monitoring features are useful and safe for actual pets.
+
+  - Therefore, the project should be understood mainly as a proof of concept. It demonstrates a possible direction for smart pet care systems, but further validation, user testing, and animal-centered evaluation would be required before making strong claims about its practical impact.
 
 ## 3. Project Details
 Describe the details about your project
+
 
 ### 3.1 Project Description
 High-level description of the system.
