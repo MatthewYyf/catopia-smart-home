@@ -117,7 +117,8 @@ Explain your (recorded) demo:
   
 - Laser Demo:
   - https://drive.google.com/file/d/1DWTcacsNxB1oIhDAYuLIpRMXL6QAB6eC/view?usp=sharing
-  - 
+  - This demo shows the pan tilt laser system responding to a command from the main control system. Once the laser play mode is activated, the Pico controls two servos: one for horizontal pan movement and one for vertical tilt movement. Together, these servos aim the laser across different positions to simulate a moving target for the cat. The laser movement is randomized within a safe range so that it feels less repetitive and more like interactive play.
+  - The system is designed as part of Catopia’s mental enrichment features. When the owner is not present, the backend can send a command to start an automated play session. The Pico then handles the low level servo and laser control locally, allowing the laser to move smoothly without needing constant input from the server. This demonstrates how the project connects software commands, embedded hardware control, and cat engagement into one integrated feature.
 - Water Bowl Pic:
   - https://drive.google.com/file/d/1kDaP6NASZN5hE8LF6nr4L-T4qRU9bAZl/view?usp=sharing
   - The water bowl has a 1 channel relay along with a load cell with hx711 board wired to a breadboard connected to an external power source. The system works by the owner on the website clicking a button to have the pi send a signal to the pico to turn the water pump on, then the water pump recieves the signal and turns on then the load cell is tracking the weight of the water bowl.
