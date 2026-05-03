@@ -95,6 +95,14 @@ Catopia uses a two-direction data flow. Sensor data moves upward from the hardwa
 
 ### 3.4 Overall Control Flow
 
+The system is built around the Raspberry Pi, which acts as the central controller, and several Raspberry Pi Pico microcontrollers, each responsible for managing a specific hardware subsystem. The Pi handles all the higher-level software — including the FastAPI backend, the frontend dashboard, the database, the camera stream, and audio processing — while each Pico focuses on one physical subsystem, such as food dispensing, water control, load sensing, or the pan-tilt laser module.
+
+On startup, each Pico connects to the Wi-Fi network and enters a continuous operating loop. In each cycle, it reads from its local sensors, sends telemetry data to the backend, checks whether any new commands have been issued, and actuates its hardware accordingly. The telemetry payload varies by device but typically includes values like food weight, water weight, pump status, servo position, and dispenser activity. The backend stores the most recent state from each device and logs significant events, such as a drop in food or water levels indicating consumption.
+
+The frontend never communicates directly with the hardware. Instead, all user interactions go through the backend. When a user triggers an action, for example manually dispensing food, the frontend sends a request to the backend, which places the appropriate command into a queue associated with the target Pico. The Pico periodically polls its command endpoint, picks up any pending instructions, executes them locally, and then resumes sending updated telemetry as usual.
+
+This creates a clean, repeating cycle: sensors feed data to the backend, the backend maintains the current system state, the frontend reflects that state to the user, user or automated actions generate commands, and the Picos carry those commands out. Structuring the system this way keeps each component loosely coupled, which makes the overall system easier to debug and straightforward to extend if additional devices or subsystems need to be added in the future.
+
 ## 4. Challenges and Limitations
 - Technical challenges
   - Wiring and getting the correct amount of power to each of the hardware components was quite challenging. Also connecting the individual picos to the pi was difficult as sometimes they would connect and the pi would succesfully send them a signal, but sometimes it wouldn't work. Calibrating the load cell was also difficult since the load cells only output raw data that doens't actually make sense so we had to use a known weight to calibrate what the load cell was outputting to a known weight. 
