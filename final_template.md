@@ -125,19 +125,29 @@ Explain your (recorded) demo:
   
 ## 6. Contributions
 List each member’s contributions:
-- Name: specific tasks completed
-- Adam: Pressure Sensor wiring and starter code(outdated)<br>
-        Water pump wiring and starter code<br>
-        Load cells wiring/starter code/found 3d model<br>
-        Assembled the cat house<br>
-        Found dataset for cat meows<br>
-        Website/microphone code to record and store owners voice memos<br>
-        Bluetooth speaker setup<br>
-- Yuxuan: Implemented database layer and consumption_tracker service for backend<br>
-          Help build and test the backend server and frontend dashboard<br>
-          Help developed the Pico firmware<br>
-          Caliboration for Load cell<br>
-          3D printing<br>
+- Matthew:
+  - Pico hardware control logic and firmware
+  - Wiring, testing, and debugging hardware components
+  - Developed backend API server
+  - Built the frontend dashboard
+  - Cat vocalization model training
+  - Pan/tilt laser cat interaction system
+  - 3D modelling and printing
+  - Helped design the data collection and analytics pipeline
+- Adam:
+  - Pressure Sensor wiring and starter code(outdated)
+  - Water pump wiring and starter code
+  - Load cells wiring/starter code/found 3d model
+  - Assembled the cat house
+  - Found dataset for cat meows
+  - Website/microphone code to record and store owners voice memos
+  - Bluetooth speaker setup
+- Yuxuan:
+  - Implemented database layer and consumption_tracker service for backend
+  - Help build and test the backend server and frontend dashboard
+  - Help developed the Pico firmware
+  - Caliboration for Load cell
+  - 3D printing
     
 ## 7.Conclusion
 
