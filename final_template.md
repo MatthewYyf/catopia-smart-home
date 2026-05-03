@@ -15,7 +15,11 @@
 ## 2. Abstract
 Provide a concise summary (150–250 words) describing:
 - The problem you are addressing
-  -  We want to help treat and care for your cat more consistently. The problem we have found is that most cats are not cared for enough as owners are either under the misconception that cats are low maintenance or are away for long periods of time. Cats, therefore, become depressed and it's difficult for owners to see changes in their cats health, especially if the changes are small and would only be noticed if they were around their cat more often.
+  - Cats can experience stress, boredom, and loneliness when their owners are not present for long periods of time. Although cats are often seen as independent animals, they still need regular stimulation, feeding consistency, hydration, and social interaction to maintain good mental and physical health. When these needs are not met, cats may show signs of anxiety, reduced activity, excessive vocalization, overeating, under-eating, or changes in drinking behavior. However, owners are often unable to observe these changes in real time while they are away from home.
+
+  - This project addresses the problem of remote cat care by creating an automated smart cat house that monitors and supports a cat’s daily behavior. The system tracks food and water intake, detects vocalizations, provides camera-based observation, and allows remote control of interactive features such as feeding and laser play. By combining sensors, audio recognition, and automated actuation, the system helps owners better understand their cat’s condition when they are not physically present.
+
+  - The goal is to reduce the gap between owner absence and pet care. Instead of only reacting after a problem becomes noticeable, the system provides continuous monitoring and enrichment, helping support the cat’s mental health, comfort, and routine throughout the day.
 - Brief description about your proposed project
   - Catopia is an integrated smart home system designed to automate and monitor essential aspects of cat care. The system enables owners to remotely track and manage their pet’s food intake, water consumption, environmental conditions, and behavior through a connected hardware and software platform.
 - Key technologies involved
