@@ -48,6 +48,17 @@ As detailed as possible.
 
 - Schematic 
 
+![Hardware Architecture](Hardware_Schematic.png)
+
+Raspberry Pi represents the main computing and coordination layer of the system. It runs the backend server, manages communication with the Pico, processes sensor and device data, and connects higher-level peripherals such as the camera, microphone, and speaker.
+
+The Pico controllers represent the hardware control layer. Each Pico is assigned to a specific subsystem. Pico 1 represents the interactive laser toy subsystem, controlling the pan-tilt servos and laser module. Pico 2 represents the feeding subsystem, controlling the kibble dispenser mechanism. Pico 3 represents the water subsystem, controlling the water pump and a load cell to track the water intake. Pico 4 represents the weight-sensing subsystem, reading data from a dedicated load cell.
+
+The green connections represent peripherals that are connected directly to the Raspberry Pi. The camera provides the live video feed, the microphone collects audio for cat vocalization recognition, and the speaker supports audio output or voice playback.
+
+
+
+
 ### 3.3 Software Components
 Catopia’s software system is composed of three main layers, embedded firmware on the Raspberry Pi Pico devices, a Python backend server running on the Raspberry Pi, and a browser-based frontend dashboard. 
 
@@ -101,6 +112,9 @@ List each member’s contributions:
         Found dataset for cat meows
         Website/microphone code to record and store owners voice memos
         Bluetooth speaker setup
+- Yuxuan: Implemented the database layer and consumption tracker service backend.
+          Helped build and test the backend server and frontend dashboard.
+          Caliboration for Load Cell.
     
 ## 7.Conclusion
 Summarize:
