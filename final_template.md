@@ -163,13 +163,25 @@ List each member’s contributions:
 ## 7.Conclusion
 Summarize:
 - What you built
-  - We built a modular cat house for the owner to be able to keep track of their cats health through many different sensors and keep them happy.
+  - For this project, we built a fully integrated prototype of a smart cat care system that combines hardware, software, sensing, automation, and data analytics into one connected platform. The system was designed to support both the physical and mental health of a cat, especially when the owner is not present. On the hardware side, we connected multiple embedded components, including Raspberry Pi Pico microcontrollers, load cells, servos, a water pump, a food dispensing mechanism, a camera, a microphone, and other supporting circuitry. These components worked together to monitor the cat’s environment and control different care features.
+
+  - A major part of the project was the data collection and analytics pipeline. The system collects physical health data such as food consumption, water consumption, and weight-related measurements. It also collects behavioral and mental health indicators through audio input and interactive play features. The backend receives telemetry from the devices, stores or updates the latest state, and makes the data available to the frontend dashboard. This allows the user to view recent activity, monitor trends, and better understand the cat’s condition over time.
+
+  - We also built a physical structure for the cat that brings the different modules together. This included the feeding system, water system, camera setup, and interactive laser play area. While the prototype was not tested on real cats, it served as a proof of concept for how a future smart pet care system could combine automated care, monitoring, and enrichment in a single platform.
 
 - What you learned
-  - We learned many things. One is that 3d printing takes a long time, and sometimes the first attempt doesn't work but on the second try it does. Another thing is that we learned how circuits work. That was really important in our project as we had many many hardware components that needed to be wired together and each have enough power to work. We also learned that waiting to test our system later was what caused many problems as we didn't have enough time to troubleshoot all the issues and get everything fully working together. 
+  - engineering project. Since the system had many separate parts, different team members had to work on hardware, backend, frontend, data storage, machine learning, and physical design at the same time. This helped us move faster, but it also made integration more challenging. We learned that communication is especially important when different modules depend on each other.
+
+  - We also learned that hardware projects need much more testing time than expected. Individual components may work during small tests, but behave differently once they are connected to the full system. Power issues, wiring problems, unstable sensors, and unreliable circuit components can all appear during integration. Because of this, we learned that features should be tested well before the final presentation, not just right before the demo.
+
+  - Another important lesson was that integration should happen earlier. Even if each feature works separately, the final system only succeeds if all parts work together smoothly.
 
 - Overall success of the project
-  - We think the project was relatively pretty succesful since we did get every module to work fully, but we weren't able to attach everything to the cat house. 
+  - Overall, the project was fairly successful. We were able to build a working prototype that demonstrated the main ideas of the system: automated feeding and water control, live monitoring, data collection, a dashboard interface, and interactive features for cat enrichment. The project showed that our concept is technically possible and gave us a strong foundation for future improvement.
+
+  - However, the final presentation could have gone more smoothly if we had integrated the full system earlier. Some issues appeared late in the process, especially with unreliable circuit components. On presentation day, the load cells stopped working, which affected our ability to demonstrate the sensing and consumption tracking features. This showed us that hardware reliability is just as important as software functionality.
+
+  - Even with these issues, the project was a meaningful proof of concept. It combined embedded systems, web development, physical design, and data analytics into one system, and it helped us understand both the potential and the challenges of building a real smart pet care product.
 
 ## References
 - Datasheets
