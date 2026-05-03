@@ -21,7 +21,9 @@ Provide a concise summary (150–250 words) describing:
 
   - The goal is to reduce the gap between owner absence and pet care. Instead of only reacting after a problem becomes noticeable, the system provides continuous monitoring and enrichment, helping support the cat’s mental health, comfort, and routine throughout the day.
 - Brief description about your proposed project
-  - Catopia is an integrated smart home system designed to automate and monitor essential aspects of cat care. The system enables owners to remotely track and manage their pet’s food intake, water consumption, environmental conditions, and behavior through a connected hardware and software platform.
+  - Our proposed project is a smart cat house that helps owners monitor and care for their cats when they are away. The system combines sensors, cameras, audio recognition, and automated devices to support the cat’s daily routine and mental well-being.
+The Raspberry Pi acts as the central controller, running the backend server, frontend dashboard, camera stream, and audio processing. Multiple Raspberry Pi Pico devices control specific hardware modules, including the food dispenser, water fountain, load cells, and pan-tilt laser toy. The system tracks food and water intake, detects cat vocalizations, streams video, and allows the owner to remotely trigger actions such as feeding or interactive play.
+  - A key goal of the project is to reduce stress, boredom, and uncertainty for both the cat and the owner. By monitoring behavior patterns and providing enrichment when the owner is not present, the smart cat house creates a more responsive care environment. The system also records useful data over time, which can help identify changes in eating, drinking, or vocalization behavior that may reflect the cat’s comfort, health, or emotional state.
 - Key technologies involved
   - 
 - Final results and impact
