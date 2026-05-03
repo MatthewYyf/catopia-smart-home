@@ -111,15 +111,14 @@ There are several improvements that could make Catopia more reliable and useful.
 With more time, we would add more complete pet care features. A fully automated litter box would be useful because it could track bathroom behavior, which is another important indicator of cat health. We would also add more interactive toys beyond the laser, since not every cat responds to the same kind of play. The system could include safer toy motion patterns, scheduled play sessions, and different enrichment modes. Another future feature would be a more advanced scheduling system that lets the owner plan feeding, water circulation, voice memo playback, and play sessions throughout the day. Finally, real-world testing with cats would be necessary to evaluate whether the system is safe, useful, and actually improves the owner’s ability to care for the cat remotely.
 
 ## 5. Demo Description
-Explain your (recorded) demo:
-- How the system works in real time
-- Key highlights
-  
-- Laser Demo:
+- Kibble Dispensor System:
+  - (LINK TO THE VIDEO)
+  - This demo shows the auger feeder dispensing kibble through a controlled motorized screw mechanism. When the feeding command is triggered, the stepper motor rotates the auger, pushing kibble from the storage container toward the bowl in small, measured amounts. The system is designed to work with a load cell so it can track the bowl’s weight and stop dispensing once the target amount of food is reached. As the bowl gets closer to the desired weight, the feeder can slow down its dispensing rate to avoid overfeeding and improve accuracy.
+- Laser Pan Tilt System:
   - https://drive.google.com/file/d/1DWTcacsNxB1oIhDAYuLIpRMXL6QAB6eC/view?usp=sharing
-  - This demo shows the pan tilt laser system responding to a command from the main control system. Once the laser play mode is activated, the Pico controls two servos: one for horizontal pan movement and one for vertical tilt movement. Together, these servos aim the laser across different positions to simulate a moving target for the cat. The laser movement is randomized within a safe range so that it feels less repetitive and more like interactive play.
-  - The system is designed as part of Catopia’s mental enrichment features. When the owner is not present, the backend can send a command to start an automated play session. The Pico then handles the low level servo and laser control locally, allowing the laser to move smoothly without needing constant input from the server. This demonstrates how the project connects software commands, embedded hardware control, and cat engagement into one integrated feature.
-- Water Bowl Pic:
+  - This demo shows the pan tilt laser system emulating the movement of prey to encourage a cat’s natural hunting and play instincts. When the laser play mode is activated, the Pico controls two servos: one for horizontal pan movement and one for vertical tilt movement. These servos move the laser across different positions, creating quick, unpredictable motion similar to a small animal or insect moving around the environment.
+  - The movement is intentionally randomized so the laser does not follow the same path every time. By changing direction, pausing briefly, and shifting between positions, the system creates a more engaging target for the cat to chase. This feature is part of Catopia’s mental enrichment system, allowing the cat to receive interactive stimulation even when the owner is not physically present.
+- Water Bowl:
   - https://drive.google.com/file/d/1kDaP6NASZN5hE8LF6nr4L-T4qRU9bAZl/view?usp=sharing
   - The water bowl has a 1 channel relay along with a load cell with hx711 board wired to a breadboard connected to an external power source. The system works by the owner on the website clicking a button to have the pi send a signal to the pico to turn the water pump on, then the water pump recieves the signal and turns on then the load cell is tracking the weight of the water bowl.
  
