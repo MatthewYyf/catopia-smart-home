@@ -148,6 +148,14 @@ List each member’s contributions:
   - Help developed the Pico firmware
   - Caliboration for Load cell
   - 3D printing
+- Garret:
+  - Stepper motor + driver wiring, power setup, and hardware integration (kibble dispenser)
+     - Integrated 1 load cell, wiring and power
+  - Dual-servo (pan/tilt) wiring, power setup, and hardware integration (laser system)
+  - Raspberry Pi Pico setup and control for motor systems
+  - Initial firmware development for stepper motor and servo control
+  - Hardware testing and debugging for motor actuation systems
+  - 3D printing
     
 ## 7.Conclusion
 
