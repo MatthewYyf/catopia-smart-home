@@ -112,7 +112,7 @@ With more time, we would add more complete pet care features. A fully automated 
 
 ## 5. Demo Description
 - Kibble Dispensor System:
-  - (LINK TO THE VIDEO)
+  - https://drive.google.com/file/d/16j8KyDVgh3PqQTofGiMgDPuj57KVN-RD/view?resourcekey
   - This demo shows the auger feeder dispensing kibble through a controlled motorized screw mechanism. When the feeding command is triggered, the stepper motor rotates the auger, pushing kibble from the storage container toward the bowl in small, measured amounts. The system is designed to work with a load cell so it can track the bowl’s weight and stop dispensing once the target amount of food is reached. As the bowl gets closer to the desired weight, the feeder can slow down its dispensing rate to avoid overfeeding and improve accuracy.
 - Laser Pan Tilt System:
   - https://drive.google.com/file/d/1DWTcacsNxB1oIhDAYuLIpRMXL6QAB6eC/view?usp=sharing
